@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_historico"
+        android:icon="@drawable/ic_historico"
+        android:title="Histórico" />
+
+    <item
+        android:id="@+id/navigation_nutria"
+        android:icon="@drawable/ic_nutria"
+        android:title="NutrIA" />
+
+    <item
+        android:id="@+id/navigation_scanner"
+        android:icon="@drawable/ic_scanner"
+        android:title="Scanner" />
+    <item
+        android:id="@+id/navigation_tabela"
+        android:icon="@drawable/ic_tabela"
+        android:title="Tabela" />
+    <item
+        android:id="@+id/navigation_comparacao"
+        android:icon="@drawable/ic_comparacao"
+        android:title="Comparação" />
+
+</menu>

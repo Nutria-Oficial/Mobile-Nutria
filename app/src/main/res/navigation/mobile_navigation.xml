@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_historico">
+
+    <fragment
+        android:id="@+id/navigation_historico"
+        android:name="com.bea.nutria.ui.Historico.HistoricoFragment"
+        android:label="Histórico"
+        tools:layout="@layout/fragment_historico" />
+
+    <fragment
+        android:id="@+id/navigation_nutria"
+        android:name="com.bea.nutria.ui.NutrIA.NutrIAFragment"
+        android:label="NutrIA"
+        tools:layout="@layout/fragment_nutria" />
+
+    <fragment
+        android:id="@+id/navigation_scanner"
+        android:name="com.bea.nutria.ui.Scanner.ScannerFragment"
+        android:label="Scanner"
+        tools:layout="@layout/fragment_scanner" />
+    <fragment
+        android:id="@+id/navigation_comparacao"
+        android:name="com.bea.nutria.ui.Comparacao.ComparacaoFragment"
+        android:label="Comparação" />
+    <fragment
+        android:id="@+id/navigation_tabela"
+        android:name="com.bea.nutria.ui.Tabela.TabelaFragment"
+        android:label="Tabela" />
+</navigation>
