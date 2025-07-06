@@ -1,204 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F2F2F2"
-    android:fillViewport="true"
+    android:gravity="center"
+    android:orientation="vertical"
     android:padding="24dp">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/logo_nutria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:fontFamily="@font/kodchasan_semibold"
+        android:text="Nutria"
+        android:textColor="#EE7026"
+        android:textSize="52sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:text="Bem-Vindo(a)!"
+        android:textColor="#333333"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/montserrat_regular"
+        android:gravity="center"
+        android:text="Cadastre-se como um engenheiro de alimentos!"
+        android:textColor="#333333"
+        android:textSize="12sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:hint="Nome completo"
+        app:boxBackgroundColor="@android:color/white"
+        app:boxCornerRadiusBottomEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusTopStart="8dp"
+        app:boxStrokeColor="#21B558"
+        app:boxStrokeWidth="1dp"
+        app:hintTextColor="#21B558">
 
-        <TextView
-            android:id="@+id/logo_nutria"
-            android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_nome"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="@font/kodchasan_semibold"
-            android:text="Nutria"
-            android:textColor="#EE7026"
-            android:textSize="52sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:fontFamily="@font/montserrat_semibold"
-            android:text="Bem-Vindo(a)!"
-            android:textColor="#333333"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
             android:fontFamily="@font/montserrat_regular"
-            android:gravity="center"
-            android:text="Cadastre-se como um engenheiro de alimentos!"
+            android:inputType="textPersonName|textCapWords"
             android:textColor="#333333"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Endereço de e-mail"
+        app:boxBackgroundColor="@android:color/white"
+        app:boxCornerRadiusBottomEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusTopStart="8dp"
+        app:boxStrokeColor="#21B558"
+        app:boxStrokeWidth="1dp"
+        app:hintTextColor="#21B558">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nome completo"
-            app:boxBackgroundColor="@android:color/white"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxStrokeWidth="1dp">
+            android:fontFamily="@font/montserrat_regular"
+            android:inputType="textEmailAddress"
+            android:textColor="#333333"
+            android:textSize="12sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_nome"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_regular"
-                android:inputType="textPersonName|textCapWords"
-                android:textColor="#333333"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Senha"
+        app:boxBackgroundColor="@android:color/white"
+        app:boxCornerRadiusBottomEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusTopStart="8dp"
+        app:boxStrokeColor="#21B558"
+        app:boxStrokeWidth="1dp"
+        app:hintTextColor="#21B558"
+        app:passwordToggleEnabled="true">
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_senha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Endereço de e-mail"
-            app:boxBackgroundColor="@android:color/white"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxStrokeWidth="1dp">
+            android:fontFamily="@font/montserrat_regular"
+            android:inputType="textPassword"
+            android:textColor="#333333"
+            android:textSize="12sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_regular"
-                android:inputType="textEmailAddress"
-                android:textColor="#333333"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Telefone"
+        app:boxBackgroundColor="@android:color/white"
+        app:boxCornerRadiusBottomEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusTopStart="8dp"
+        app:boxStrokeColor="#21B558"
+        app:boxStrokeWidth="1dp"
+        app:hintTextColor="#21B558">
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_telefone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Senha"
-            app:boxBackgroundColor="@android:color/white"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxStrokeWidth="1dp"
-            app:passwordToggleEnabled="true">
+            android:fontFamily="@font/montserrat_regular"
+            android:inputType="phone"
+            android:textColor="#333333"
+            android:textSize="12sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_senha"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_regular"
-                android:inputType="textPassword"
-                android:textColor="#333333"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Empresa (Opcional)"
+        app:boxBackgroundColor="@android:color/white"
+        app:boxCornerRadiusBottomEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusTopStart="8dp"
+        app:boxStrokeColor="#21B558"
+        app:boxStrokeWidth="1dp"
+        app:hintTextColor="#21B558">
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_empresa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Telefone"
-            app:boxBackgroundColor="@android:color/white"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxStrokeWidth="1dp">
+            android:fontFamily="@font/montserrat_regular"
+            android:inputType="text"
+            android:textColor="#333333"
+            android:textSize="12sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_telefone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_regular"
-                android:inputType="phone"
-                android:textColor="#333333"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_cadastrar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:text="Cadastrar-se"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:backgroundTint="#EE7026"
+        app:cornerRadius="8dp" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal">
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Empresa (Opcional)"
-            app:boxBackgroundColor="@android:color/white"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxStrokeWidth="1dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_empresa"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_regular"
-                android:inputType="text"
-                android:textColor="#333333"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_cadastrar"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="24dp"
-            android:fontFamily="@font/montserrat_semibold"
-            android:text="Cadastrar-se"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:backgroundTint="#EE7026"
-            app:cornerRadius="12dp" />
-
-        <LinearLayout
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal">
+            android:fontFamily="@font/montserrat_regular"
+            android:text="Já é cadastrado?"
+            android:textColor="#333333"
+            android:textSize="12sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_regular"
-                android:text="Já é cadastrado?"
-                android:textColor="#333333"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/btn_entrar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_semibold"
-                android:text=" Entrar"
-                android:textColor="#21B558"
-                android:textSize="14sp"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
+        <TextView
+            android:id="@+id/btn_entrar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text=" Entrar"
+            android:textColor="#21B558"
+            android:textSize="12sp"
+            android:textStyle="bold" />
     </LinearLayout>
-</ScrollView>
+
+</LinearLayout>
