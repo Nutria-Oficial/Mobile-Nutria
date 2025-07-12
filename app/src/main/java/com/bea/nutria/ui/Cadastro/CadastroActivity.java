@@ -2,12 +2,14 @@ package com.bea.nutria.ui.Cadastro;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bea.nutria.MainActivity;
 import com.bea.nutria.R;
+import com.bea.nutria.ui.Login.LoginActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseApp;
@@ -35,6 +37,12 @@ public class CadastroActivity extends AppCompatActivity {
         editTelefone = findViewById(R.id.edit_telefone);
         editEmpresa = findViewById(R.id.edit_empresa);
         btnCadastrar = findViewById(R.id.btn_cadastrar);
+
+        TextView btnEntrar = findViewById(R.id.btn_entrar);
+        btnEntrar.setOnClickListener(v -> {
+            Intent intent = new Intent(CadastroActivity.this, LoginActivity.class);
+            startActivity(intent);
+        });
 
         btnCadastrar.setOnClickListener(v -> {
             cadastrar();
