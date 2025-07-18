@@ -2,5 +2,6 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/kodchasan_semibold</item>
+        <item>@font/montserrat_semibold</item>
     </array>
 </resources>
