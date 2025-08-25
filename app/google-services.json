@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "918824501546",
+    "project_id": "nutria-df122",
+    "storage_bucket": "nutria-df122.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:918824501546:android:79c45bc5f5f6a844db9e53",
+        "android_client_info": {
+          "package_name": "com.bea.nutria"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6Rq06YiBF3YXt_IBjeEAjTVHFSIOTwK8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
