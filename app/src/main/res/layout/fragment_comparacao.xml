@@ -11,106 +11,123 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="-100dp"
-        android:layout_marginTop="36dp"
         android:fontFamily="@font/montserrat_semibold"
         android:text="@string/title_comparacao"
         android:textColor="#040303"
         android:textSize="30sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="42dp"
-        android:layout_height="36dp"
-        android:background="#FFF7F7"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.91"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.051"
-        app:srcCompat="@drawable/ic_perfil" />
+        app:layout_constraintVertical_bias="0.661" />
 
     <View
         android:id="@+id/view"
         android:layout_width="413dp"
-        android:layout_height="630dp"
-        android:layout_marginTop="30dp"
+        android:layout_height="700dp"
+        android:layout_marginTop="300dp"
         android:background="@drawable/fundo_arredondado"
         android:backgroundTint="#FFF9F9"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TextView_tituloTelaComparacao"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
     <View
         android:id="@+id/View_demonstracaoItem"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/quadrado_arredondado"
         app:circularflow_defaultRadius="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/TextIputLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.096"
+        app:layout_constraintHorizontal_bias="0.095"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.19" />
+        app:layout_constraintTop_toTopOf="@+id/view"
+        app:layout_constraintVertical_bias="0.687" />
 
     <View
         android:id="@+id/View_linha"
         android:layout_width="256dp"
         android:layout_height="3dp"
+        android:layout_marginTop="-10dp"
         android:layout_marginEnd="32dp"
         android:background="#EEEDF7"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/view"
-        app:layout_constraintHorizontal_bias="0.916"
+        app:layout_constraintHorizontal_bias="0.911"
         app:layout_constraintStart_toEndOf="@+id/View_demonstracaoItem"
         app:layout_constraintTop_toTopOf="@+id/view"
-        app:layout_constraintVertical_bias="0.124" />
+        app:layout_constraintVertical_bias="0.126" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/TextIputLayout"
-        android:layout_width="366dp"
-        android:layout_height="wrap_content"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        app:boxBackgroundColor="@android:color/white"
+        app:boxBackgroundColor="#E9E9F0"
+        app:boxBackgroundMode="filled"
+        app:boxStrokeWidth="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/View_linha">
+        app:layout_constraintTop_toBottomOf="@+id/View_linha"
+        app:startIconScaleType="center">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/lupa"
+            android:drawableStart="@drawable/ic_lupa"
             android:fontFamily="@font/montserrat_regular"
             android:hint="@string/title_barra_pesquisa" />
     </com.google.android.material.textfield.TextInputLayout>
 
-<!--    Disposição dos itens da lista na tela -->
+    <!--    Disposição dos itens da lista na tela -->
 
-<!--    match_parent: "Preencha toda a largura ou altura do elemento pai".-->
-<!--    wrap_content: "Pegue só o espaço necessário para o conteúdo dentro do elemento".-->
+    <!--    match_parent: "Preencha toda a largura ou altura do elemento pai".-->
+    <!--    wrap_content: "Pegue só o espaço necessário para o conteúdo dentro do elemento".-->
 
-<!--    Traducao: -->
-<!--    wrap: enrolar (enrole-se no tamanho de seu pai)-->
-<!--    match: corresponder (corresponda apenas ao tamanho dos seus elementos internos)-->
-
+    <!--    Traducao: -->
+    <!--    wrap: enrolar (enrole-se no tamanho de seu pai)-->
+    <!--    match: corresponder (corresponda apenas ao tamanho dos seus elementos internos)-->
 
     <include
         layout="@layout/itens_lista"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="530dp"
+        android:layout_marginTop="720dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/View_demonstracaoItem"
+        app:layout_constraintEnd_toEndOf="@+id/View_demonstracaoItem"
+        app:layout_constraintStart_toStartOf="@+id/View_demonstracaoItem"
+        app:layout_constraintTop_toTopOf="@+id/View_demonstracaoItem"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/xlsx" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toEndOf="@+id/TextView_tituloTelaComparacao"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.696"
+        app:srcCompat="@drawable/perfil_4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
