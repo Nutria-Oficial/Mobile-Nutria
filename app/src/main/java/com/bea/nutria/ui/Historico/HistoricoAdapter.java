@@ -64,7 +64,6 @@ public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.View
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtNome;
         ImageView img;
-
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtNome = itemView.findViewById(R.id.nomeProdutoHistorico);
