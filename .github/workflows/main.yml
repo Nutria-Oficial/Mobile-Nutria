@@ -9,11 +9,6 @@ jobs:
   build-and-lint:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: Mobile
-        shell: bash
-
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
@@ -34,37 +29,53 @@ jobs:
                      "platforms;android-34" \
                      "build-tools;34.0.0"
 
-      - name: Verificar existência do gradlew
+      - name: Localizar gradlew
+        id: find_gradle
+        shell: bash
         run: |
+          echo "Repo root:"
           pwd
-          ls -la
-          test -f gradlew || (echo "gradlew NÃO encontrado aqui" && exit 1)
+          echo "Listando até 3 níveis..."
+          find . -maxdepth 3 -type f -name gradlew -print
+          GRADLEW_PATH="$(find . -maxdepth 3 -type f -name gradlew | head -n1)"
+          if [ -z "$GRADLEW_PATH" ]; then
+            echo "gradlew não encontrado no repo!" >&2
+            exit 1
+          fi
+          GRADLEW_DIR="$(dirname "$GRADLEW_PATH")"
+          echo "GRADLEW_DIR=$GRADLEW_DIR" >> $GITHUB_ENV
+          echo "Encontrado em: $GRADLEW_DIR"
 
       - name: Normalizar EOL (CRLF -> LF)
-        run: |
-          # remove \r do Windows; evita erro de shell
-          sed -i 's/\r$//' gradlew
-          head -n 1 gradlew | cat -v  # deve mostrar '#!/usr/bin/env sh' sem ^M
+        shell: bash
+        run: sed -i 's/\r$//' gradlew
+        working-directory: ${{ env.GRADLEW_DIR }}
 
       - name: Tornar gradlew executável
+        shell: bash
         run: |
           chmod +x gradlew
-          ls -l gradlew  # deve mostrar -rwxr-xr-x
+          ls -l gradlew
+        working-directory: ${{ env.GRADLEW_DIR }}
 
       - name: Compilar APK (assembleDebug)
+        shell: bash
         run: ./gradlew assembleDebug -x test
+        working-directory: ${{ env.GRADLEW_DIR }}
 
       - name: Rodar Android Lint
+        shell: bash
         run: ./gradlew lint -x test
+        working-directory: ${{ env.GRADLEW_DIR }}
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: Mobile/app/build/outputs/apk/debug/*.apk
+          path: ${{ env.GRADLEW_DIR }}/app/build/outputs/apk/debug/*.apk
 
       - name: Upload Relatório Lint
         uses: actions/upload-artifact@v4
         with:
           name: lint-report
-          path: Mobile/app/build/reports/lint-results*.html
+          path: ${{ env.GRADLEW_DIR }}/app/build/reports/lint-results*.html
