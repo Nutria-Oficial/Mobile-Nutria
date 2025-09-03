@@ -27,6 +27,10 @@ jobs:
           sdkmanager "platform-tools" \
                      "platforms;android-34" \
                      "build-tools;34.0.0"
+      
+      
+      - name: Dar permissão ao gradlew
+        run: chmod +x gradlew
 
       - name: Compilar APK (assembleDebug)
         run: ./gradlew assembleDebug -x test
