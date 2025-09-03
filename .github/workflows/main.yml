@@ -32,13 +32,39 @@ jobs:
       - name: Localizar gradlew
         id: find_gradle
         run: |
-          echo "Listando até 3 níveis para encontrar gradlew..."
-          find . -maxdepth 3 -type f -name gradlew -print
           GRADLEW_PATH="$(find . -maxdepth 3 -type f -name gradlew | head -n1)"
           if [ -z "$GRADLEW_PATH" ]; then
-            echo "gradlew não encontrado no repo!" >&2
+            echo "gradlew não encontrado!" >&2
             exit 1
           fi
           GRADLEW_DIR="$(dirname "$GRADLEW_PATH")"
           echo "GRADLEW_DIR=$GRADLEW_DIR" >> $GITHUB_ENV
-          echo "Enco
+          echo "gradlew encontrado em: $GRADLEW_DIR"
+
+      - name: Normalizar EOL (CRLF -> LF)
+        run: sed -i 's/\r$//' gradlew
+        working-directory: ${{ env.GRADLEW_DIR }}
+
+      - name: Tornar gradlew executável
+        run: chmod +x gradlew && ls -l gradlew
+        working-directory: ${{ env.GRADLEW_DIR }}
+
+      - name: Compilar APK (assembleDebug)
+        run: ./gradlew assembleDebug -x test
+        working-directory: ${{ env.GRADLEW_DIR }}
+
+      - name: Rodar Android Lint
+        run: ./gradlew lint -x test
+        working-directory: ${{ env.GRADLEW_DIR }}
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: ${{ env.GRADLEW_DIR }}/app/build/outputs/apk/debug/*.apk
+
+      - name: Upload Relatório Lint
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report
+          path: ${{ env.GRADLEW_DIR }}/app/build/reports/lint-results*.html
