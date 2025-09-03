@@ -8,6 +8,11 @@ jobs:
   build-and-lint:
     runs-on: ubuntu-latest
 
+    # Faz todos os `run:` executarem dentro de Mobile/
+    defaults:
+      run:
+        working-directory: Mobile
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
@@ -27,13 +32,21 @@ jobs:
           sdkmanager "platform-tools" \
                      "platforms;android-34" \
                      "build-tools;34.0.0"
-      
-      
+
+      - name: Conferir diretório e gradlew
+        run: |
+          pwd
+          ls -la
+          ls -l gradlew
+
       - name: Dar permissão ao gradlew
         run: chmod +x gradlew
 
-      - name: Compilar APK (assembleDebug)
-        run: ./gradlew assembleDebug -x test
+      - name: Build (assembleDebug)
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: assembleDebug -x test
+          build-root-directory: Mobile
 
       - name: Rodar Android Lint
         run: ./gradlew lint -x test
@@ -42,10 +55,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          path: Mobile/app/build/outputs/apk/debug/*.apk
 
       - name: Upload Relatório Lint
         uses: actions/upload-artifact@v4
         with:
           name: lint-report
-          path: app/build/reports/lint-results*.html
+          path: Mobile/app/build/reports/lint-results*.html
