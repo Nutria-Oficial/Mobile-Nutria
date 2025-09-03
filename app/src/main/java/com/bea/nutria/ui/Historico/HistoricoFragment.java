@@ -39,7 +39,7 @@ public class HistoricoFragment extends Fragment {
          produtos.add("Feijão Preto");
          produtos.add("Presunto levissimo");
 
-        adapter = new HistoricoAdapter(produtos); // adapter não-nulo
+        adapter = new HistoricoAdapter(produtos);
         binding.rvHistorico.setAdapter(adapter);
 
         // 3) Só depois de setar o adapter, conecta o TextWatcher
