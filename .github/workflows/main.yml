@@ -3,15 +3,16 @@ name: CI - Nutria Android
 on:
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build-and-lint:
     runs-on: ubuntu-latest
 
-    # Faz todos os `run:` executarem dentro de Mobile/
     defaults:
       run:
         working-directory: Mobile
+        shell: bash
 
     steps:
       - name: Checkout código
@@ -33,20 +34,25 @@ jobs:
                      "platforms;android-34" \
                      "build-tools;34.0.0"
 
-      - name: Conferir diretório e gradlew
+      - name: Verificar existência do gradlew
         run: |
           pwd
           ls -la
-          ls -l gradlew
+          test -f gradlew || (echo "gradlew NÃO encontrado aqui" && exit 1)
 
-      - name: Dar permissão ao gradlew
-        run: chmod +x gradlew
+      - name: Normalizar EOL (CRLF -> LF)
+        run: |
+          # remove \r do Windows; evita erro de shell
+          sed -i 's/\r$//' gradlew
+          head -n 1 gradlew | cat -v  # deve mostrar '#!/usr/bin/env sh' sem ^M
 
-      - name: Build (assembleDebug)
-        uses: gradle/gradle-build-action@v3
-        with:
-          arguments: assembleDebug -x test
-          build-root-directory: Mobile
+      - name: Tornar gradlew executável
+        run: |
+          chmod +x gradlew
+          ls -l gradlew  # deve mostrar -rwxr-xr-x
+
+      - name: Compilar APK (assembleDebug)
+        run: ./gradlew assembleDebug -x test
 
       - name: Rodar Android Lint
         run: ./gradlew lint -x test
