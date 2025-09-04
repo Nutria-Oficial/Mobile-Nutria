@@ -31,6 +31,7 @@ jobs:
 
       - name: Localizar gradlew
         id: find_gradle
+        shell: bash
         run: |
           GRADLEW_PATH="$(find . -maxdepth 3 -type f -name gradlew | head -n1)"
           if [ -z "$GRADLEW_PATH" ]; then
@@ -39,21 +40,25 @@ jobs:
           fi
           GRADLEW_DIR="$(dirname "$GRADLEW_PATH")"
           echo "GRADLEW_DIR=$GRADLEW_DIR" >> $GITHUB_ENV
-          echo "gradlew encontrado em: $GRADLEW_DIR"
+          echo "gradlew em: $GRADLEW_DIR"
 
       - name: Normalizar EOL (CRLF -> LF)
+        shell: bash
         run: sed -i 's/\r$//' gradlew
         working-directory: ${{ env.GRADLEW_DIR }}
 
       - name: Tornar gradlew executável
+        shell: bash
         run: chmod +x gradlew && ls -l gradlew
         working-directory: ${{ env.GRADLEW_DIR }}
 
       - name: Compilar APK (assembleDebug)
+        shell: bash
         run: ./gradlew assembleDebug -x test
         working-directory: ${{ env.GRADLEW_DIR }}
 
       - name: Rodar Android Lint
+        shell: bash
         run: ./gradlew lint -x test
         working-directory: ${{ env.GRADLEW_DIR }}
 
