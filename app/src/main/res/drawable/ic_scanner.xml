@@ -1,5 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/scanner_selecionado" android:state_checked="true"/>
-    <item android:drawable="@drawable/scanner"/>
-</selector>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="1008dp"
+    android:height="1008dp"
+    android:viewportWidth="1008"
+    android:viewportHeight="1008">
+  <path
+      android:pathData="M254,90.9H104V227.3H4V0H254V90.9ZM1004,227.3V0H754V90.9H904V227.3H1004ZM254,909.1H104V772.7H4V1000H254V909.1ZM904,772.7V909.1H754V1000H1004V772.7H904ZM754,227.3H254V772.7H754V227.3ZM854,772.7C854,822.7 809,863.6 754,863.6H254C199,863.6 154,822.7 154,772.7V227.3C154,177.3 199,136.4 254,136.4H754C809,136.4 854,177.3 854,227.3V772.7ZM654,318.2H354V409.1H654V318.2ZM654,454.5H354V545.5H654V454.5ZM654,590.9H354V681.8H654V590.9Z"
+      android:fillColor="#494C4D"/>
+  <path
+      android:strokeWidth="1"
+      android:pathData="M254,90.9H104V227.3H4V0H254V90.9ZM1004,227.3V0H754V90.9H904V227.3H1004ZM254,909.1H104V772.7H4V1000H254V909.1ZM904,772.7V909.1H754V1000H1004V772.7H904ZM754,227.3H254V772.7H754V227.3ZM854,772.7C854,822.7 809,863.6 754,863.6H254C199,863.6 154,822.7 154,772.7V227.3C154,177.3 199,136.4 254,136.4H754C809,136.4 854,177.3 854,227.3V772.7ZM654,318.2H354V409.1H654V318.2ZM654,454.5H354V545.5H654V454.5ZM654,590.9H354V681.8H654V590.9Z"
+      android:fillColor="#00000000"
+      android:strokeColor="#494C4D"/>
+</vector>
