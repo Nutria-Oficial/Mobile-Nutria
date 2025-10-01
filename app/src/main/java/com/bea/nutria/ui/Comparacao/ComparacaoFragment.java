@@ -99,6 +99,7 @@ public class ComparacaoFragment extends Fragment {
                     }
                 }
             }
+
             return false;
         });
     }
