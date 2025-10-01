@@ -15,13 +15,24 @@
         android:text="@string/title_comparacao"
         android:textColor="#040303"
         android:textSize="30sp"
-        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.661" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toEndOf="@+id/TextView_tituloTelaComparacao"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.696"
+        app:srcCompat="@drawable/perfil_4" />
 
     <View
         android:id="@+id/view"
@@ -38,96 +49,165 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <View
-        android:id="@+id/View_demonstracaoItem"
+        android:id="@+id/view_linha4"
+        android:layout_width="265dp"
+        android:layout_height="3dp"
+        android:background="#EEEDF7"
+        tools:layout_editor_absoluteX="120dp"
+        tools:layout_editor_absoluteY="305dp" />
+
+    <View
+        android:id="@+id/View_demonstracaoItem_1"
         android:layout_width="65dp"
         android:layout_height="65dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginTop="17dp"
         android:background="@drawable/quadrado_arredondado"
         app:circularflow_defaultRadius="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/TextIputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.095"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/view"
-        app:layout_constraintVertical_bias="0.687" />
+        app:layout_constraintTop_toTopOf="@+id/view" />
+
+    <TextView
+        android:id="@+id/textViewSelecionarProduto1"
+        android:layout_width="261dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="32dp"
+        android:text="Só é possível comparar produtos com mais de uma tabela"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.423"
+        app:layout_constraintStart_toEndOf="@+id/View_demonstracaoItem_1"
+        app:layout_constraintTop_toTopOf="@+id/view" />
 
     <View
-        android:id="@+id/View_linha"
-        android:layout_width="256dp"
-        android:layout_height="3dp"
-        android:layout_marginTop="-10dp"
-        android:layout_marginEnd="32dp"
-        android:background="#EEEDF7"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/view"
-        app:layout_constraintHorizontal_bias="0.911"
-        app:layout_constraintStart_toEndOf="@+id/View_demonstracaoItem"
-        app:layout_constraintTop_toTopOf="@+id/view"
-        app:layout_constraintVertical_bias="0.126" />
+        android:id="@+id/View_demonstracaoItem_selecionado"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="17dp"
+        android:background="@drawable/quadrado_arredondado"
+        android:visibility="gone"
+        app:circularflow_defaultRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.095"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/view" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/TextIputLayout"
+    <TextView
+        android:id="@+id/textViewNomeProdutoSelecionado"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        tools:text="Leite desnatado"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.165"
+        app:layout_constraintStart_toEndOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintTop_toTopOf="@+id/view" />
+
+    <TextView
+        android:id="@+id/textViewAvaliacaoProdutoSelecionado"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Avaliação: 78"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.18"
+        app:layout_constraintStart_toEndOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintTop_toBottomOf="@+id/textViewNomeProdutoSelecionado" />
+
+    <View
+        android:id="@+id/view_demonstracaoItem2"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/quadrado_arredondado"
+        android:visibility="gone"
+        app:circularflow_defaultRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.095"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/View_demonstracaoItem_selecionado" />
+
+    <TextView
+        android:id="@+id/textViewSelecionarProduto2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:text="Selecione o 2º produto"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.221"
+        app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem2"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAvaliacaoProdutoSelecionado" />
+
+    <Button
+        android:id="@+id/botao_teste_transicao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="SIMULAR SELEÇÃO"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_bar_container" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/search_bar_container"
         android:layout_width="350dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        app:boxBackgroundColor="#E9E9F0"
-        app:boxBackgroundMode="filled"
-        app:boxStrokeWidth="0dp"
+        android:background="@drawable/search_bar_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/View_linha"
-        app:startIconScaleType="center">
+        app:layout_constraintTop_toBottomOf="@+id/View_demonstracaoItem_1">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <EditText
+            android:id="@+id/search_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_lupa"
-            android:fontFamily="@font/montserrat_regular"
-            android:hint="@string/title_barra_pesquisa" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:hint="Pesquisar produto"
+            android:imeOptions="actionSearch"
+            android:paddingStart="48dp"
+            android:paddingEnd="16dp"
+            android:singleLine="true"
+            android:textColor="@android:color/black"
+            android:textColorHint="#A0A0A0"
+            android:textCursorDrawable="@drawable/black_cursor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
-    <!--    Disposição dos itens da lista na tela -->
-
-    <!--    match_parent: "Preencha toda a largura ou altura do elemento pai".-->
-    <!--    wrap_content: "Pegue só o espaço necessário para o conteúdo dentro do elemento".-->
-
-    <!--    Traducao: -->
-    <!--    wrap: enrolar (enrole-se no tamanho de seu pai)-->
-    <!--    match: corresponder (corresponda apenas ao tamanho dos seus elementos internos)-->
+        <ImageView
+            android:id="@+id/search_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/ic_lupa"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.6" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include
+        android:id="@+id/listaItens"
         layout="@layout/itens_lista"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="720dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/View_demonstracaoItem"
-        app:layout_constraintEnd_toEndOf="@+id/View_demonstracaoItem"
-        app:layout_constraintStart_toStartOf="@+id/View_demonstracaoItem"
-        app:layout_constraintTop_toTopOf="@+id/View_demonstracaoItem"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/xlsx" />
-
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        app:layout_constraintBottom_toTopOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toEndOf="@+id/TextView_tituloTelaComparacao"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.696"
-        app:srcCompat="@drawable/perfil_4" />
+        app:layout_constraintTop_toBottomOf="@+id/search_bar_container" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

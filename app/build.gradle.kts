@@ -44,13 +44,19 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+    implementation(libs.firebase.auth)
+    implementation(libs.activity)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
-
-    implementation("com.google.android.material:material:1.10.0")
+    implementation ("com.google.android.material:material:1.11.0")
     implementation("com.google.firebase:firebase-firestore")
     implementation ("androidx.navigation:navigation-fragment:2.7.7")
     implementation ("androidx.navigation:navigation-ui:2.7.7")
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation ("com.cloudinary:cloudinary-android:2.5.0")
+    implementation ("androidx.exifinterface:exifinterface:1.3.7")
+
+
 }

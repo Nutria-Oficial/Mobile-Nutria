@@ -22,12 +22,26 @@
         android:name="com.bea.nutria.ui.Scanner.ScannerFragment"
         android:label="Scanner"
         tools:layout="@layout/fragment_scanner" />
+
     <fragment
         android:id="@+id/navigation_comparacao"
         android:name="com.bea.nutria.ui.Comparacao.ComparacaoFragment"
-        android:label="Comparação" />
+        android:label="Comparação">
+        <!-- Ação para navegar para o fragment do produto 2 -->
+        <action
+            android:id="@+id/action_navigation_comparacao_to_comparacaoFragmentProduto2"
+            app:destination="@id/comparacaoFragmentProduto2" />
+    </fragment>
+
     <fragment
         android:id="@+id/navigation_tabela"
         android:name="com.bea.nutria.ui.Tabela.TabelaFragment"
         android:label="Tabela" />
+
+    <!-- NOVO: Adicione este fragment para que ele seja um destino na navegação -->
+    <fragment
+        android:id="@+id/comparacaoFragmentProduto2"
+        android:name="com.bea.nutria.ComparacaoFragmentProduto2"
+        android:label="Comparação de Produto 2"
+        tools:layout="@layout/activity_comparacao_fragment_produto2" />
 </navigation>

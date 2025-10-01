@@ -18,7 +18,7 @@
         android:title="Scanner" />
     <item
         android:id="@+id/navigation_tabela"
-        android:icon="@drawable/ic_tabela"
+        android:icon="@drawable/ic_tabela_sem_fundo"
         android:title="Tabela" />
     <item
         android:id="@+id/navigation_comparacao"
