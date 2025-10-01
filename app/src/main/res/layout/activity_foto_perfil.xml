@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/logo_nutria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="55dp"
+        android:fontFamily="@font/kodchasan_semibold"
+        android:text="Nutria"
+        android:textColor="#EE7026"
+        android:textSize="52sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/nome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:gravity="center"
+        android:text="Olá, nome!"
+        android:textColor="#333333"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/logo_nutria"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/foto_padrao"
+        android:layout_width="249dp"
+        android:layout_height="258dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginBottom="66dp"
+        android:background="@drawable/imagem_arredondada"
+        android:scaleType="centerCrop"
+        android:clipToOutline="true"
+        app:layout_constraintBottom_toTopOf="@+id/btn_proximo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nome"
+        app:srcCompat="@drawable/foto_padrao" />
+
+
+    <ImageView
+        android:id="@+id/add_foto"
+        android:layout_width="53dp"
+        android:layout_height="55dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="100dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_proximo"
+        app:layout_constraintEnd_toEndOf="@id/foto_padrao"
+        app:srcCompat="@drawable/add_foto" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_proximo"
+        android:layout_width="348dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="96dp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:text="Próximo"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:backgroundTint="#EE7026"
+        app:cornerRadius="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/foto_padrao" />
+
+    <TextView
+        android:id="@+id/pular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/montserrat_regular"
+        android:text="Pular"
+        android:textColor="#333333"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@+id/btn_proximo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
