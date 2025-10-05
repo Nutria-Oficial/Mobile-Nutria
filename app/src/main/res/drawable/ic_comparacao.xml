@@ -1,5 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/comparacao_selecionada" android:state_checked="true"/>
-    <item android:drawable="@drawable/comparacao"/>
-</selector>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="1000dp"
+    android:height="1000dp"
+    android:viewportWidth="1000"
+    android:viewportHeight="1000">
+  <path
+      android:pathData="M250.4,83.3C170,83.3 104.6,148.8 104.6,229.2C104.6,295 148.8,350.1 208.8,368.2V666.5C208.7,674 209.9,740.8 257.7,788.7C287.2,818.3 326.7,833.3 375,833.3V916.7L541.7,791.7L375,666.7V750C299,750 292.3,686.1 292.1,666.7V368.2C352.1,350.1 396.3,295 396.3,229.2C396.3,148.8 330.8,83.3 250.4,83.3ZM250.4,291.7C216,291.7 187.9,263.6 187.9,229.2C187.9,194.7 216,166.7 250.4,166.7C284.9,166.7 312.9,194.7 312.9,229.2C312.9,263.6 284.9,291.7 250.4,291.7ZM792.1,631.8V333.2C791.9,266.3 747.2,166.7 625,166.7V83.3L458.3,208.3L625,333.3V250C701.2,250 708.4,314.1 708.8,333.3V631.8C648.8,649.9 604.6,705 604.6,770.8C604.6,851.3 670,916.7 750.4,916.7C830.8,916.7 896.3,851.3 896.3,770.8C896.3,705 852.1,649.9 792.1,631.8ZM750.4,833.3C716,833.3 687.9,805.3 687.9,770.8C687.9,736.4 716,708.3 750.4,708.3C784.9,708.3 812.9,736.4 812.9,770.8C812.9,805.3 784.9,833.3 750.4,833.3Z"
+      android:fillColor="#494D4B"/>
+</vector>
