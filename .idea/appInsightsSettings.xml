@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.bea.nutria" />
+                  <option name="mobileSdkAppId" value="1:918824501546:android:79c45bc5f5f6a844db9e53" />
+                  <option name="projectId" value="nutria-df122" />
+                  <option name="projectNumber" value="918824501546" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
