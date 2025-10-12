@@ -1,7 +1,13 @@
 package com.bea.nutria;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bea.nutria.ui.Cadastro.CadastroActivity;
+import com.bea.nutria.ui.Login.LoginActivity;
+import com.bea.nutria.ui.Perfil.PerfilActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +21,7 @@ import com.bea.nutria.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private ImageView perfil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+        perfil = findViewById(R.id.perfil);
+
+        perfil.setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, PerfilActivity.class)));
     }
 
 }
