@@ -87,6 +87,7 @@ public class PerfilActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
 
+        //iniciando cloudinary
         try {
             MediaManager.get();
         } catch (IllegalStateException e) {
@@ -173,31 +174,26 @@ public class PerfilActivity extends AppCompatActivity {
                 });
 
         //carregando o usuário
+        String emailFromIntent = getIntent().getStringExtra("EMAIL_SESSAO");
+        if (emailFromIntent != null) {
+            getSharedPreferences("nutria_prefs", MODE_PRIVATE)
+                    .edit()
+                    .putString("email", emailFromIntent.trim().toLowerCase())
+                    .apply();
+        }
+
         String emailLogado = getSharedPreferences("nutria_prefs", MODE_PRIVATE)
                 .getString("email", null);
 
-        if (emailLogado == null) {
 
-            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                emailLogado = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-            }
-        }
+        mostrarCarregando("Carregando perfil...");
+        iniciandoServidor(() -> carregarUsuario(emailLogado.trim().toLowerCase()));
 
-        if (emailLogado != null && !emailLogado.trim().isEmpty()) {
-            final String emailFinal = emailLogado.trim();
-
-            mostrarCarregando("Carregando perfil...");
-            iniciandoServidor(() -> carregarUsuario(emailFinal));
-
-        } else {
-            Toast.makeText(this, "Usuário não encontrado", Toast.LENGTH_SHORT).show();
-            finish();
-        }
 
         setListeners();
     }
 
-    // mostra o overlay de carregamento com mensagem
+    //mostra o overlay de carregamento com mensagem
     private void mostrarCarregando(String mensagem) {
         if (txtCarregando != null) txtCarregando.setText(mensagem == null ? "Carregando..." : mensagem);
         if (overlayCarregando != null) overlayCarregando.setVisibility(View.VISIBLE);
@@ -208,6 +204,7 @@ public class PerfilActivity extends AppCompatActivity {
         if (overlayCarregando != null) overlayCarregando.setVisibility(View.GONE);
     }
 
+    //evita erro de timeout,pois começa a esquentar o render antes das chamadas
     private void iniciandoServidor(Runnable proximoPasso) {
         long agora = System.currentTimeMillis();
         if (agora - ultimoWakeMs < JANELA_WAKE_MS) {

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bea.nutria.MainActivity;
 import com.bea.nutria.R;
 import com.bea.nutria.ui.Cadastro.CadastroActivity;
+import com.bea.nutria.ui.Perfil.PerfilActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -119,13 +120,17 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        //Faz o login no firebase
         objAutenticar.signInWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    //Verifica se o login foi feito com sucesso
-                    @Override public void onComplete(@NonNull Task<AuthResult> task) {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            getSharedPreferences("nutria_prefs", MODE_PRIVATE)
+                                    .edit()
+                                    .putString("email", email.trim().toLowerCase())
+                                    .apply();
+
+                           startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             finish();
                         } else {
                             String excecao = "Usuário/Senha inválidos";
@@ -142,7 +147,6 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    //Verifica se o email e senha digitados são validos
     private String safeText(TextInputEditText input) {
         return (input != null && input.getText() != null)
                 ? input.getText().toString().trim()
