@@ -22,7 +22,7 @@ public interface UsuarioAPI {
 
     //Atualiza o email do usuario
     @PATCH("usuarios/{id}/email")
-    Call<Usuario> atualizarEmailUsuario(@Path("id") Integer id, @Body Map<String, String>  email);
+    Call<Usuario> atualizarEmailUsuario(@Path("id") Integer id, @Body Map<String, String> email);
 
     //Atualiza o telefone do usuario
     @PATCH("usuarios/{id}/telefone")
@@ -34,15 +34,15 @@ public interface UsuarioAPI {
 
     //Atualiza a foto do usuario
     @PATCH("usuarios/{id}/foto")
-    Call<Usuario> atualizarFotoUsuario(@Path("id") Integer id, @Body Map<String, String>  foto);
+    Call<Usuario> atualizarFotoUsuario(@Path("id") Integer id, @Body Map<String, String> foto);
 
     //Atualiza o nome do usuario
     @PATCH("usuarios/{id}/nome")
-    Call<Usuario> atualizarNomeUsuario(@Path("id") Integer id, @Body Map<String, String>  nome);
+    Call<Usuario> atualizarNomeUsuario(@Path("id") Integer id, @Body Map<String, String> nome);
 
     //Atualiza a empresa do usuario
     @PATCH("usuarios/{id}/empresa")
-    Call<Usuario> atualizarEmpresaUsuario(@Path("id") Integer id, @Body Map<String, String>  empresa);
+    Call<Usuario> atualizarEmpresaUsuario(@Path("id") Integer id, @Body Map<String, String> empresa);
 
 
 }

@@ -33,7 +33,8 @@ public class Usuario {
         this.urlFoto = urlFoto;
     }
 
-    public Usuario() {}
+    public Usuario() {
+    }
 
     public Integer getId() {
         return id;

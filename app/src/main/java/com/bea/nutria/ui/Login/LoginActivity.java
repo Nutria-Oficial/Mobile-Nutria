@@ -58,9 +58,9 @@ public class LoginActivity extends AppCompatActivity {
         View view = LayoutInflater.from(ctx).inflate(R.layout.dialog_esqueceu_senha, null);
 
         TextInputEditText editEmail = view.findViewById(R.id.email_esqueceu);
-        ProgressBar progress        = view.findViewById(R.id.progress);
-        MaterialButton btnCancelar  = view.findViewById(R.id.cancelar);
-        MaterialButton btnEnviar    = view.findViewById(R.id.enviar);
+        ProgressBar progress = view.findViewById(R.id.progress);
+        MaterialButton btnCancelar = view.findViewById(R.id.cancelar);
+        MaterialButton btnEnviar = view.findViewById(R.id.enviar);
 
         AlertDialog dialog = new AlertDialog.Builder(ctx)
                 .setView(view)
@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
                                     .putString("email", email.trim().toLowerCase())
                                     .apply();
 
-                           startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             finish();
                         } else {
                             String excecao = "Usuário/Senha inválidos";
@@ -140,7 +140,8 @@ public class LoginActivity extends AppCompatActivity {
                                 excecao = "Usuário não cadastrado";
                             } catch (FirebaseAuthInvalidCredentialsException e) {
                                 excecao = "E-mail e senha não correspondem";
-                            } catch (Exception ignored) { }
+                            } catch (Exception ignored) {
+                            }
                             Toast.makeText(LoginActivity.this, excecao, Toast.LENGTH_SHORT).show();
                         }
                     }
