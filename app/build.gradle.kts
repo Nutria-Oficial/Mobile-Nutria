@@ -36,15 +36,15 @@ android {
 
 dependencies {
     implementation(libs.appcompat)
-    implementation(libs.material) // mantém a 1.12.0 do catálogo
+    implementation(libs.material) 
     implementation(libs.constraintlayout)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.firebase.auth)
-    implementation(libs.activity)           // androidx.activity:activity:1.11.0
-    implementation(libs.activity.ktx)       // androidx.activity:activity-ktx:1.11.0
+    implementation(libs.activity)        
+    implementation(libs.activity.ktx)      
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
@@ -52,10 +52,7 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.google.firebase:firebase-firestore")
-
-    // Já tem via catálogo (2.9.0); remova as duplicadas 2.7.7:
-    // implementation ("androidx.navigation:navigation-fragment:2.7.7")    <-- REMOVER
-    // implementation ("androidx.navigation:navigation-ui:2.7.7")          <-- REMOVER
+    
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
@@ -66,6 +63,5 @@ dependencies {
     implementation("androidx.exifinterface:exifinterface:1.3.7")
     implementation("at.favre.lib:bcrypt:0.10.2")
 
-    // REMOVER esta linha duplicada/mais antiga do Material:
-    // implementation("com.google.android.material:material:1.11.0")
+
 }
