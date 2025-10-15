@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="3dp"
+    android:background="@drawable/fundo_arredondado"
+    android:elevation="4dp">
+
+    <!-- 1. CABEÇALHO (PARTE FIXA - Clicável para expandir) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header_item"
+        android:layout_width="351dp"
+        android:layout_height="83dp"
+        app:layout_constraintBottom_toTopOf="@id/conteudo_expansivel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:background="#EEEDF7"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view5"
+            android:layout_width="345dp"
+            android:layout_height="68dp"
+            android:layout_marginHorizontal="5dp"
+            android:background="#FFFFFF"
+            android:backgroundTint="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/imageButtonSeta"
+            android:layout_width="37dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/transparent"
+            android:rotation="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/seta"
+            tools:ignore="ContentDescription" />
+
+        <View
+            android:id="@+id/view_demonstracaoItem"
+            android:layout_width="63dp"
+            android:layout_height="73dp"
+            android:background="@drawable/quadrado_arredondado"
+            app:circularflow_defaultRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="Produto"
+            android:textColor="#161515"
+            android:textSize="18sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem"
+            app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem"
+            app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem"
+            app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem"
+            app:srcCompat="@drawable/xlsx"
+            tools:ignore="ContentDescription" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 2. CORPO (PARTE EXPANSÍVEL - Visibilidade inicialmente GONE) -->
+    <LinearLayout
+        android:id="@+id/conteudo_expansivel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_item">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="Detalhes Nutricionais:"
+            android:textColor="#EE7026"
+            android:textSize="14sp" />
+
+        <!-- Detalhe: Valor Energético -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="4dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/montserrat_regular"
+                android:text="Valor energético"
+                android:textColor="#333333" />
+
+            <TextView
+                android:id="@+id/tv_valor_energetico"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_medium"
+                android:textColor="#000000"
+                tools:text="120kcal" />
+        </LinearLayout>
+
+        <!-- Detalhe: Açúcares totais -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="4dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/montserrat_regular"
+                android:text="Açúcares totais"
+                android:textColor="#333333" />
+
+            <TextView
+                android:id="@+id/tv_acucares"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_medium"
+                android:textColor="#000000"
+                tools:text="105g" />
+        </LinearLayout>
+
+        <!-- Botão de Interação -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_selecionar_tabela"
+            android:layout_width="150dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="Escolher Tabela"
+            android:textAllCaps="false"
+            app:backgroundTint="#EE7026"
+            app:cornerRadius="8dp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

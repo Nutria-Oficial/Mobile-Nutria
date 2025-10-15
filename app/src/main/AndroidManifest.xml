@@ -19,7 +19,7 @@
         android:theme="@style/Theme.Nutria"
         tools:targetApi="31">
         <activity
-            android:name=".ComparacaoFragmentProduto2"
+            android:name=".ComparacaoFragmentParte2"
             android:exported="false" />
         <activity
             android:name=".ui.Login.LoginActivity"

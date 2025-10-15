@@ -6,6 +6,26 @@
     android:layout_height="match_parent"
     android:background="#F2F2F2">
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_escolherTabelas"
+        android:layout_width="330dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="90dp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:text="Escolher tabelas"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:onClick="openFragmentComparacaoPart2"
+        app:backgroundTint="#EE7026"
+        app:cornerRadius="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
         android:id="@+id/TextView_tituloTelaComparacao"
         android:layout_width="wrap_content"
@@ -23,7 +43,7 @@
         app:layout_constraintVertical_bias="0.661" />
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/imageViewPerfil"
         android:layout_width="45dp"
         android:layout_height="45dp"
         app:layout_constraintBottom_toTopOf="@+id/view"
@@ -52,9 +72,14 @@
         android:id="@+id/view_linha4"
         android:layout_width="265dp"
         android:layout_height="3dp"
+        android:layout_marginEnd="-10dp"
         android:background="#EEEDF7"
-        tools:layout_editor_absoluteX="120dp"
-        tools:layout_editor_absoluteY="305dp" />
+        app:layout_constraintBottom_toTopOf="@+id/search_bar_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.794"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/View_demonstracaoItem_1"
+        app:layout_constraintVertical_bias="0.0" />
 
     <View
         android:id="@+id/View_demonstracaoItem_1"
@@ -68,12 +93,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view" />
 
+    <ImageView
+        android:id="@+id/imageViewIconeTabela"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintEnd_toEndOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintStart_toStartOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintTop_toTopOf="@+id/View_demonstracaoItem_selecionado"
+        app:srcCompat="@drawable/xlsx" />
+
     <TextView
         android:id="@+id/textViewSelecionarProduto1"
         android:layout_width="261dp"
-        android:layout_height="38dp"
-        android:layout_marginTop="32dp"
-        android:text="Só é possível comparar produtos com mais de uma tabela"
+        android:layout_height="19dp"
+        android:layout_marginTop="40dp"
+        android:text="Escolha seu produto"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.423"
@@ -97,27 +133,16 @@
         android:id="@+id/textViewNomeProdutoSelecionado"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
-        tools:text="Leite desnatado"
+        android:fontFamily="@font/montserrat_medium"
+        tools:text="Manteiga"
+        android:textColor="#161515"
         android:textSize="18sp"
-        android:textStyle="bold"
+        android:textStyle="normal"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.165"
+        android:layout_marginStart="16dp"
         app:layout_constraintStart_toEndOf="@+id/View_demonstracaoItem_selecionado"
-        app:layout_constraintTop_toTopOf="@+id/view" />
-
-    <TextView
-        android:id="@+id/textViewAvaliacaoProdutoSelecionado"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Avaliação: 78"
-        android:textSize="14sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.18"
-        app:layout_constraintStart_toEndOf="@+id/View_demonstracaoItem_selecionado"
-        app:layout_constraintTop_toBottomOf="@+id/textViewNomeProdutoSelecionado" />
+        app:layout_constraintTop_toTopOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintBottom_toBottomOf="@+id/View_demonstracaoItem_selecionado"/>
 
     <View
         android:id="@+id/view_demonstracaoItem2"
@@ -143,7 +168,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.221"
         app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem2"
-        app:layout_constraintTop_toBottomOf="@+id/textViewAvaliacaoProdutoSelecionado" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewNomeProdutoSelecionado" />
 
     <Button
         android:id="@+id/botao_teste_transicao"
@@ -164,27 +189,25 @@
         android:background="@drawable/search_bar_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/View_demonstracaoItem_1">
-
-        <EditText
-            android:id="@+id/search_bar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:hint="Pesquisar produto"
-            android:imeOptions="actionSearch"
-            android:paddingStart="48dp"
-            android:paddingEnd="16dp"
-            android:singleLine="true"
-            android:textColor="@android:color/black"
-            android:textColorHint="#A0A0A0"
-            android:textCursorDrawable="@drawable/black_cursor"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/View_demonstracaoItem_1"> <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:hint="Pesquisar produto"
+        android:imeOptions="actionSearch"
+        android:paddingStart="48dp"
+        android:paddingEnd="16dp"
+        android:singleLine="true"
+        android:textColor="@android:color/black"
+        android:textColorHint="#A0A0A0"
+        android:textCursorDrawable="@drawable/black_cursor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
             android:id="@+id/search_icon"
