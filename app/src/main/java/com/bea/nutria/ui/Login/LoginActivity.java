@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bea.nutria.MainActivity;
 import com.bea.nutria.R;
 import com.bea.nutria.ui.Cadastro.CadastroActivity;
+import com.bea.nutria.ui.Perfil.PerfilActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -57,9 +58,9 @@ public class LoginActivity extends AppCompatActivity {
         View view = LayoutInflater.from(ctx).inflate(R.layout.dialog_esqueceu_senha, null);
 
         TextInputEditText editEmail = view.findViewById(R.id.email_esqueceu);
-        ProgressBar progress        = view.findViewById(R.id.progress);
-        MaterialButton btnCancelar  = view.findViewById(R.id.cancelar);
-        MaterialButton btnEnviar    = view.findViewById(R.id.enviar);
+        ProgressBar progress = view.findViewById(R.id.progress);
+        MaterialButton btnCancelar = view.findViewById(R.id.cancelar);
+        MaterialButton btnEnviar = view.findViewById(R.id.enviar);
 
         AlertDialog dialog = new AlertDialog.Builder(ctx)
                 .setView(view)
@@ -119,12 +120,16 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        //Faz o login no firebase
         objAutenticar.signInWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    //Verifica se o login foi feito com sucesso
-                    @Override public void onComplete(@NonNull Task<AuthResult> task) {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            getSharedPreferences("nutria_prefs", MODE_PRIVATE)
+                                    .edit()
+                                    .putString("email", email.trim().toLowerCase())
+                                    .apply();
+
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             finish();
                         } else {
@@ -135,14 +140,14 @@ public class LoginActivity extends AppCompatActivity {
                                 excecao = "Usuário não cadastrado";
                             } catch (FirebaseAuthInvalidCredentialsException e) {
                                 excecao = "E-mail e senha não correspondem";
-                            } catch (Exception ignored) { }
+                            } catch (Exception ignored) {
+                            }
                             Toast.makeText(LoginActivity.this, excecao, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
-    //Verifica se o email e senha digitados são validos
     private String safeText(TextInputEditText input) {
         return (input != null && input.getText() != null)
                 ? input.getText().toString().trim()
