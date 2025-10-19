@@ -1,11 +1,11 @@
 package com.bea.nutria.ui.Login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,8 +15,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bea.nutria.MainActivity;
 import com.bea.nutria.R;
 import com.bea.nutria.ui.Cadastro.CadastroActivity;
+import com.bea.nutria.ui.Perfil.PerfilActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
@@ -27,11 +29,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth objAutenticar;
-    private TextInputEditText editEmail;
-    private TextInputEditText editSenha;
-    private Button btnEntrar;
-    private TextView btnCadastrarSe;
-    private TextView esqueceuSenha;
+    private TextInputEditText editEmail, editSenha;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,37 +41,73 @@ public class LoginActivity extends AppCompatActivity {
 
         editEmail = findViewById(R.id.edit_email);
         editSenha = findViewById(R.id.edit_senha);
-        btnEntrar = findViewById(R.id.btn_proximo);
-        btnCadastrarSe = findViewById(R.id.btn_cadastrar_se);
-        esqueceuSenha = findViewById(R.id.esqueceuSenha);
 
-        btnCadastrarSe.setOnClickListener(v ->
-                startActivity(new Intent(LoginActivity.this, CadastroActivity.class))
-        );
 
-        btnEntrar.setOnClickListener(v -> fazerLogin());
+        findViewById(R.id.btn_cadastrar_se)
+                .setOnClickListener(v -> startActivity(new Intent(this, CadastroActivity.class)));
 
-        esqueceuSenha.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPasswordReset();
+        findViewById(R.id.btn_proximo)
+                .setOnClickListener(v -> fazerLogin());
+
+        findViewById(R.id.esqueceuSenha)
+                .setOnClickListener(v -> showPasswordReset());
+    }
+
+    private void showPasswordReset() {
+        Context ctx = this;
+        View view = LayoutInflater.from(ctx).inflate(R.layout.dialog_esqueceu_senha, null);
+
+        TextInputEditText editEmail = view.findViewById(R.id.email_esqueceu);
+        ProgressBar progress = view.findViewById(R.id.progress);
+        MaterialButton btnCancelar = view.findViewById(R.id.cancelar);
+        MaterialButton btnEnviar = view.findViewById(R.id.enviar);
+
+        AlertDialog dialog = new AlertDialog.Builder(ctx)
+                .setView(view)
+                .create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
+        // deixa o card com cantos visíveis
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(
+                    new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+
+        //botao de cancelar da um dismiss
+        btnCancelar.setOnClickListener(v -> dialog.dismiss());
+
+        //enviar esqueceu senha
+        btnEnviar.setOnClickListener(v -> {
+            String email = safeText(editEmail);
+            if (email.isEmpty()) {
+                editEmail.setError("Digite seu e-mail");
+                editEmail.requestFocus();
+                return;
             }
 
-            private void showPasswordReset() {
-                //alert dialog
-                AlertDialog.Builder alert = new AlertDialog.Builder(LoginActivity.this);
-                alert.setTitle("Recuperar senha");
-                alert.setMessage("Digite seu email para recuperar a senha: ");
-                //colocar um edittext para digitar o email
-                EditText editText = new EditText(LoginActivity.this);
-                alert.setView(editText);
-                //botao positive: enviar
-                alert.setPositiveButton("Enviar", (dialog, wich) -> {
-                    String email = editText.getText().toString();
-                    objAutenticar.sendPasswordResetEmail(email);
-                });
-                alert.show();
-            }
+            progress.setVisibility(View.VISIBLE);
+            btnEnviar.setEnabled(false);
+            btnCancelar.setEnabled(false);
+
+            //Busca no firebase o email para enviar o email de redefinição de senha
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                    .addOnCompleteListener(task -> {
+                        progress.setVisibility(View.GONE);
+                        btnEnviar.setEnabled(true);
+                        btnCancelar.setEnabled(true);
+
+                        if (task.isSuccessful()) {
+                            Toast.makeText(ctx, "E-mail de redefinição enviado!", Toast.LENGTH_LONG).show();
+                            dialog.dismiss();
+                        } else {
+                            String msg = "Erro ao enviar e-mail";
+                            if (task.getException() != null && task.getException().getMessage() != null) {
+                                msg = task.getException().getMessage();
+                            }
+                            Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
+                        }
+                    });
         });
     }
 
@@ -88,10 +122,16 @@ public class LoginActivity extends AppCompatActivity {
 
         objAutenticar.signInWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override public void onComplete(@NonNull Task<AuthResult> task) {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            getSharedPreferences("nutria_prefs", MODE_PRIVATE)
+                                    .edit()
+                                    .putString("email", email.trim().toLowerCase())
+                                    .apply();
+
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                            finish(); // opcional, fecha a tela de login
+                            finish();
                         } else {
                             String excecao = "Usuário/Senha inválidos";
                             try {
@@ -100,8 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                                 excecao = "Usuário não cadastrado";
                             } catch (FirebaseAuthInvalidCredentialsException e) {
                                 excecao = "E-mail e senha não correspondem";
-                            } catch (Exception e) {
-                                System.out.println(e.getMessage());
+                            } catch (Exception ignored) {
                             }
                             Toast.makeText(LoginActivity.this, excecao, Toast.LENGTH_SHORT).show();
                         }

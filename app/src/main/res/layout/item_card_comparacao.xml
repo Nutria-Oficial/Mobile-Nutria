@@ -13,7 +13,7 @@
         android:layout_height="75dp">
 
         <View
-            android:id="@+id/view_demonstracaoItem"
+            android:id="@+id/view_demonstracaoItem4"
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:background="@drawable/quadrado_arredondado"
@@ -35,7 +35,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.741"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem"
+            app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem4"
             app:layout_constraintVertical_bias="0.887" />
 
         <TextView
@@ -87,10 +87,10 @@
             android:id="@+id/imageView3"
             android:layout_width="55dp"
             android:layout_height="55dp"
-            app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem"
-            app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem"
-            app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem"
-            app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem"
+            app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem4"
+            app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem4"
+            app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem4"
+            app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem4"
             app:layout_constraintVertical_bias="0.446"
             app:srcCompat="@drawable/xlsx" />
 

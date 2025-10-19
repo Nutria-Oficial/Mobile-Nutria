@@ -116,7 +116,7 @@
         android:id="@+id/btn_proximo"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginTop="222dp"
+        android:layout_marginTop="170dp"
         android:fontFamily="@font/montserrat_semibold"
         android:text="Entrar"
         android:textAllCaps="false"

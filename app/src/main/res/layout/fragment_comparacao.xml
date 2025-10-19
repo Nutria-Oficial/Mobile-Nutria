@@ -6,67 +6,34 @@
     android:layout_height="match_parent"
     android:background="#F2F2F2">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_escolherTabelas"
-        android:layout_width="330dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="90dp"
-        android:fontFamily="@font/montserrat_semibold"
-        android:text="Escolher tabelas"
-        android:textAllCaps="false"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        android:onClick="openFragmentComparacaoPart2"
-        app:backgroundTint="#EE7026"
-        app:cornerRadius="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <TextView
         android:id="@+id/TextView_tituloTelaComparacao"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="-100dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="50dp"
         android:fontFamily="@font/montserrat_semibold"
         android:text="@string/title_comparacao"
         android:textColor="#040303"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.661" />
-
-    <ImageView
-        android:id="@+id/imageViewPerfil"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        app:layout_constraintBottom_toTopOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toEndOf="@+id/TextView_tituloTelaComparacao"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.696"
-        app:srcCompat="@drawable/perfil_4" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/view"
         android:layout_width="413dp"
-        android:layout_height="700dp"
-        android:layout_marginTop="300dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/fundo_arredondado"
         android:backgroundTint="#FFF9F9"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/TextView_tituloTelaComparacao"
+        app:layout_constraintVertical_bias="0.983" />
 
     <View
         android:id="@+id/view_linha4"
@@ -232,5 +199,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_bar_container" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_escolherTabelas"
+        android:layout_width="330dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="90dp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:text="Escolher tabelas"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:onClick="openFragmentComparacaoPart2"
+        app:backgroundTint="#EE7026"
+        app:cornerRadius="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

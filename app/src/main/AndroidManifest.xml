@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permissões -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission
@@ -18,36 +19,56 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Nutria"
         tools:targetApi="31">
+
+        <!-- Tela de comparação -->
         <activity
-            android:name=".ComparacaoFragmentParte2"
+            android:name=".ComparacaoParte2Fragment"
             android:exported="false" />
+
+        <!-- Tela de perfil -->
+        <activity
+            android:name=".ui.Perfil.PerfilActivity"
+            android:exported="false" />
+
+        <!-- Tela de login -->
         <activity
             android:name=".ui.Login.LoginActivity"
+            android:exported="true"
+            android:label="@string/app_name" />
+
+        <!-- SplashScreen (tela inicial ao abrir o app) -->
+        <activity
+            android:name=".ui.SplashScreen.SplashScreen"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- O android:windowSoftInputMode="adjustPan|stateHidden" abaixo serve para que, quando alguma barra de pesquisa for clicada, não levantar junto com o teclado o BottomNavigationView -->
+        </activity>
+
+        <!-- Tela principal -->
         <activity
             android:name=".MainActivity"
             android:exported="false"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustPan|stateHidden" />
+
+        <!-- Tela de cadastro -->
         <activity
             android:name=".ui.Cadastro.CadastroActivity"
             android:exported="false"
             android:label="@string/app_name" />
+
+        <!-- Tela de foto de perfil -->
         <activity
             android:name=".ui.FotoPerfil.FotoPerfilActivity"
             android:exported="false"
             android:label="@string/app_name" />
 
+        <!-- Meta-dados de fontes -->
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
     </application>
-
 </manifest>
