@@ -1,27 +1,334 @@
 package com.bea.nutria.ui.Tabela;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 
+import com.bea.nutria.api.TabelaAPI;
 import com.bea.nutria.databinding.FragmentTabelaBinding;
+import com.bea.nutria.model.GetNutrienteDTO;
+import com.bea.nutria.model.GetTabelaDTO;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Credentials;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TabelaFragment extends Fragment {
 
     private FragmentTabelaBinding binding;
+    private int porcaoAtual= 0;
+    private String tipoMedida = "";
+    private Integer idTabela = 0;
+    private OkHttpClient client;
+    private Retrofit retrofit;
+    private String credenciais;
+    private TabelaAPI api;
+    private long ultimoWakeMs = 0L;
+    private static final long JANELA_WAKE_MS = 60_000;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentTabelaBinding.inflate(inflater, container, false);
+
+        setCheckBoxListener(binding.checkBox);
+        setCheckBoxListener(binding.checkBox2);
+        setCheckBoxListener(binding.checkBox3);
+        setCheckBoxListener(binding.checkBox4);
+
+        credenciais = Credentials.basic("nutria", "nutria123");
+        client = new OkHttpClient.Builder()
+                .connectTimeout(25, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .pingInterval(30, TimeUnit.SECONDS)
+                .addNetworkInterceptor(chain -> {
+                    Request original = chain.request();
+                    Request req = original.newBuilder()
+                            .header("Authorization", credenciais)
+                            .header("Accept", "application/json")
+                            .method(original.method(), original.body())
+                            .build();
+                    return chain.proceed(req);
+                })
+                .build();
+
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl("https://api-spring-mongodb.onrender.com")
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        api = retrofit.create(TabelaAPI.class);
+
         return binding.getRoot();
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
+        ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+            Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
+            return WindowInsetsCompat.CONSUMED;
+        });
+
+        binding.editValor.setText(String.valueOf(porcaoAtual));
+        binding.editValor.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+
+        binding.btnAumentar.setOnClickListener(v -> {
+            atualizarPorcao(porcaoAtual + 1);
+        });
+        binding.btnDiminuir.setOnClickListener(v -> {
+            if (porcaoAtual > 0){
+                atualizarPorcao(porcaoAtual - 1);
+            }
+        });
+
+        binding.editValor.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                try {
+                    porcaoAtual = Integer.parseInt(charSequence.toString());
+                }catch (NumberFormatException exception){
+                    porcaoAtual = 0;
+                }
+            }
+        });
+
+        binding.button.setOnClickListener(v -> {
+            //adicionar métodos para verificar se todos os campos foram preenchidos
+            Map<String, Object> novaTabela = new HashMap<>();
+
+            //ingredientes mockados
+            List<Map<String, Number>> ingredientes = new ArrayList<>();
+            Map<String, Number> ingrediente1 = new HashMap<>();
+            ingrediente1.put("nCdIngrediente",1);
+            ingrediente1.put("iQuantidade", 200.0);
+
+            Map<String, Number> ingrediente2 = new HashMap<>();
+            ingrediente2.put("nCdIngrediente",2);
+            ingrediente2.put("iQuantidade", 150.5);
+
+            ingredientes.add(ingrediente1);
+            ingredientes.add(ingrediente2);
+
+            novaTabela.put("nomeProduto", binding.textInputLayout.getEditText().getText());
+            novaTabela.put("nomeTabela", binding.textInputLayout.getEditText().getText());
+            novaTabela.put("tipoMedida", tipoMedida);
+            novaTabela.put("porcao", getPorcaoAtual());
+            novaTabela.put("ingredientes", ingredientes);
+
+            final boolean[] recebeuIdProduto = {false};
+
+            getParentFragmentManager().setFragmentResultListener("idProduto", this, new FragmentResultListener() {
+                @Override
+                public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                    recebeuIdProduto[0] = true;
+                    Integer idProduto = result.getInt("idProduto");
+                    iniciandoServidor(() -> adicionarTabela(1, idProduto, novaTabela));
+
+                }
+            });
+            view.postDelayed(() -> {
+                if (!recebeuIdProduto[0]) {
+                    iniciandoServidor(() -> criarTabela(1, novaTabela));
+                }
+            }, 200);
+        });
+
+    }
+    public void atualizarPorcao(int novoValor){
+        porcaoAtual = novoValor;
+        binding.editValor.setText(String.valueOf(porcaoAtual));
+    }
+    public int getPorcaoAtual(){
+        return porcaoAtual;
+    }
+    private void setCheckBoxListener(CheckBox checkBox){
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) ->{
+            if (isChecked) {
+                if (checkBox != binding.checkBox) binding.checkBox.setChecked(false);
+                if (checkBox != binding.checkBox2) binding.checkBox2.setChecked(false);
+                if (checkBox != binding.checkBox3) binding.checkBox3.setChecked(false);
+                if (checkBox != binding.checkBox4) binding.checkBox4.setChecked(false);
+
+                tipoMedida = checkBox.getText().toString();
+            }
+            else {
+                if (tipoMedida.equals(checkBox.getText().toString())){
+                    tipoMedida = "";
+                }
+            }
+        });
+    }
+    private void criarTabela(Integer usuarioLogado, Map<String,Object> tabela) {
+        api.criarTabela(usuarioLogado, tabela).enqueue(new Callback<GetTabelaDTO>() {
+            @Override
+            public void onResponse(Call<GetTabelaDTO> call, retrofit2.Response<GetTabelaDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    GetTabelaDTO tabelaCriada = response.body();
+                    preencherDadosTabela(tabelaCriada);
+//                    binding.tableLayout.setVisibility(View.VISIBLE);
+//                    binding.botaoNovo.setVisibility(View.VISIBLE);
+
+                } else {
+                    int code = response.code();
+//                    esconderCarregando();
+                    Toast.makeText(
+                            getContext(),
+                            "Erro ao carregar usuário (" + code + ")\n",
+                            Toast.LENGTH_LONG
+                    ).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetTabelaDTO> call, Throwable t) {
+//                esconderCarregando();
+                Toast.makeText(getContext(),
+                        "Falha de conexão: " + (t.getMessage() == null ? "desconhecida" : t.getMessage()),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    private void adicionarTabela(Integer usuarioLogado, Integer idProduto, Map<String,Object> tabela) {
+        api.adicionarTabela(usuarioLogado, idProduto, tabela).enqueue(new Callback<GetTabelaDTO>() {
+            @Override
+            public void onResponse(Call<GetTabelaDTO> call, retrofit2.Response<GetTabelaDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    GetTabelaDTO tabelaCriada = response.body();
+                    preencherDadosTabela(tabelaCriada);
+//                    binding.tableLayout.setVisibility(View.VISIBLE);
+//                    binding.botaoNovo.setVisibility(View.VISIBLE);
+
+                } else {
+                    int code = response.code();
+//                    esconderCarregando();
+                    Toast.makeText(
+                            getContext(),
+                            "Erro ao carregar usuário (" + code + ")\n",
+                            Toast.LENGTH_LONG
+                    ).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetTabelaDTO> call, Throwable t) {
+//                esconderCarregando();
+                Toast.makeText(getContext(),
+                        "Falha de conexão: " + (t.getMessage() == null ? "desconhecida" : t.getMessage()),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void preencherDadosTabela(GetTabelaDTO tabela) {
+        idTabela = tabela.getTabelaId();
+//        binding.tableLayout.removeAllViews();
+        TableRow nomeColuna = new TableRow(getContext());
+        TextView coluna1 = new TextView(getContext());
+        TextView coluna2 = new TextView(getContext());
+        TextView coluna3 = new TextView(getContext());
+
+        coluna1.setText(tabela.getNomeTabela());
+        coluna2.setText("Poção " + tabela.getPorcao()+"g");
+        coluna3.setText("%VD*");
+
+        nomeColuna.addView(coluna1);
+        nomeColuna.addView(coluna2);
+        nomeColuna.addView(coluna3);
+//        binding.tableLayout.addView(nomeColuna);
+
+        for (GetNutrienteDTO nutrienteDados : tabela.getNutrientes()){
+            TableRow nutrientesInformacao = new TableRow(getContext());
+            TextView nutriente = new TextView(getContext());
+            TextView porcao = new TextView(getContext());
+            TextView vd = new TextView(getContext());
+
+            nutriente.setText(nutrienteDados.getNutriente());
+            porcao.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getPorcao()));
+            vd.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getValorDiario())+"%");
+
+            nutrientesInformacao.addView(nutriente);
+            nutrientesInformacao.addView(porcao);
+            nutrientesInformacao.addView(vd);
+//        binding.tableLayout.addView(nutrientesInformacao);
+
+        }
+
+    }
+
+    private void iniciandoServidor(Runnable proximoPasso) {
+        long agora = System.currentTimeMillis();
+        if (agora - ultimoWakeMs < JANELA_WAKE_MS) {
+            if (proximoPasso != null) proximoPasso.run();
+            return;
+        }
+        new Thread(() -> {
+            boolean ok = false;
+            for (int tent = 1; tent <= 3 && !ok; tent++) {
+                try {
+                    Request req = new Request.Builder()
+                            .url("https://api-spring-mongodb.onrender.com")
+                            .header("Authorization", credenciais)
+                            .build();
+                    try (Response resp = client.newCall(req).execute()) {
+                        ok = (resp != null && resp.isSuccessful());
+                    }
+                } catch (Exception ignore) {
+                }
+            }
+            ultimoWakeMs = System.currentTimeMillis();
+            if (isAdded()){
+                requireActivity().runOnUiThread(() -> {
+                    if (proximoPasso != null) proximoPasso.run();
+                });
+            }
+        }).start();
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
