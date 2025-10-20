@@ -25,12 +25,31 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     buildFeatures {
         viewBinding = true
+    }
+
+    // ADICIONE ESTE BLOCO AQUI
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/androidx.cardview_cardview.version",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0"
+            )
+        }
     }
 }
 
@@ -44,7 +63,10 @@ dependencies {
     implementation(libs.navigation.ui)
     implementation(libs.firebase.auth)
     implementation(libs.activity)
-    implementation(libs.activity.ktx)      
+    implementation(libs.activity.ktx)
+    implementation(libs.viewpager2)
+    // REMOVA ESTA LINHA: implementation(libs.cardview.v7)
+    implementation(libs.recyclerview)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
@@ -61,6 +83,4 @@ dependencies {
     implementation("com.cloudinary:cloudinary-android:2.5.0")
     implementation("androidx.exifinterface:exifinterface:1.3.7")
     implementation("at.favre.lib:bcrypt:0.10.2")
-
-
 }
