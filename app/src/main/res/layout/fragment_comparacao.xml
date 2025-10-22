@@ -137,17 +137,6 @@
         app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem2"
         app:layout_constraintTop_toBottomOf="@+id/textViewNomeProdutoSelecionado" />
 
-    <Button
-        android:id="@+id/botao_teste_transicao"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="SIMULAR SELEÇÃO"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_bar_container" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/search_bar_container"
         android:layout_width="350dp"

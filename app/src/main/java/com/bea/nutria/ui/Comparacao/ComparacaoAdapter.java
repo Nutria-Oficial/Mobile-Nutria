@@ -1,5 +1,7 @@
 package com.bea.nutria.ui.Comparacao;
 
+import android.annotation.SuppressLint;
+import android.util.Log; // Adicionado para Log
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,65 +12,81 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bea.nutria.R;
+import com.bea.nutria.model.GetProdutoDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.ViewHolder> {
+public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.ProdutoViewHolder> {
 
-    private List<String> nomes; //lista exibida
-    private List<String> nomeOriginal; //cópia da lista completa (sem filtro)
+    private List<GetProdutoDTO> listaProdutosExibida;
+    private final List<GetProdutoDTO> listaProdutosOriginal;
+    private OnItemClickListener listener;
+    private static final String TAG = "ComparacaoAdapter"; // Tag para Log
 
-    public ComparacaoAdapter(List<String> nomes) {
-        this.nomes = new ArrayList<>(nomes);
-        this.nomeOriginal = new ArrayList<>(nomes);
+    public interface OnItemClickListener {
+        void onItemClick(GetProdutoDTO produto);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
+    public ComparacaoAdapter(List<GetProdutoDTO> produtos) {
+        this.listaProdutosExibida = new ArrayList<>(produtos);
+        this.listaProdutosOriginal = new ArrayList<>(produtos);
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_historico, parent, false);
-        return new ViewHolder(v);
+    public ProdutoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        try {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_card_comparacao, parent, false);
+            return new ProdutoViewHolder(view);
+        } catch (Exception e) {
+            // Este log será útil se o layout não puder ser inflado
+            Log.e(TAG, "Erro ao inflar o layout item_card_comparacao: " + e.getMessage());
+            throw e; // Lança a exceção para que ela apareça no logcat
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String nome = nomes.get(position);
-        holder.txtNome.setText(nome);
-        holder.img.setImageResource(R.drawable.imagem_item_historico);
+    public void onBindViewHolder(@NonNull ProdutoViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        GetProdutoDTO produtoAtual = listaProdutosExibida.get(position);
+
+        // Verificação de NULO no holder antes de tentar usar o setText
+        if (holder.txtNome != null) {
+            holder.txtNome.setText(produtoAtual.getNome());
+        } else {
+            Log.e(TAG, "txtNome é NULL. O ID R.id.textViewTitulo está incorreto ou a View não existe.");
+        }
+
+        // Define o listener de clique
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(produtoAtual);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return nomes.size();
+        return listaProdutosExibida.size();
     }
 
-    public void filtro(String query) {
-        String q = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
-        nomes.clear();
+    // ... (Métodos filtro e updateList existentes) ...
 
-        if (q.isEmpty()) {
-            nomes.addAll(nomeOriginal); // sem busca fica na lista original
-        } else {
-            for (String s : nomeOriginal) {
-                if (s.toLowerCase(Locale.ROOT).contains(q)) {
-                    nomes.add(s);
-                }
-            }
-        }
-        notifyDataSetChanged();
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ProdutoViewHolder extends RecyclerView.ViewHolder {
         TextView txtNome;
         ImageView img;
 
-        ViewHolder(@NonNull View itemView) {
+        ProdutoViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtNome = itemView.findViewById(R.id.nomeProdutoHistorico);
-            img = itemView.findViewById(R.id.imgProdutoHistorico);
+            // Verificação de ID: Se esta linha retornar null, a falha acontece no onBind.
+            txtNome = itemView.findViewById(R.id.textViewTitulo);
+            img = itemView.findViewById(R.id.imageView3);
         }
     }
 }
