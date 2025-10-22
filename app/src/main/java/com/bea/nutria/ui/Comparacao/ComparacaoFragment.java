@@ -19,8 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager; // Reintroduzido
-import androidx.recyclerview.widget.RecyclerView;     // Reintroduzido
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bea.nutria.ComparacaoParte2Fragment;
 import com.bea.nutria.R;
@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -53,7 +54,6 @@ public class ComparacaoFragment extends Fragment {
     private View iconeTabela;
     private View btnEscolherTabelas;
 
-    // Variáveis da RecyclerView e Adapter (REINTRODUZIDAS)
     private RecyclerView recyclerViewProdutos;
     private ComparacaoAdapter comparacaoAdapter;
 
@@ -64,9 +64,10 @@ public class ComparacaoFragment extends Fragment {
 
     private String credenciais = "";
 
-    // REMOVIDAS: ultimoWakeMs e JANELA_WAKE_MS
-
     private static final int FRAGMENT_CONTAINER_ID = R.id.nav_host_fragment_activity_main;
+
+    private long ultimoWakeMs = 0L;
+    private static final long JANELA_WAKE_MS = 60_000; // 60 segundos
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -89,9 +90,8 @@ public class ComparacaoFragment extends Fragment {
         textViewSelecionarProduto2 = view.findViewById(R.id.textViewSelecionarProduto2);
         iconeTabela = view.findViewById(R.id.imageViewIconeTabela);
         btnEscolherTabelas = view.findViewById(R.id.btn_escolherTabelas);
-        //botaoTesteTransicao = view.findViewById(R.id.botao_teste_transicao);
 
-        // --- Configuração da RecyclerView (RESTAURADA E SEGURA) ---
+        // --- Configuração da RecyclerView ---
         View listaItensIncluded = view.findViewById(R.id.listaItens);
         if (listaItensIncluded != null) {
             recyclerViewProdutos = listaItensIncluded.findViewById(R.id.recyclerViewListaProdutos);
@@ -103,12 +103,11 @@ public class ComparacaoFragment extends Fragment {
         } else {
             Log.e("ComparacaoFragment", "Erro: listaItens (include) não encontrado.");
         }
-        // --------------------------------------------------------
+        // ------------------------------------
 
-        // Credenciais: Assumindo "nutria" é o usuário e "nutria123" a senha (ajustado para Basic Auth)
         credenciais = Credentials.basic("nutria", "nutria123");
 
-        // Configura o cliente OkHttp (mantido)
+        // Configura OkHttpClient
         client = new OkHttpClient.Builder()
                 .connectTimeout(25, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
@@ -126,7 +125,7 @@ public class ComparacaoFragment extends Fragment {
                 })
                 .build();
 
-        // Configura Retrofit (base URL para o serviço MongoDB)
+        // Configura Retrofit
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://api-spring-mongodb.onrender.com/")
                 .client(client)
@@ -135,28 +134,20 @@ public class ComparacaoFragment extends Fragment {
 
         produtoApi = retrofit.create(ProdutoAPI.class);
 
-        // MUDANÇA CRÍTICA: Chama a API principal DIRETAMENTE (Sem o iniciandoServidor)
-        buscarProdutoDoUsuario(idUsuario);
+        // --- Uso da função iniciandoServidor (A Boa Prática) ---
+        // Chama o servidor para acordá-lo e, em seguida, busca os produtos.
+        iniciandoServidor(() -> buscarProdutoDoUsuario(idUsuario));
+        // -------------------------------------------------------
 
-        // Simulação de transição
-//        botaoTesteTransicao.setOnClickListener(v -> {
-//            demonstracaoItem1.setVisibility(View.INVISIBLE);
-//            textViewSelecionarProduto1.setVisibility(View.GONE);
-//            botaoTesteTransicao.setVisibility(View.GONE);
-//            demonstracaoItemSelecionado.setVisibility(View.VISIBLE);
-//            nomeProdutoSelecionado.setVisibility(View.VISIBLE);
-//            iconeTabela.setVisibility(View.VISIBLE);
-//            btnEscolherTabelas.setVisibility(View.VISIBLE);
-//            iconeTabela.bringToFront();
-//            demonstracaoItem2.setVisibility(View.GONE);
-//            textViewSelecionarProduto2.setVisibility(View.GONE);
-//            nomeProdutoSelecionado.setText("Manteiga");
-//
-//            // Novo: Oculta a lista de produtos (se estivesse visível)
-//            if (recyclerViewProdutos != null) {
-//                recyclerViewProdutos.setVisibility(View.GONE);
-//            }
-//        });
+
+        // Simulação de transição (Removida ou mantida dependendo da sua necessidade, está comentada)
+        /*
+        if (botaoTesteTransicao != null) {
+            botaoTesteTransicao.setOnClickListener(v -> {
+                // ... lógica de transição simulada ...
+            });
+        }
+        */
 
         // Fecha o teclado ao tocar fora (código mantido)
         view.setOnTouchListener((v, event) -> {
@@ -179,41 +170,82 @@ public class ComparacaoFragment extends Fragment {
         });
 
         // Abre ComparacaoParte2Fragment
-        btnEscolherTabelas.setOnClickListener(v -> {
-            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(FRAGMENT_CONTAINER_ID, new ComparacaoParte2Fragment());
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-        });
+        if (btnEscolherTabelas != null) {
+            btnEscolherTabelas.setOnClickListener(v -> {
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(FRAGMENT_CONTAINER_ID, new ComparacaoParte2Fragment());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+            });
+        }
     }
 
-    // REMOVIDO: iniciandoServidor()
+    /**
+     * Tenta "acordar" o servidor de backend hospedado no Render (ou similar)
+     * para evitar a latência do "cold start" na primeira chamada de API real.
+     * Só executa o health check se a última tentativa for há mais de JANELA_WAKE_MS.
+     * @param proximoPasso A ação a ser executada na UI thread após a tentativa de wake-up.
+     */
+    private void iniciandoServidor(Runnable proximoPasso) {
+        long agora = System.currentTimeMillis();
+        if (agora - ultimoWakeMs < JANELA_WAKE_MS) {
+            if (proximoPasso != null) proximoPasso.run();
+            return;
+        }
+
+        // Garante que o Fragment ainda está anexado antes de usar getActivity()
+        if (getActivity() == null) {
+            if (proximoPasso != null) proximoPasso.run();
+            return;
+        }
+
+        new Thread(() -> {
+            boolean ok = false;
+            // O health check deve ser para o mesmo serviço que a API principal
+            String healthCheckUrl = "https://api-spring-mongodb.onrender.com/actuator/health"; // Ajustado para o URL base do Retrofit
+
+            for (int tent = 1; tent <= 3 && !ok; tent++) {
+                try {
+                    Request req = new Request.Builder()
+                            .url(healthCheckUrl)
+                            // A autorização pode ser necessária até para o health check dependendo da configuração
+                            .header("Authorization", credenciais)
+                            .build();
+                    try (Response resp = client.newCall(req).execute()) {
+                        ok = (resp != null && resp.isSuccessful());
+                        Log.d("WakeUp", "Tentativa " + tent + ": " + (ok ? "SUCESSO" : "FALHA") + " | Código: " + (resp != null ? resp.code() : "N/A"));
+                    }
+                } catch (Exception e) {
+                    Log.e("WakeUp", "Erro na tentativa " + tent + ": " + e.getMessage());
+                }
+            }
+            ultimoWakeMs = System.currentTimeMillis();
+            // Volta para a UI thread para executar o próximo passo (buscar dados)
+            requireActivity().runOnUiThread(() -> { if (proximoPasso != null) proximoPasso.run(); });
+        }).start();
+    }
 
     private void buscarProdutoDoUsuario(Integer idUsuario) {
-        // MUDAR: de Callback<GetProdutoDTO>
-        // PARA: Callback<List<GetProdutoDTO>>
+        // ... (Corpo da função mantido, agora é chamada após tentar acordar o servidor)
         produtoApi.buscarProdutosComMaisDeUmaTabela(idUsuario).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<GetProdutoDTO>> call, @NonNull retrofit2.Response<List<GetProdutoDTO>> response) {
-                if (getActivity() == null || binding == null) return; // Segurança de Fragmento
+                if (getActivity() == null || binding == null) return;
 
                 if (response.isSuccessful() && response.body() != null) {
 
                     List<GetProdutoDTO> listaRetorno = response.body();
 
-                    // Adicionada verificação de nulo no RecyclerViewProdutos
                     if (recyclerViewProdutos != null && !listaRetorno.isEmpty()) {
 
-                        // --- Lógica de integração do Adapter (RESTAURADA) ---
+                        // --- Lógica de integração do Adapter ---
                         comparacaoAdapter = new ComparacaoAdapter(listaRetorno);
 
                         comparacaoAdapter.setOnItemClickListener(produto -> {
                             Log.d("Comparacao", "Produto selecionado: " + produto.getNome());
 
                             // Transição visual: Oculta a lista e exibe o item selecionado
-                            recyclerViewProdutos.setVisibility(View.GONE);
-                            demonstracaoItem1.setVisibility(View.GONE);
                             textViewSelecionarProduto1.setVisibility(View.GONE);
                             demonstracaoItemSelecionado.setVisibility(View.VISIBLE);
                             nomeProdutoSelecionado.setVisibility(View.VISIBLE);
@@ -223,7 +255,7 @@ public class ComparacaoFragment extends Fragment {
                             textViewSelecionarProduto2.setVisibility(View.VISIBLE);
 
                             nomeProdutoSelecionado.setText(produto.getNome());
-                            if (binding != null && binding.searchBar != null) {
+                            if (binding != null) {
                                 binding.searchBar.setText(produto.getNome());
                             }
                         });
@@ -249,7 +281,6 @@ public class ComparacaoFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<List<GetProdutoDTO>> call, @NonNull Throwable t) {
                 Log.e("API:", "Falha na requisição: " + t.getMessage());
-                // Garante que a UI seja atualizada na thread principal em caso de falha
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(ComparacaoFragment.this::tratarListaVaziaOuErro);
                 }
@@ -267,7 +298,9 @@ public class ComparacaoFragment extends Fragment {
         // Mostra a UI de "Escolha seu produto"
         demonstracaoItem1.setVisibility(View.VISIBLE);
         textViewSelecionarProduto1.setVisibility(View.VISIBLE);
-        botaoTesteTransicao.setVisibility(View.VISIBLE);
+        if (botaoTesteTransicao != null) {
+            botaoTesteTransicao.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -282,7 +315,6 @@ public class ComparacaoFragment extends Fragment {
     private void resetEstado() {
         demonstracaoItem1.setVisibility(View.VISIBLE);
         textViewSelecionarProduto1.setVisibility(View.VISIBLE);
-      //  botaoTesteTransicao.setVisibility(View.VISIBLE);
 
         demonstracaoItemSelecionado.setVisibility(View.GONE);
         nomeProdutoSelecionado.setVisibility(View.GONE);

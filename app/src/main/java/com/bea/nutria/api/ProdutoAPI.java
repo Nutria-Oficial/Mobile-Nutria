@@ -10,6 +10,6 @@ import retrofit2.http.Path;
 
 public interface ProdutoAPI {
     //Buscar o usuario pelo email
-    @GET("produtos/usuario/{id}?filtrar=true")
+    @GET("produtos/usuario/{id}?filtrar=false")
     Call<List<GetProdutoDTO>> buscarProdutosComMaisDeUmaTabela(@Path("id") Integer id);
 }

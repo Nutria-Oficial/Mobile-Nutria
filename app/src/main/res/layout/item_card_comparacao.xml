@@ -27,35 +27,22 @@
 
         <View
             android:id="@+id/view_linha"
-            android:layout_width="256dp"
+            android:layout_width="300dp"
             android:layout_height="3dp"
             android:layout_marginTop="40dp"
             android:background="#EEEDF7"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.741"
+            app:layout_constraintHorizontal_bias="0.738"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem4"
-            app:layout_constraintVertical_bias="0.887" />
-
-        <TextView
-            android:id="@+id/textViewDescricao"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginTop="6dp"
-            android:fontFamily="@font/montserrat_regular"
-            android:text="Avaliação:"
-            app:layout_constraintBottom_toTopOf="@+id/view_linha"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.316"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewTitulo"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/textViewTitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/montserrat_medium"
             android:text="Produto"
@@ -63,11 +50,9 @@
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/view_linha"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.309"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem4"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.444" />
 
         <ImageButton
             android:id="@+id/imageButton"
@@ -85,13 +70,14 @@
 
         <ImageView
             android:id="@+id/imageView3"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
+            android:layout_width="49dp"
+            android:layout_height="45dp"
             app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem4"
             app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem4"
+            app:layout_constraintHorizontal_bias="0.083"
             app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem4"
             app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem4"
-            app:layout_constraintVertical_bias="0.446"
+            app:layout_constraintVertical_bias="0.6"
             app:srcCompat="@drawable/xlsx" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
