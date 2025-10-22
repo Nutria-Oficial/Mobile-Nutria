@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class FotoPerfilActivity extends AppCompatActivity {
 
-   private final String cloudName = "dtvvd7xif";
+    private final String cloudName = "dtvvd7xif";
     private final String uploadPreset = "perfil_app";
     private final String folder = "fotosAjustadas";
 
@@ -55,7 +55,7 @@ public class FotoPerfilActivity extends AppCompatActivity {
         fotoPerfil = findViewById(R.id.foto_padrao);
         btnAddFoto = findViewById(R.id.add_foto);
         boasVindas = findViewById(R.id.nome);
-        pular      = findViewById(R.id.pular);
+        pular = findViewById(R.id.pular);
         btnProximo = findViewById(R.id.btn_proximo);
 
         nomeUsuario = getIntent().getStringExtra("nome");
@@ -88,12 +88,13 @@ public class FotoPerfilActivity extends AppCompatActivity {
     private void checkPermissions() {
         requestPermissions = registerForActivityResult(
                 new ActivityResultContracts.RequestMultiplePermissions(),
-                r -> {}
+                r -> {
+                }
         );
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestPermissions.launch(new String[]{ android.Manifest.permission.READ_MEDIA_IMAGES });
+            requestPermissions.launch(new String[]{android.Manifest.permission.READ_MEDIA_IMAGES});
         } else {
-            requestPermissions.launch(new String[]{ android.Manifest.permission.READ_EXTERNAL_STORAGE });
+            requestPermissions.launch(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE});
         }
     }
 
@@ -124,21 +125,32 @@ public class FotoPerfilActivity extends AppCompatActivity {
                 .option("folder", folder)
                 .unsigned(uploadPreset)
                 .callback(new UploadCallback() {
-                    @Override public void onStart(String requestId) {
+                    @Override
+                    public void onStart(String requestId) {
                         runOnUiThread(() -> Toast.makeText(FotoPerfilActivity.this, "Enviando imagem...", Toast.LENGTH_SHORT).show());
                     }
-                    @Override public void onProgress(String requestId, long bytes, long totalBytes) { }
-                    @Override public void onSuccess(String requestId, Map resultData) {
+
+                    @Override
+                    public void onProgress(String requestId, long bytes, long totalBytes) {
+                    }
+
+                    @Override
+                    public void onSuccess(String requestId, Map resultData) {
                         String url = (String) resultData.get("secure_url");
                         runOnUiThread(() -> finalizarComUrl(url));
                     }
-                    @Override public void onError(String requestId, ErrorInfo error) {
+
+                    @Override
+                    public void onError(String requestId, ErrorInfo error) {
                         runOnUiThread(() ->
                                 Toast.makeText(FotoPerfilActivity.this,
                                         "Falha no upload (" + error.getCode() + "): " + error.getDescription(),
                                         Toast.LENGTH_LONG).show());
                     }
-                    @Override public void onReschedule(String requestId, ErrorInfo error) { }
+
+                    @Override
+                    public void onReschedule(String requestId, ErrorInfo error) {
+                    }
                 })
                 .dispatch(this);
     }

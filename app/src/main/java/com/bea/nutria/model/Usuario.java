@@ -3,6 +3,7 @@ package com.bea.nutria.model;
 import com.google.gson.annotations.SerializedName;
 
 public class Usuario {
+    @SerializedName(value = "id", alternate = {"idUsuario", "usuarioId", "ncdusuario"})
     private Integer id;
     private String nome;
     private String email;
@@ -32,7 +33,8 @@ public class Usuario {
         this.urlFoto = urlFoto;
     }
 
-    public Usuario() {}
+    public Usuario() {
+    }
 
     public Integer getId() {
         return id;

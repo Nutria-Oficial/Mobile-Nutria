@@ -1,5 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/nutria_selecionado" android:state_checked="true"/>
-    <item android:drawable="@drawable/nutria"/>
-</selector>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="1000dp"
+    android:height="1000dp"
+    android:viewportWidth="1000"
+    android:viewportHeight="1000">
+  <path
+      android:pathData="M208.3,750V906.9L271.5,869L469.9,750H666.7C712.6,750 750,712.6 750,666.7V333.3C750,287.4 712.6,250 666.7,250H166.7C120.7,250 83.3,287.4 83.3,333.3V666.7C83.3,712.6 120.7,750 166.7,750H208.3ZM166.7,333.3H666.7V666.7H446.8L291.7,759.8V666.7H166.7V333.3Z"
+      android:fillColor="#494D4B"/>
+  <path
+      android:pathData="M833.3,83.3H333.3C287.4,83.3 250,120.7 250,166.7H750C796,166.7 833.3,204 833.3,250V583.3C879.3,583.3 916.7,546 916.7,500V166.7C916.7,120.7 879.3,83.3 833.3,83.3Z"
+      android:fillColor="#494D4B"/>
+</vector>
