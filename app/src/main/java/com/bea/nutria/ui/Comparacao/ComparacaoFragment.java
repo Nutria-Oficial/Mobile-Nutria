@@ -89,7 +89,7 @@ public class ComparacaoFragment extends Fragment {
         textViewSelecionarProduto2 = view.findViewById(R.id.textViewSelecionarProduto2);
         iconeTabela = view.findViewById(R.id.imageViewIconeTabela);
         btnEscolherTabelas = view.findViewById(R.id.btn_escolherTabelas);
-        botaoTesteTransicao = view.findViewById(R.id.botao_teste_transicao);
+        //botaoTesteTransicao = view.findViewById(R.id.botao_teste_transicao);
 
         // --- Configuração da RecyclerView (RESTAURADA E SEGURA) ---
         View listaItensIncluded = view.findViewById(R.id.listaItens);
@@ -139,24 +139,24 @@ public class ComparacaoFragment extends Fragment {
         buscarProdutoDoUsuario(idUsuario);
 
         // Simulação de transição
-        botaoTesteTransicao.setOnClickListener(v -> {
-            demonstracaoItem1.setVisibility(View.INVISIBLE);
-            textViewSelecionarProduto1.setVisibility(View.GONE);
-            botaoTesteTransicao.setVisibility(View.GONE);
-            demonstracaoItemSelecionado.setVisibility(View.VISIBLE);
-            nomeProdutoSelecionado.setVisibility(View.VISIBLE);
-            iconeTabela.setVisibility(View.VISIBLE);
-            btnEscolherTabelas.setVisibility(View.VISIBLE);
-            iconeTabela.bringToFront();
-            demonstracaoItem2.setVisibility(View.GONE);
-            textViewSelecionarProduto2.setVisibility(View.GONE);
-            nomeProdutoSelecionado.setText("Manteiga");
-
-            // Novo: Oculta a lista de produtos (se estivesse visível)
-            if (recyclerViewProdutos != null) {
-                recyclerViewProdutos.setVisibility(View.GONE);
-            }
-        });
+//        botaoTesteTransicao.setOnClickListener(v -> {
+//            demonstracaoItem1.setVisibility(View.INVISIBLE);
+//            textViewSelecionarProduto1.setVisibility(View.GONE);
+//            botaoTesteTransicao.setVisibility(View.GONE);
+//            demonstracaoItemSelecionado.setVisibility(View.VISIBLE);
+//            nomeProdutoSelecionado.setVisibility(View.VISIBLE);
+//            iconeTabela.setVisibility(View.VISIBLE);
+//            btnEscolherTabelas.setVisibility(View.VISIBLE);
+//            iconeTabela.bringToFront();
+//            demonstracaoItem2.setVisibility(View.GONE);
+//            textViewSelecionarProduto2.setVisibility(View.GONE);
+//            nomeProdutoSelecionado.setText("Manteiga");
+//
+//            // Novo: Oculta a lista de produtos (se estivesse visível)
+//            if (recyclerViewProdutos != null) {
+//                recyclerViewProdutos.setVisibility(View.GONE);
+//            }
+//        });
 
         // Fecha o teclado ao tocar fora (código mantido)
         view.setOnTouchListener((v, event) -> {
@@ -234,7 +234,7 @@ public class ComparacaoFragment extends Fragment {
                         recyclerViewProdutos.setVisibility(View.VISIBLE);
                         demonstracaoItem1.setVisibility(View.GONE);
                         textViewSelecionarProduto1.setVisibility(View.GONE);
-                        botaoTesteTransicao.setVisibility(View.GONE);
+                        //botaoTesteTransicao.setVisibility(View.GONE);
 
                     } else {
                         Log.d("API:", "Lista de produtos vazia ou RecyclerView não inicializada.");
@@ -282,7 +282,7 @@ public class ComparacaoFragment extends Fragment {
     private void resetEstado() {
         demonstracaoItem1.setVisibility(View.VISIBLE);
         textViewSelecionarProduto1.setVisibility(View.VISIBLE);
-        botaoTesteTransicao.setVisibility(View.VISIBLE);
+      //  botaoTesteTransicao.setVisibility(View.VISIBLE);
 
         demonstracaoItemSelecionado.setVisibility(View.GONE);
         nomeProdutoSelecionado.setVisibility(View.GONE);
