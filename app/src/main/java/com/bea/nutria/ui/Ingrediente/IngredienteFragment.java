@@ -28,7 +28,7 @@ public class IngredienteFragment extends Fragment {
     private TextView txtRegistrados;
     private TextView txtNovo;
     private ImageView linha;
-    private TextView btVoltar;
+    private ImageView btVoltar;
     private IngredienteAPI api;
     private String credenciais;
     private Retrofit retrofit;
