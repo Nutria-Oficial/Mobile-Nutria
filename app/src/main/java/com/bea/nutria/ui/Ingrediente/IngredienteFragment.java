@@ -8,21 +8,33 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bea.nutria.R;
-import com.bea.nutria.ui.Tabela.TabelaFragment;
+import com.bea.nutria.api.IngredienteAPI;
+import okhttp3.Response;
+import java.util.concurrent.TimeUnit;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class IngredienteFragment extends Fragment {
 
     private ViewPager2 viewPager;
     private IngredienteViewPagerAdapter adapter;
+    private IngredienteFragment binding;
     private TextView txtRegistrados;
     private TextView txtNovo;
     private ImageView linha;
     private TextView btVoltar;
+    private IngredienteAPI api;
+    private String credenciais;
+    private Retrofit retrofit;
+    private OkHttpClient client;
+    private long ultimoWakeMs = 0L;
+    private static final long JANELA_WAKE_MS = 60_000;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,6 +69,32 @@ public class IngredienteFragment extends Fragment {
             navController.navigate(R.id.action_ingrediente_to_tabela);
         });
 
+        client = new OkHttpClient.Builder()
+                .connectTimeout(25, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .pingInterval(30, TimeUnit.SECONDS)
+                .addNetworkInterceptor(chain -> {
+                    Request original = chain.request();
+                    Request req = original.newBuilder()
+                            .header("Authorization", credenciais)
+                            .header("Accept", "application/json")
+                            .method(original.method(), original.body())
+                            .build();
+                    return chain.proceed(req);
+                })
+                .build();
+
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl("https://api-spring-mongodb.onrender.com")
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        api = retrofit.create(IngredienteAPI.class);
+
         return view;
     }
 
@@ -81,6 +119,35 @@ public class IngredienteFragment extends Fragment {
                     .setDuration(200)
                     .start();
         }
+    }
+
+    private void iniciandoServidor(Runnable proximoPasso) {
+        long agora = System.currentTimeMillis();
+        if (agora - ultimoWakeMs < JANELA_WAKE_MS) {
+            if (proximoPasso != null) proximoPasso.run();
+            return;
+        }
+        new Thread(() -> {
+            boolean ok = false;
+            for (int tent = 1; tent <= 3 && !ok; tent++) {
+                try {
+                    Request req = new Request.Builder()
+                            .url("https://api-spring-mongodb.onrender.com")
+                            .header("Authorization", credenciais)
+                            .build();
+                    try (Response resp = client.newCall(req).execute()) {
+                        ok = (resp != null && resp.isSuccessful());
+                    }
+                } catch (Exception ignore) {
+                }
+            }
+            ultimoWakeMs = System.currentTimeMillis();
+            if (isAdded()){
+                requireActivity().runOnUiThread(() -> {
+                    if (proximoPasso != null) proximoPasso.run();
+                });
+            }
+        }).start();
     }
 
     @Override
