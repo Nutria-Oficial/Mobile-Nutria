@@ -25,20 +25,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bea.nutria.ComparacaoParte2Fragment;
 import com.bea.nutria.R;
 import com.bea.nutria.api.ProdutoAPI;
+import com.bea.nutria.api.mongo.Mongo;
 import com.bea.nutria.databinding.FragmentComparacaoBinding;
 import com.bea.nutria.model.GetProdutoDTO;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.Credentials;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ComparacaoFragment extends Fragment {
 
@@ -58,16 +52,12 @@ public class ComparacaoFragment extends Fragment {
     private ComparacaoAdapter comparacaoAdapter;
 
     private Integer idUsuario = 1;
-    private ProdutoAPI produtoApi;
-    private OkHttpClient client;
-    private Retrofit retrofit;
 
-    private String credenciais = "";
+    private ProdutoAPI produtoApi;
+    // Referência corrigida para a classe Mongo
+    private Mongo apiManager;
 
     private static final int FRAGMENT_CONTAINER_ID = R.id.nav_host_fragment_activity_main;
-
-    private long ultimoWakeMs = 0L;
-    private static final long JANELA_WAKE_MS = 60_000; // 60 segundos
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -80,6 +70,12 @@ public class ComparacaoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // --- Inicialização do Gerenciador de API ---
+        apiManager = new Mongo(); // Inicializa o Manager
+
+        produtoApi = apiManager.getApi(ProdutoAPI.class);
+        // ------------------------------------------
 
         // Referências dos elementos de UI
         demonstracaoItem1 = view.findViewById(R.id.View_demonstracaoItem_1);
@@ -105,49 +101,11 @@ public class ComparacaoFragment extends Fragment {
         }
         // ------------------------------------
 
-        credenciais = Credentials.basic("nutria", "nutria123");
-
-        // Configura OkHttpClient
-        client = new OkHttpClient.Builder()
-                .connectTimeout(25, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
-                .pingInterval(30, TimeUnit.SECONDS)
-                .addNetworkInterceptor(chain -> {
-                    Request original = chain.request();
-                    Request req = original.newBuilder()
-                            .header("Authorization", credenciais)
-                            .header("Accept", "application/json")
-                            .method(original.method(), original.body())
-                            .build();
-                    return chain.proceed(req);
-                })
-                .build();
-
-        // Configura Retrofit
-        retrofit = new Retrofit.Builder()
-                .baseUrl("https://api-spring-mongodb.onrender.com/")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        produtoApi = retrofit.create(ProdutoAPI.class);
-
         // --- Uso da função iniciandoServidor (A Boa Prática) ---
         // Chama o servidor para acordá-lo e, em seguida, busca os produtos.
-        iniciandoServidor(() -> buscarProdutoDoUsuario(idUsuario));
+        apiManager.iniciarServidor(requireActivity(), () -> buscarProdutoDoUsuario(idUsuario));
         // -------------------------------------------------------
 
-
-        // Simulação de transição (Removida ou mantida dependendo da sua necessidade, está comentada)
-        /*
-        if (botaoTesteTransicao != null) {
-            botaoTesteTransicao.setOnClickListener(v -> {
-                // ... lógica de transição simulada ...
-            });
-        }
-        */
 
         // Fecha o teclado ao tocar fora (código mantido)
         view.setOnTouchListener((v, event) -> {
@@ -181,53 +139,7 @@ public class ComparacaoFragment extends Fragment {
         }
     }
 
-    /**
-     * Tenta "acordar" o servidor de backend hospedado no Render (ou similar)
-     * para evitar a latência do "cold start" na primeira chamada de API real.
-     * Só executa o health check se a última tentativa for há mais de JANELA_WAKE_MS.
-     * @param proximoPasso A ação a ser executada na UI thread após a tentativa de wake-up.
-     */
-    private void iniciandoServidor(Runnable proximoPasso) {
-        long agora = System.currentTimeMillis();
-        if (agora - ultimoWakeMs < JANELA_WAKE_MS) {
-            if (proximoPasso != null) proximoPasso.run();
-            return;
-        }
-
-        // Garante que o Fragment ainda está anexado antes de usar getActivity()
-        if (getActivity() == null) {
-            if (proximoPasso != null) proximoPasso.run();
-            return;
-        }
-
-        new Thread(() -> {
-            boolean ok = false;
-            // O health check deve ser para o mesmo serviço que a API principal
-            String healthCheckUrl = "https://api-spring-mongodb.onrender.com/actuator/health"; // Ajustado para o URL base do Retrofit
-
-            for (int tent = 1; tent <= 3 && !ok; tent++) {
-                try {
-                    Request req = new Request.Builder()
-                            .url(healthCheckUrl)
-                            // A autorização pode ser necessária até para o health check dependendo da configuração
-                            .header("Authorization", credenciais)
-                            .build();
-                    try (Response resp = client.newCall(req).execute()) {
-                        ok = (resp != null && resp.isSuccessful());
-                        Log.d("WakeUp", "Tentativa " + tent + ": " + (ok ? "SUCESSO" : "FALHA") + " | Código: " + (resp != null ? resp.code() : "N/A"));
-                    }
-                } catch (Exception e) {
-                    Log.e("WakeUp", "Erro na tentativa " + tent + ": " + e.getMessage());
-                }
-            }
-            ultimoWakeMs = System.currentTimeMillis();
-            // Volta para a UI thread para executar o próximo passo (buscar dados)
-            requireActivity().runOnUiThread(() -> { if (proximoPasso != null) proximoPasso.run(); });
-        }).start();
-    }
-
     private void buscarProdutoDoUsuario(Integer idUsuario) {
-        // ... (Corpo da função mantido, agora é chamada após tentar acordar o servidor)
         produtoApi.buscarProdutosComMaisDeUmaTabela(idUsuario).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<GetProdutoDTO>> call, @NonNull retrofit2.Response<List<GetProdutoDTO>> response) {
@@ -245,8 +157,11 @@ public class ComparacaoFragment extends Fragment {
                         comparacaoAdapter.setOnItemClickListener(produto -> {
                             Log.d("Comparacao", "Produto selecionado: " + produto.getNome());
 
-                            // Transição visual: Oculta a lista e exibe o item selecionado
+                            // Transição visual: Quando um item é SELECIONADO, ocultamos a área de seleção
+                            // inicial (demonstracaoItem1) e mostramos a área de item selecionado.
                             textViewSelecionarProduto1.setVisibility(View.GONE);
+                            demonstracaoItem1.setVisibility(View.GONE); // Oculta o item inicial
+
                             demonstracaoItemSelecionado.setVisibility(View.VISIBLE);
                             nomeProdutoSelecionado.setVisibility(View.VISIBLE);
                             iconeTabela.setVisibility(View.VISIBLE);
@@ -255,18 +170,17 @@ public class ComparacaoFragment extends Fragment {
                             textViewSelecionarProduto2.setVisibility(View.VISIBLE);
 
                             nomeProdutoSelecionado.setText(produto.getNome());
-                            if (binding != null) {
-                                binding.searchBar.setText(produto.getNome());
-                            }
+
                         });
 
                         recyclerViewProdutos.setAdapter(comparacaoAdapter);
 
-                        // 4. Mostrar a lista e ocultar a UI de "Escolha seu produto"
+                        // 4. Mostrar a lista.
                         recyclerViewProdutos.setVisibility(View.VISIBLE);
-                        demonstracaoItem1.setVisibility(View.GONE);
-                        textViewSelecionarProduto1.setVisibility(View.GONE);
-                        //botaoTesteTransicao.setVisibility(View.GONE);
+
+                        // CORREÇÃO APLICADA:
+                        // demonstracaoItem1 e textViewSelecionarProduto1 PERMANECEM VISÍVEIS aqui,
+                        // pois a lista está apenas carregando, e não um item foi selecionado ainda.
 
                     } else {
                         Log.d("API:", "Lista de produtos vazia ou RecyclerView não inicializada.");
