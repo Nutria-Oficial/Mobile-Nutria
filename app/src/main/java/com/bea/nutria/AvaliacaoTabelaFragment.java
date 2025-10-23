@@ -1,0 +1,269 @@
+package com.bea.nutria;
+
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bea.nutria.api.TabelaAPI;
+import com.bea.nutria.databinding.FragmentAvaliacaoTabelaBinding;
+import com.bea.nutria.model.GetNutrienteDTO;
+import com.bea.nutria.model.GetTabelaDTO;
+import com.bea.nutria.model.GetTabelaEAvaliacaoDTO;
+import com.bea.nutria.ui.Tabela.TabelaFragment;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Credentials;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+///**
+// * A simple {@link Fragment} subclass.
+// * Use the {@link AvaliacaoTabelaFragment#newInstance} factory method to
+// * create an instance of this fragment.
+// */
+public class AvaliacaoTabelaFragment extends Fragment {
+
+    private FragmentAvaliacaoTabelaBinding binding;
+    private OkHttpClient client;
+    private Retrofit retrofit;
+    private String credenciais = Credentials.basic("nutria", "nutria123");
+    private TabelaAPI api;
+    private long ultimoWakeMs = 0L;
+
+    private ArrayList<String[]> tabelaDados = new ArrayList<>();
+    private static final long JANELA_WAKE_MS = 60_000;
+
+//    public AvaliacaoTabelaFragment() {
+//        // Required empty public constructor
+//    }
+//
+//    /**
+//     * Use this factory method to create a new instance of
+//     * this fragment using the provided parameters.
+//     *
+//     * @param param1 Parameter 1.
+//     * @param param2 Parameter 2.
+//     * @return A new instance of fragment AvaliacaoTabelaFragment.
+//     */
+//    // TODO: Rename and change types and number of parameters
+//    public static AvaliacaoTabelaFragment newInstance(String param1, String param2) {
+//        AvaliacaoTabelaFragment fragment = new AvaliacaoTabelaFragment();
+//
+//        return fragment;
+//    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        binding = FragmentAvaliacaoTabelaBinding.inflate(inflater, container, false);
+
+        credenciais = Credentials.basic("nutria", "nutria123");
+        client = new OkHttpClient.Builder()
+                .connectTimeout(25, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .pingInterval(30, TimeUnit.SECONDS)
+                .addNetworkInterceptor(chain -> {
+                    Request original = chain.request();
+                    Request req = original.newBuilder()
+                            .header("Authorization", credenciais)
+                            .header("Accept", "application/json")
+                            .method(original.method(), original.body())
+                            .build();
+                    return chain.proceed(req);
+                })
+                .build();
+
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl("https://api-spring-mongodb.onrender.com")
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        api = retrofit.create(TabelaAPI.class);
+
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        assert getArguments() != null;
+        Integer idTabela = getArguments().getInt("idTabela");
+        iniciandoServidor(() -> buscarTabelaAvaliacao(idTabela));
+
+        binding.btnVisualizar.setOnClickListener(v -> {
+            Bundle result = new Bundle();
+            result.putSerializable("tabela", tabelaDados);
+
+            NavController navController = NavHostFragment.findNavController(AvaliacaoTabelaFragment.this);
+            navController.navigate(R.id.action_navigation_avaliacao_tabela_to_navigation_visualizar, result);
+        });
+        binding.btnVoltar.setOnClickListener(v ->{
+            NavController navController = NavHostFragment.findNavController(AvaliacaoTabelaFragment.this);
+            navController.navigate(R.id.action_avaliacao_tabela_to_tabela);
+        });
+
+    }
+
+    private void buscarTabelaAvaliacao(Integer tabelaId) {
+        mostrarCarregando(true);
+        api.buscarTabelaComAvaliacao(tabelaId).enqueue(new Callback<GetTabelaEAvaliacaoDTO>() {
+            @Override
+            public void onResponse(Call<GetTabelaEAvaliacaoDTO> call, retrofit2.Response<GetTabelaEAvaliacaoDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    GetTabelaEAvaliacaoDTO tabelaEncontrada = response.body();
+                    preencherDadosTabela(tabelaEncontrada);
+
+                    mostrarCarregando(false);
+                    binding.tableLayout.setVisibility(View.VISIBLE);
+
+                } else {
+                    int code = response.code();
+                    Toast.makeText(
+                            getContext(),
+                            "Erro ao carregar usuário (" + code + ")\n",
+                            Toast.LENGTH_LONG
+                    ).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetTabelaEAvaliacaoDTO> call, Throwable t) {
+                Toast.makeText(getContext(),
+                        "Falha de conexão: " + (t.getMessage() == null ? "desconhecida" : t.getMessage()),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    private void iniciandoServidor(Runnable proximoPasso) {
+        long agora = System.currentTimeMillis();
+        if (agora - ultimoWakeMs < JANELA_WAKE_MS) {
+            if (proximoPasso != null) proximoPasso.run();
+            return;
+        }
+        new Thread(() -> {
+            boolean ok = false;
+            for (int tent = 1; tent <= 3 && !ok; tent++) {
+                try {
+                    Request req = new Request.Builder()
+                            .url("https://api-spring-mongodb.onrender.com")
+                            .header("Authorization", credenciais)
+                            .build();
+                    try (Response resp = client.newCall(req).execute()) {
+                        ok = (resp != null && resp.isSuccessful());
+                    }
+                } catch (Exception ignore) {
+                }
+            }
+            ultimoWakeMs = System.currentTimeMillis();
+            if (isAdded()){
+                requireActivity().runOnUiThread(() -> {
+                    if (proximoPasso != null) proximoPasso.run();
+                });
+            }
+        }).start();
+    }
+    private void preencherDadosTabela(GetTabelaEAvaliacaoDTO tabela) {
+        tabelaDados.clear();
+        binding.tableLayout.removeAllViews();
+
+        TableRow nomeTabela = new TableRow(getContext());
+        TextView nome = new TextView(getContext());
+        nomeTabela.addView(nome);
+        binding.tableLayout.addView(nomeTabela);
+        adicionarValoresTabelaDados(binding.tableLayout.getChildAt(0));
+
+        TableRow nomeColuna = new TableRow(getContext());
+        TextView coluna1 = new TextView(getContext());
+        TextView coluna2 = new TextView(getContext());
+        TextView coluna3 = new TextView(getContext());
+
+        coluna1.setText(tabela.getNomeTabela());
+        coluna2.setText("Poção " + tabela.getPorcao()+"g");
+        coluna3.setText("%VD*");
+
+        nomeColuna.addView(coluna1);
+        nomeColuna.addView(coluna2);
+        nomeColuna.addView(coluna3);
+        binding.tableLayout.addView(nomeColuna);
+        adicionarValoresTabelaDados(binding.tableLayout.getChildAt(1));
+
+        for (GetNutrienteDTO nutrienteDados : tabela.getNutrientes()){
+            TableRow nutrientesInformacao = new TableRow(getContext());
+            TextView nutriente = new TextView(getContext());
+            TextView porcao = new TextView(getContext());
+            TextView vd = new TextView(getContext());
+
+            nutriente.setText(nutrienteDados.getNutriente());
+            porcao.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getPorcao()));
+            vd.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getValorDiario())+"%");
+
+            nutrientesInformacao.addView(nutriente);
+            nutrientesInformacao.addView(porcao);
+            nutrientesInformacao.addView(vd);
+            binding.tableLayout.addView(nutrientesInformacao);
+            adicionarValoresTabelaDados(binding.tableLayout.getChildAt(1));
+
+        }
+
+    }
+    private void mostrarCarregando(boolean carregando) {
+        if (carregando) {
+            binding.layoutCarregando.setVisibility(View.VISIBLE);
+            binding.layoutInformacoes.setVisibility(View.GONE);
+        } else {
+            binding.layoutCarregando.setVisibility(View.GONE);
+            binding.layoutInformacoes.setVisibility(View.VISIBLE);
+        }
+    }
+//    private void getTabelaDados(ArrayList<String[]> dados){
+//
+//    }
+    private void adicionarValoresTabelaDados(View linhaTabela){
+        TableRow linha = (TableRow) linhaTabela;
+
+        String[] valores = new String[linha.getChildCount()];
+
+        for (int i = 0; i < linha.getChildCount(); i++) {
+            TextView valor = (TextView) linha.getChildAt(i);
+            valores[i] = valor.getText().toString();
+        }
+        tabelaDados.add(valores);
+    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}

@@ -1,6 +1,8 @@
 package com.bea.nutria.model;
 
-public class GetNutrienteDTO {
+import java.io.Serializable;
+
+public class GetNutrienteDTO  implements Serializable {
     String nutriente;
     double total;
     double porcao;
