@@ -29,5 +29,46 @@
     <fragment
         android:id="@+id/navigation_tabela"
         android:name="com.bea.nutria.ui.Tabela.TabelaFragment"
-        android:label="Tabela" />
+        android:label="Tabela"
+        tools:layout="@layout/fragment_tabela">
+
+        <action
+            android:id="@+id/action_tabela_to_avaliacao_tabela"
+            app:destination="@id/navigation_avaliacao_tabela" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_avaliacao_tabela"
+        android:name="com.bea.nutria.AvaliacaoTabelaFragment"
+        android:label="fragment_avaliacao_tabela"
+        tools:layout="@layout/fragment_avaliacao_tabela">
+
+        <action
+            android:id="@+id/action_avaliacao_tabela_to_tabela"
+            app:destination="@id/navigation_tabela" />
+        <action
+            android:id="@+id/action_navigation_avaliacao_tabela_to_navigation_visualizar"
+            app:destination="@id/navigation_visualizar" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_visualizar"
+        android:name="com.bea.nutria.VisualizarFragment"
+        android:label="fragment_visualizar"
+        tools:layout="@layout/fragment_visualizar" >
+        <action
+            android:id="@+id/action_navigation_visualizar_to_navigation_avaliacao_tabela"
+            app:destination="@id/navigation_avaliacao_tabela" />
+        <action
+            android:id="@+id/action_navigation_visualizar_to_navigation_exportar"
+            app:destination="@id/navigation_exportar" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_exportar"
+        android:name="com.bea.nutria.ExportarFragment"
+        android:label="fragment_exportar"
+        tools:layout="@layout/fragment_exportar" >
+        <action
+            android:id="@+id/action_navigation_exportar_to_navigation_visualizar"
+            app:destination="@id/navigation_visualizar" />
+    </fragment>
 </navigation>
