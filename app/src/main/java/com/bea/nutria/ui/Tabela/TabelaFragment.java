@@ -20,11 +20,20 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
+import com.bea.nutria.AvaliacaoTabelaFragment;
+import com.bea.nutria.R;
 import com.bea.nutria.api.TabelaAPI;
 import com.bea.nutria.databinding.FragmentTabelaBinding;
 import com.bea.nutria.model.GetNutrienteDTO;
 import com.bea.nutria.model.GetTabelaDTO;
+import com.bea.nutria.model.ItemIngrediente;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,9 +57,10 @@ public class TabelaFragment extends Fragment {
     private int porcaoAtual= 0;
     private String tipoMedida = "";
     private Integer idTabela = 0;
+    private List<ItemIngrediente> ingredienteList = new ArrayList<>();
     private OkHttpClient client;
     private Retrofit retrofit;
-    private String credenciais;
+    private String credenciais = Credentials.basic("nutria", "nutria123");
     private TabelaAPI api;
     private long ultimoWakeMs = 0L;
     private static final long JANELA_WAKE_MS = 60_000;
@@ -139,45 +149,52 @@ public class TabelaFragment extends Fragment {
         });
 
         binding.button.setOnClickListener(v -> {
-            //adicionar métodos para verificar se todos os campos foram preenchidos
-            Map<String, Object> novaTabela = new HashMap<>();
+            if (validarTodosCamposObrigatorios()) {
 
-            //ingredientes mockados
-            List<Map<String, Number>> ingredientes = new ArrayList<>();
-            Map<String, Number> ingrediente1 = new HashMap<>();
-            ingrediente1.put("nCdIngrediente",1);
-            ingrediente1.put("iQuantidade", 200.0);
+                //adicionar métodos para verificar se todos os campos foram preenchidos
+                Map<String, Object> novaTabela = new HashMap<>();
 
-            Map<String, Number> ingrediente2 = new HashMap<>();
-            ingrediente2.put("nCdIngrediente",2);
-            ingrediente2.put("iQuantidade", 150.5);
+                //ingredientes mockados
+                List<Map<String, Number>> ingredientes = new ArrayList<>();
+                Map<String, Number> ingrediente1 = new HashMap<>();
+                ingrediente1.put("nCdIngrediente", 1);
+                ingrediente1.put("iQuantidade", 200.0);
 
-            ingredientes.add(ingrediente1);
-            ingredientes.add(ingrediente2);
+                Map<String, Number> ingrediente2 = new HashMap<>();
+                ingrediente2.put("nCdIngrediente", 2);
+                ingrediente2.put("iQuantidade", 150.5);
 
-            novaTabela.put("nomeProduto", binding.textInputLayout.getEditText().getText());
-            novaTabela.put("nomeTabela", binding.textInputLayout.getEditText().getText());
-            novaTabela.put("tipoMedida", tipoMedida);
-            novaTabela.put("porcao", getPorcaoAtual());
-            novaTabela.put("ingredientes", ingredientes);
+                ingredientes.add(ingrediente1);
+                ingredientes.add(ingrediente2);
 
-            final boolean[] recebeuIdProduto = {false};
+                novaTabela.put("nomeProduto", binding.nomeProdutoLayout.getEditText().getText());
+                novaTabela.put("nomeTabela", binding.nomeTabelaLayout.getEditText().getText());
+                novaTabela.put("tipoMedida", tipoMedida);
+                novaTabela.put("porcao", getPorcaoAtual());
+                novaTabela.put("ingredientes", ingredientes);
 
-            getParentFragmentManager().setFragmentResultListener("idProduto", this, new FragmentResultListener() {
-                @Override
-                public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                    recebeuIdProduto[0] = true;
-                    Integer idProduto = result.getInt("idProduto");
+                if (getArguments() != null) {
+                    Integer idProduto = getArguments().getInt("idProduto");
                     iniciandoServidor(() -> adicionarTabela(1, idProduto, novaTabela));
-
-                }
-            });
-            view.postDelayed(() -> {
-                if (!recebeuIdProduto[0]) {
+                } else {
                     iniciandoServidor(() -> criarTabela(1, novaTabela));
                 }
-            }, 200);
+            }else {
+                Toast.makeText(getContext(),
+                        "Por favor, todos os campos devem ser preenchidos e ao menos um ingrediente adicionado",
+                        Toast.LENGTH_LONG).show();
+            }
+
         });
+
+        binding.btnNovo.setOnClickListener(v -> {
+            Bundle result = new Bundle();
+            result.putInt("idTabela", idTabela);
+
+            NavController navController = NavHostFragment.findNavController(TabelaFragment.this);
+            navController.navigate(R.id.action_tabela_to_avaliacao_tabela, result);
+        });
+
 
     }
     public void atualizarPorcao(int novoValor){
@@ -205,18 +222,21 @@ public class TabelaFragment extends Fragment {
         });
     }
     private void criarTabela(Integer usuarioLogado, Map<String,Object> tabela) {
+        mostrarCarregando(true);
         api.criarTabela(usuarioLogado, tabela).enqueue(new Callback<GetTabelaDTO>() {
             @Override
             public void onResponse(Call<GetTabelaDTO> call, retrofit2.Response<GetTabelaDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     GetTabelaDTO tabelaCriada = response.body();
                     preencherDadosTabela(tabelaCriada);
-//                    binding.tableLayout.setVisibility(View.VISIBLE);
-//                    binding.botaoNovo.setVisibility(View.VISIBLE);
+                    mostrarCarregando(false);
+                    binding.tableLayout.setVisibility(View.VISIBLE);
+                    binding.btnNovo.setVisibility(View.VISIBLE);
+                    Toast.makeText(getContext(), "Tabela adicionada com sucesso!", Toast.LENGTH_SHORT).show();
 
                 } else {
                     int code = response.code();
-//                    esconderCarregando();
+                    mostrarCarregando(false);
                     Toast.makeText(
                             getContext(),
                             "Erro ao carregar usuário (" + code + ")\n",
@@ -227,7 +247,7 @@ public class TabelaFragment extends Fragment {
 
             @Override
             public void onFailure(Call<GetTabelaDTO> call, Throwable t) {
-//                esconderCarregando();
+                mostrarCarregando(false);
                 Toast.makeText(getContext(),
                         "Falha de conexão: " + (t.getMessage() == null ? "desconhecida" : t.getMessage()),
                         Toast.LENGTH_LONG).show();
@@ -235,18 +255,21 @@ public class TabelaFragment extends Fragment {
         });
     }
     private void adicionarTabela(Integer usuarioLogado, Integer idProduto, Map<String,Object> tabela) {
+        mostrarCarregando(true);
         api.adicionarTabela(usuarioLogado, idProduto, tabela).enqueue(new Callback<GetTabelaDTO>() {
             @Override
             public void onResponse(Call<GetTabelaDTO> call, retrofit2.Response<GetTabelaDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     GetTabelaDTO tabelaCriada = response.body();
                     preencherDadosTabela(tabelaCriada);
-//                    binding.tableLayout.setVisibility(View.VISIBLE);
-//                    binding.botaoNovo.setVisibility(View.VISIBLE);
+                    mostrarCarregando(false);
+                    binding.tableLayout.setVisibility(View.VISIBLE);
+                    binding.btnNovo.setVisibility(View.VISIBLE);
 
+                    Toast.makeText(getContext(), "Tabela adicionada com sucesso!", Toast.LENGTH_SHORT).show();
                 } else {
                     int code = response.code();
-//                    esconderCarregando();
+                    mostrarCarregando(false);
                     Toast.makeText(
                             getContext(),
                             "Erro ao carregar usuário (" + code + ")\n",
@@ -257,7 +280,7 @@ public class TabelaFragment extends Fragment {
 
             @Override
             public void onFailure(Call<GetTabelaDTO> call, Throwable t) {
-//                esconderCarregando();
+                mostrarCarregando(false);
                 Toast.makeText(getContext(),
                         "Falha de conexão: " + (t.getMessage() == null ? "desconhecida" : t.getMessage()),
                         Toast.LENGTH_LONG).show();
@@ -267,20 +290,26 @@ public class TabelaFragment extends Fragment {
 
     private void preencherDadosTabela(GetTabelaDTO tabela) {
         idTabela = tabela.getTabelaId();
-//        binding.tableLayout.removeAllViews();
+        binding.tableLayout.removeAllViews();
+
+        TableRow nomeTabela = new TableRow(getContext());
+        TextView nome = new TextView(getContext());
+        nomeTabela.addView(nome);
+        binding.tableLayout.addView(nomeTabela);
+
         TableRow nomeColuna = new TableRow(getContext());
         TextView coluna1 = new TextView(getContext());
         TextView coluna2 = new TextView(getContext());
         TextView coluna3 = new TextView(getContext());
 
-        coluna1.setText(tabela.getNomeTabela());
-        coluna2.setText("Poção " + tabela.getPorcao()+"g");
+        coluna1.setText("Item");
+        coluna2.setText("Valor");
         coluna3.setText("%VD*");
 
         nomeColuna.addView(coluna1);
         nomeColuna.addView(coluna2);
         nomeColuna.addView(coluna3);
-//        binding.tableLayout.addView(nomeColuna);
+        binding.tableLayout.addView(nomeColuna);
 
         for (GetNutrienteDTO nutrienteDados : tabela.getNutrientes()){
             TableRow nutrientesInformacao = new TableRow(getContext());
@@ -295,7 +324,7 @@ public class TabelaFragment extends Fragment {
             nutrientesInformacao.addView(nutriente);
             nutrientesInformacao.addView(porcao);
             nutrientesInformacao.addView(vd);
-//        binding.tableLayout.addView(nutrientesInformacao);
+            binding.tableLayout.addView(nutrientesInformacao);
 
         }
 
@@ -329,9 +358,38 @@ public class TabelaFragment extends Fragment {
             }
         }).start();
     }
+    private void mostrarCarregando(boolean carregando) {
+        if (carregando) {
+            binding.layoutCarregando.setVisibility(View.VISIBLE);
+        } else {
+            binding.layoutCarregando.setVisibility(View.GONE);
+        }
+    }
+    private boolean validarCampoObrigatorio(TextInputLayout layout, TextInputEditText edit) {
+        String texto = edit.getText().toString().trim();
+
+        if (texto.isEmpty()) {
+            layout.setError("Campo obrigatório");
+            layout.setErrorEnabled(true);
+            return false;
+        } else {
+            layout.setError(null);
+            layout.setErrorEnabled(false);
+            return true;
+        }
+    }
+    private boolean validarTodosCamposObrigatorios() {
+        boolean nomeProdutoValido = validarCampoObrigatorio(binding.nomeProdutoLayout, binding.nomeProdutoEdit);
+        boolean nomeTabelaValido = validarCampoObrigatorio(binding.nomeTabelaLayout, binding.nomeTabelaEdit);
+        boolean checkBoxSelecionada = binding.checkBox.isChecked() || binding.checkBox2.isChecked() || binding.checkBox3.isChecked() || binding.checkBox4.isChecked();
+
+        //verificar se tem ingredientes adicionados
+        return nomeProdutoValido && nomeTabelaValido && checkBoxSelecionada && !binding.editValor.getText().equals("0");
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
+
 }
