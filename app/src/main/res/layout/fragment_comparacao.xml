@@ -35,6 +35,12 @@
         app:layout_constraintTop_toBottomOf="@+id/TextView_tituloTelaComparacao"
         app:layout_constraintVertical_bias="0.983" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top_searchbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="232dp" />
     <View
         android:id="@+id/view_linha4"
         android:layout_width="265dp"
@@ -59,17 +65,6 @@
         app:layout_constraintHorizontal_bias="0.095"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view" />
-
-    <ImageView
-        android:id="@+id/imageViewIconeTabela"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/View_demonstracaoItem_selecionado"
-        app:layout_constraintEnd_toEndOf="@+id/View_demonstracaoItem_selecionado"
-        app:layout_constraintStart_toStartOf="@+id/View_demonstracaoItem_selecionado"
-        app:layout_constraintTop_toTopOf="@+id/View_demonstracaoItem_selecionado"
-        app:srcCompat="@drawable/xlsx" />
 
     <TextView
         android:id="@+id/textViewSelecionarProduto1"
@@ -96,20 +91,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view" />
 
+    <ImageView
+        android:id="@+id/imageViewIconeTabela"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintEnd_toEndOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintStart_toStartOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintTop_toTopOf="@+id/View_demonstracaoItem_selecionado"
+        app:srcCompat="@drawable/xlsx" />
+
     <TextView
         android:id="@+id/textViewNomeProdutoSelecionado"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:fontFamily="@font/montserrat_medium"
-        tools:text="Manteiga"
         android:textColor="#161515"
         android:textSize="18sp"
         android:textStyle="normal"
         android:visibility="gone"
-        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/View_demonstracaoItem_selecionado"
         app:layout_constraintStart_toEndOf="@+id/View_demonstracaoItem_selecionado"
         app:layout_constraintTop_toTopOf="@+id/View_demonstracaoItem_selecionado"
-        app:layout_constraintBottom_toBottomOf="@+id/View_demonstracaoItem_selecionado"/>
+        tools:text="Manteiga" />
 
     <View
         android:id="@+id/view_demonstracaoItem2"
@@ -141,11 +147,10 @@
         android:id="@+id/search_bar_container"
         android:layout_width="350dp"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
         android:background="@drawable/search_bar_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/View_demonstracaoItem_1"> <EditText
+        app:layout_constraintTop_toBottomOf="@+id/guideline_top_searchbar"> <EditText
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
