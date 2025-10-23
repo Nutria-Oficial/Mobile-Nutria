@@ -3,8 +3,6 @@ package com.bea.nutria.api.mongo;
 import android.app.Activity;
 import android.util.Log;
 
-import com.bea.nutria.api.ProdutoAPI; // Mantemos o import para o método getProdutoApi, mas é opcional
-
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Credentials;
@@ -14,18 +12,19 @@ import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class Mongo {
+public class ConexaoAPI {
 
     private long ultimoWakeMs = 0L;
     private static final long JANELA_WAKE_MS = 60_000; // 60 segundos
-    private static final String BASE_URL = "https://api-spring-mongodb.onrender.com/";
+    private static String BASE_URL = "";
 
     private final String credenciais = Credentials.basic("nutria", "nutria123");
 
     private final OkHttpClient client;
     private final Retrofit retrofit;
 
-    public Mongo() {
+    public ConexaoAPI(String url) {
+        BASE_URL = url;
         // 1. Configura OkHttpClient
         client = new OkHttpClient.Builder()
                 .connectTimeout(25, TimeUnit.SECONDS)

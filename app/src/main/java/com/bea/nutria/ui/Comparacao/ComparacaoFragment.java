@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bea.nutria.ComparacaoParte2Fragment;
 import com.bea.nutria.R;
 import com.bea.nutria.api.ProdutoAPI;
-import com.bea.nutria.api.mongo.Mongo;
+import com.bea.nutria.api.mongo.ConexaoAPI;
 import com.bea.nutria.databinding.FragmentComparacaoBinding;
 import com.bea.nutria.model.GetProdutoDTO;
 
@@ -54,8 +54,9 @@ public class ComparacaoFragment extends Fragment {
     private Integer idUsuario = 1;
 
     private ProdutoAPI produtoApi;
-    // Referência corrigida para a classe Mongo
-    private Mongo apiManager;
+    private ConexaoAPI apiManager;
+
+    private static final String url = "https://api-spring-mongodb.onrender.com/";
 
     private static final int FRAGMENT_CONTAINER_ID = R.id.nav_host_fragment_activity_main;
 
@@ -72,7 +73,7 @@ public class ComparacaoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // --- Inicialização do Gerenciador de API ---
-        apiManager = new Mongo(); // Inicializa o Manager
+        apiManager = new ConexaoAPI(url); // Inicializa o Manager
 
         produtoApi = apiManager.getApi(ProdutoAPI.class);
         // ------------------------------------------
