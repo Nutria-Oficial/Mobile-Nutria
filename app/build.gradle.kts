@@ -72,6 +72,7 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.3.4")
     implementation("androidx.camera:camera-view:1.3.4")
 
-    implementation("com.google.mlkit:text-recognition:16.0.1")
+// se seu repositório não resolver: 'io.projectreactor:reactor-core:3.6.3'
+    implementation("com.google.code.gson:gson:2.11.0")
 
 }
