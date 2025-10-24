@@ -32,11 +32,11 @@
 
     <!-- Ícone no topo-direito, acima do NavHost -->
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/perfil"
         android:layout_width="50dp"
         android:layout_height="55dp"
         android:layout_marginTop="40dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="15dp"
         android:elevation="8dp"
         android:translationZ="8dp"
         app:layout_constraintEnd_toEndOf="parent"

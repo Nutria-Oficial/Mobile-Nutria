@@ -21,7 +21,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -29,10 +28,8 @@ import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.CallAdapter;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class CadastroActivity extends AppCompatActivity {
@@ -54,14 +51,12 @@ public class CadastroActivity extends AppCompatActivity {
                 } else {
                     urlFotoSelecionada = null;
                 }
-                // Pré-aquece o Render e só então cadastra
-                preAquecerServidorEProsseguir();
+                iniciandoServidor();
             });
 
-    // --- HTTP ---
     private OkHttpClient okHttpClient;
     private Retrofit retrofit;
-    private String basicAuthHeader;
+    private String credenciais;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +75,7 @@ public class CadastroActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         auth = FirebaseAuth.getInstance();
 
-        // OkHttp + Basic Auth + timeouts maiores
-        basicAuthHeader = Credentials.basic("nutria", "nutria123");
+        credenciais = Credentials.basic("nutria", "nutria123");
         okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(45, TimeUnit.SECONDS)
                 .readTimeout(90, TimeUnit.SECONDS)
@@ -91,7 +85,7 @@ public class CadastroActivity extends AppCompatActivity {
                 .addInterceptor(chain -> {
                     Request original = chain.request();
                     Request req = original.newBuilder()
-                            .header("Authorization", basicAuthHeader)
+                            .header("Authorization", credenciais)
                             .header("Accept", "application/json")
                             .method(original.method(), original.body())
                             .build();
@@ -100,7 +94,7 @@ public class CadastroActivity extends AppCompatActivity {
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://api-spring-aql.onrender.com/") // barra final
+                .baseUrl("https://api-spring-aql.onrender.com/")
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -132,20 +126,18 @@ public class CadastroActivity extends AppCompatActivity {
         fotoLauncher.launch(i);
     }
 
-    /** Faz um GET rápido em /actuator/health para "acordar" o Render; depois chama efetivarCadastro(). */
-    private void preAquecerServidorEProsseguir() {
+    private void iniciandoServidor() {
         new Thread(() -> {
             try {
                 Request req = new Request.Builder()
                         .url("https://api-spring-aql.onrender.com/actuator/health")
-                        .header("Authorization", basicAuthHeader)
+                        .header("Authorization", credenciais)
                         .build();
                 Call call = okHttpClient.newCall(req);
-                // Não precisa usar o retorno; só queremos “tocar” o servidor.
                 Response resp = call.execute();
                 if (resp != null) resp.close();
             } catch (Exception ignored) {
-                // Mesmo se falhar, vamos tentar o POST.
+
             }
             runOnUiThread(this::efetivarCadastro);
         }).start();
@@ -160,7 +152,6 @@ public class CadastroActivity extends AppCompatActivity {
 
         // BCrypt em background pra não travar UI
         new Thread(() -> {
-            // cost=10 mais rápido, reduz chance de jank
             String senhaHasheada = BCrypt.withDefaults().hashToString(10, senhaNormal.toCharArray());
 
             Usuario body = new Usuario(nome, email, senhaHasheada, telefone, empresa, urlFotoSelecionada);
