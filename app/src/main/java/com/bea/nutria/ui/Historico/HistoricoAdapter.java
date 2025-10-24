@@ -17,65 +17,61 @@ import java.util.Locale;
 
 public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.ViewHolder> {
 
-    public interface OnItemClickListener {
-        void onItemClick(int position);
-    }
+    public interface OnItemClickListener { void onItemClick(int position); }
 
-    private final List<String> nomes = new ArrayList<>();
-    private final List<HistoricoFragment.ProdutoItem> produtosOriginais = new ArrayList<>();
-    private final List<HistoricoFragment.ProdutoItem> produtosFiltrados = new ArrayList<>();
     private final OnItemClickListener listener;
+    private final List<String> nomes = new ArrayList<>();
+    private final List<String> nomesOriginais = new ArrayList<>();
+    private final List<HistoricoFragment.ProdutoItem> produtos = new ArrayList<>();
 
     public HistoricoAdapter(List<String> nomesIniciais, OnItemClickListener listener) {
-        if (nomesIniciais != null) nomes.addAll(nomesIniciais);
+        if (nomesIniciais != null) {
+            nomes.addAll(nomesIniciais);
+            nomesOriginais.addAll(nomesIniciais);
+        }
         this.listener = listener;
     }
 
-    public void submit(List<String> nomesNovos, List<HistoricoFragment.ProdutoItem> produtosNovos) {
+    public void submit(List<String> novosNomes, List<HistoricoFragment.ProdutoItem> novosProdutos) {
         nomes.clear();
-        produtosOriginais.clear();
-        produtosFiltrados.clear();
+        nomesOriginais.clear();
+        produtos.clear();
 
-        if (nomesNovos != null) nomes.addAll(nomesNovos);
-        if (produtosNovos != null) {
-            produtosOriginais.addAll(produtosNovos);
-            produtosFiltrados.addAll(produtosNovos);
+        if (novosNomes != null) {
+            nomes.addAll(novosNomes);
+            nomesOriginais.addAll(novosNomes);
+        }
+        if (novosProdutos != null) {
+            produtos.addAll(novosProdutos);
         }
         notifyDataSetChanged();
     }
 
-    @NonNull
-    @Override
+    @NonNull @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_historico, parent, false);
-        return new ViewHolder(v);
+        return new ViewHolder(v, listener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        HistoricoFragment.ProdutoItem p = produtosFiltrados.get(position);
-        holder.txtNome.setText(p.nome);
+        holder.txtNome.setText(nomes.get(position));
         holder.img.setImageResource(R.drawable.imagem_item_historico);
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(position));
     }
 
     @Override
-    public int getItemCount() {
-        return produtosFiltrados.size();
-    }
+    public int getItemCount() { return nomes.size(); }
 
     public void filtro(String query) {
         String q = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
-        produtosFiltrados.clear();
+        nomes.clear();
 
         if (q.isEmpty()) {
-            produtosFiltrados.addAll(produtosOriginais);
+            nomes.addAll(nomesOriginais);
         } else {
-            for (HistoricoFragment.ProdutoItem p : produtosOriginais) {
-                if (p.nome.toLowerCase(Locale.ROOT).contains(q)) {
-                    produtosFiltrados.add(p);
-                }
+            for (String s : nomesOriginais) {
+                if (s.toLowerCase(Locale.ROOT).contains(q)) nomes.add(s);
             }
         }
         notifyDataSetChanged();
@@ -84,11 +80,14 @@ public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.View
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtNome;
         ImageView img;
-
-        ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
             txtNome = itemView.findViewById(R.id.nomeProdutoHistorico);
             img = itemView.findViewById(R.id.imgProdutoHistorico);
+            itemView.setOnClickListener(v -> {
+                int pos = getAdapterPosition();
+                if (listener != null && pos != RecyclerView.NO_POSITION) listener.onItemClick(pos);
+            });
         }
     }
 }
