@@ -57,18 +57,17 @@ dependencies {
     implementation ("com.squareup.okhttp3:okhttp:4.12.0")
     implementation ("com.cloudinary:cloudinary-android:2.5.0")
     implementation ("androidx.exifinterface:exifinterface:1.3.7")
-<<<<<<< Updated upstream
+
     implementation ("com.squareup.retrofit2:retrofit:2.11.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation("at.favre.lib:bcrypt:0.10.2")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-=======
 
     implementation ("com.github.bumptech.glide:glide:4.16.0")
 //    o Glide é utilizado para carregar Gifs, visto que o Android Studio não oferece suporte para eles, logo, temos que importar do GitHub o Glide.
     implementation ("com.google.android.material:material:1.9.0") // Este é o Material Desing, que é utilizado para para implementar o desing do app, um sistema de desing utilizado pelo google para tornar aplicativos mais bonitos.
->>>>>>> Stashed changes
+
 
 //    A linha abaixo foi REMOVIDA para usar a abordagem antiga.
 //    implementation("androidx.core:core-splashscreen:1.0.1")
