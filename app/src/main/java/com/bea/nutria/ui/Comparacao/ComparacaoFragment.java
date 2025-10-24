@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bea.nutria.ComparacaoParte2Fragment;
 import com.bea.nutria.R;
 import com.bea.nutria.api.ProdutoAPI;
-import com.bea.nutria.api.mongo.ConexaoAPI;
+import com.bea.nutria.api.conexaoApi.ConexaoAPI;
 import com.bea.nutria.databinding.FragmentComparacaoBinding;
 import com.bea.nutria.model.GetProdutoDTO;
 
