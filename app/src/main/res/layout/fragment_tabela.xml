@@ -34,7 +34,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewConteudo"
             android:layout_width="match_parent"
-            android:layout_height="596dp"
+            android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:background="@drawable/card_border"
@@ -44,7 +44,7 @@
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="616dp">
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -53,7 +53,7 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="match_parent">
 
                         <TextView
                             android:id="@+id/textView2"
@@ -216,7 +216,7 @@
 
                         <LinearLayout
                             android:id="@+id/linearLayout"
-                            android:layout_width="338dp"
+                            android:layout_width="160dp"
                             android:layout_height="54dp"
                             android:layout_marginStart="28dp"
                             android:layout_marginTop="28dp"
@@ -227,8 +227,8 @@
                             app:layout_constraintTop_toBottomOf="@+id/checkBox">
 
                             <EditText
-                                android:id="@+id/editValor"
-                                android:layout_width="295dp"
+                                android:id="@+id/porcao"
+                                android:layout_width="130dp"
                                 android:layout_height="50dp"
                                 android:layout_marginLeft="5dp"
                                 android:background="@color/white"
@@ -263,6 +263,45 @@
                                     app:srcCompat="@drawable/seta_baixo" />
                             </LinearLayout>
                         </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayout3"
+                            android:layout_width="160dp"
+                            android:layout_height="54dp"
+                            android:layout_marginStart="25dp"
+                            android:layout_marginTop="28dp"
+                            android:layout_marginEnd="36dp"
+                            android:background="@drawable/linear_layout_border"
+                            android:gravity="center|start"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/linearLayout"
+                            app:layout_constraintTop_toBottomOf="@+id/checkBox3">
+
+                            <EditText
+                                android:id="@+id/valor"
+                                android:layout_width="150dp"
+                                android:layout_height="50dp"
+                                android:layout_marginLeft="5dp"
+                                android:background="@color/white"
+                                android:inputType="number"
+                                android:paddingStart="10dp"
+                                android:text="0"
+                                android:textAlignment="textStart" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/porcaoEmbalagem"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:fontFamily="@font/montserrat_regular"
+                            android:text="Porção por embalagem"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.858"
+                            app:layout_constraintStart_toEndOf="@+id/textView4" />
 
                         <TextView
                             android:id="@+id/textView6"

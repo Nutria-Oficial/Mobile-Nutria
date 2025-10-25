@@ -55,6 +55,7 @@ public class TabelaFragment extends Fragment {
 
     private FragmentTabelaBinding binding;
     private int porcaoAtual= 0;
+    private int porcaoEmbalagemAtual= 0;
     private String tipoMedida = "";
     private Integer idTabela = 0;
     private List<ItemIngrediente> ingredienteList = new ArrayList<>();
@@ -114,8 +115,8 @@ public class TabelaFragment extends Fragment {
             return WindowInsetsCompat.CONSUMED;
         });
 
-        binding.editValor.setText(String.valueOf(porcaoAtual));
-        binding.editValor.setInputType(InputType.TYPE_CLASS_NUMBER);
+        binding.porcao.setText(String.valueOf(porcaoAtual));
+        binding.porcao.setInputType(InputType.TYPE_CLASS_NUMBER);
 
 
         binding.btnAumentar.setOnClickListener(v -> {
@@ -127,7 +128,7 @@ public class TabelaFragment extends Fragment {
             }
         });
 
-        binding.editValor.addTextChangedListener(new TextWatcher() {
+        binding.porcao.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable editable) {
 
@@ -144,6 +145,26 @@ public class TabelaFragment extends Fragment {
                     porcaoAtual = Integer.parseInt(charSequence.toString());
                 }catch (NumberFormatException exception){
                     porcaoAtual = 0;
+                }
+            }
+        });
+        binding.porcaoEmbalagem.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                try {
+                    porcaoEmbalagemAtual = Integer.parseInt(charSequence.toString());
+                }catch (NumberFormatException exception){
+                    porcaoEmbalagemAtual = 0;
                 }
             }
         });
@@ -199,10 +220,13 @@ public class TabelaFragment extends Fragment {
     }
     public void atualizarPorcao(int novoValor){
         porcaoAtual = novoValor;
-        binding.editValor.setText(String.valueOf(porcaoAtual));
+        binding.porcao.setText(String.valueOf(porcaoAtual));
     }
     public int getPorcaoAtual(){
         return porcaoAtual;
+    }
+    public int getPorcaoEmbalagemAtual(){
+        return porcaoEmbalagemAtual;
     }
     private void setCheckBoxListener(CheckBox checkBox){
         checkBox.setOnCheckedChangeListener((buttonView, isChecked) ->{
@@ -297,6 +321,15 @@ public class TabelaFragment extends Fragment {
         nomeTabela.addView(nome);
         binding.tableLayout.addView(nomeTabela);
 
+        TableRow porcoes = new TableRow(getContext());
+        TextView porcao = new TextView(getContext());
+        porcao.setText(porcaoAtual);
+        TextView porcaoEmbalagem = new TextView(getContext());
+        porcaoEmbalagem.setText(porcaoEmbalagemAtual);
+        porcoes.addView(porcao);
+        porcoes.addView(porcaoEmbalagem);
+        binding.tableLayout.addView(porcoes);
+
         TableRow nomeColuna = new TableRow(getContext());
         TextView coluna1 = new TextView(getContext());
         TextView coluna2 = new TextView(getContext());
@@ -314,15 +347,15 @@ public class TabelaFragment extends Fragment {
         for (GetNutrienteDTO nutrienteDados : tabela.getNutrientes()){
             TableRow nutrientesInformacao = new TableRow(getContext());
             TextView nutriente = new TextView(getContext());
-            TextView porcao = new TextView(getContext());
+            TextView porcaoNutriente = new TextView(getContext());
             TextView vd = new TextView(getContext());
 
             nutriente.setText(nutrienteDados.getNutriente());
-            porcao.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getPorcao()));
+            porcaoNutriente.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getPorcao()));
             vd.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getValorDiario())+"%");
 
             nutrientesInformacao.addView(nutriente);
-            nutrientesInformacao.addView(porcao);
+            nutrientesInformacao.addView(porcaoNutriente);
             nutrientesInformacao.addView(vd);
             binding.tableLayout.addView(nutrientesInformacao);
 
@@ -381,10 +414,10 @@ public class TabelaFragment extends Fragment {
     private boolean validarTodosCamposObrigatorios() {
         boolean nomeProdutoValido = validarCampoObrigatorio(binding.nomeProdutoLayout, binding.nomeProdutoEdit);
         boolean nomeTabelaValido = validarCampoObrigatorio(binding.nomeTabelaLayout, binding.nomeTabelaEdit);
-        boolean checkBoxSelecionada = binding.checkBox.isChecked() || binding.checkBox2.isChecked() || binding.checkBox3.isChecked() || binding.checkBox4.isChecked();
+        boolean checkBoxSelecionado = binding.checkBox.isChecked() || binding.checkBox2.isChecked() || binding.checkBox3.isChecked() || binding.checkBox4.isChecked();
 
         //verificar se tem ingredientes adicionados
-        return nomeProdutoValido && nomeTabelaValido && checkBoxSelecionada && !binding.editValor.getText().equals("0");
+        return nomeProdutoValido && nomeTabelaValido && checkBoxSelecionado && !binding.porcao.getText().equals("0") && !binding.porcaoEmbalagem.getText().equals("0");
     }
     @Override
     public void onDestroyView() {
