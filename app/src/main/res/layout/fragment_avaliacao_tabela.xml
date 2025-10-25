@@ -85,12 +85,12 @@
                             app:layout_constraintStart_toStartOf="parent" />
 
                         <ImageView
-                            android:id="@+id/imageView6"
+                            android:id="@+id/avaliacao"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="108dp"
                             android:layout_marginBottom="6dp"
-                            android:src="@drawable/avaliacao_botao_legenda"
+                            android:src="@drawable/ic_avaliacao_c"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent" />
 

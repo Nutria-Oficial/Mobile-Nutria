@@ -1,16 +1,22 @@
 package com.bea.nutria;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Credentials;
@@ -133,7 +140,9 @@ public class AvaliacaoTabelaFragment extends Fragment {
             NavController navController = NavHostFragment.findNavController(AvaliacaoTabelaFragment.this);
             navController.navigate(R.id.action_avaliacao_tabela_to_tabela);
         });
-
+        binding.avaliacao.setOnClickListener(v -> {
+            mostrarLegenda();
+        });
     }
 
     private void buscarTabelaAvaliacao(Integer tabelaId) {
@@ -147,6 +156,7 @@ public class AvaliacaoTabelaFragment extends Fragment {
 
                     mostrarCarregando(false);
                     binding.tableLayout.setVisibility(View.VISIBLE);
+                    mudarCorAvaliacao(tabelaEncontrada.getAvaliacao().getClassificacao());
 
                 } else {
                     int code = response.code();
@@ -247,9 +257,7 @@ public class AvaliacaoTabelaFragment extends Fragment {
             binding.layoutInformacoes.setVisibility(View.VISIBLE);
         }
     }
-//    private void getTabelaDados(ArrayList<String[]> dados){
-//
-//    }
+
     private void adicionarValoresTabelaDados(View linhaTabela){
         TableRow linha = (TableRow) linhaTabela;
 
@@ -260,6 +268,32 @@ public class AvaliacaoTabelaFragment extends Fragment {
             valores[i] = valor.getText().toString();
         }
         tabelaDados.add(valores);
+    }
+    private void mudarCorAvaliacao(Character letter) {
+        switch (letter){
+            case 'A': binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_a);
+            case 'B': binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_b);
+            case 'C': binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_c);
+            case 'D': binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_d);
+            case 'E': binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_e);
+        }
+    }
+    private void mostrarLegenda(){
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.card_avaliacao_legenda, null);
+
+        ImageView btnfechar = view.findViewById(R.id.btnFechar);
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setView(view)
+                .create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(
+                    new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+
+        btnfechar.setOnClickListener(v -> dialog.dismiss());
     }
     @Override
     public void onDestroyView() {
