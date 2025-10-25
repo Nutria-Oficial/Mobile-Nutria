@@ -15,6 +15,7 @@ navigationUi = "2.9.0"
 firebaseAuth = "24.0.1"
 activity = "1.11.0"
 cardview = "1.0.0"
+firebaseCrashlyticsBuildtools = "3.0.6"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -31,6 +32,7 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 
 
 [plugins]
