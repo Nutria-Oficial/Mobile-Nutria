@@ -25,12 +25,30 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     buildFeatures {
         viewBinding = true
+    }
+
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/androidx.cardview_cardview.version",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0"
+            )
+        }
     }
 }
 
@@ -44,7 +62,9 @@ dependencies {
     implementation(libs.navigation.ui)
     implementation(libs.firebase.auth)
     implementation(libs.activity)
-    implementation(libs.activity.ktx)      
+    implementation(libs.activity.ktx)
+    implementation(libs.viewpager2)
+    implementation(libs.recyclerview)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
@@ -66,8 +86,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     implementation ("com.github.bumptech.glide:glide:4.16.0")
-//    o Glide é utilizado para carregar Gifs, visto que o Android Studio não oferece suporte para eles, logo, temos que importar do GitHub o Glide.
-    implementation ("com.google.android.material:material:1.9.0") // Este é o Material Desing, que é utilizado para para implementar o desing do app, um sistema de desing utilizado pelo google para tornar aplicativos mais bonitos.
+    implementation ("com.google.android.material:material:1.9.0")
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
