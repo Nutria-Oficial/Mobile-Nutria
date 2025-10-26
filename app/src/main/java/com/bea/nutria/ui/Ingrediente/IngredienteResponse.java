@@ -1,7 +1,15 @@
-package com.bea.nutria.model;
+package com.bea.nutria.ui.Ingrediente;
 
-public class IngredienteResponse {
+import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
+import java.util.Objects;
+
+public class IngredienteResponse implements Serializable {
+
+    @SerializedName("id")
     private Integer id;
+
+    @SerializedName("nomeIngrediente")
     private String nomeIngrediente;
 
     public IngredienteResponse(Integer id, String nomeIngrediente) {
@@ -23,5 +31,10 @@ public class IngredienteResponse {
 
     public void setNomeIngrediente(String nomeIngrediente) {
         this.nomeIngrediente = nomeIngrediente;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

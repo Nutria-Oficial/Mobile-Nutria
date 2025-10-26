@@ -1,7 +1,7 @@
 package com.bea.nutria.api;
 
-import com.bea.nutria.model.IngredienteRequest;
-import com.bea.nutria.model.IngredienteResponse;
+import com.bea.nutria.ui.Ingrediente.IngredienteRequest;
+import com.bea.nutria.ui.Ingrediente.IngredienteResponse;
 
 import java.util.List;
 import retrofit2.Call;

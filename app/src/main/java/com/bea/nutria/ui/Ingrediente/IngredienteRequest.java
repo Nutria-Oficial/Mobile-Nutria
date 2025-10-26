@@ -1,4 +1,4 @@
-package com.bea.nutria.model;
+package com.bea.nutria.ui.Ingrediente;
 
 public class IngredienteRequest {
 

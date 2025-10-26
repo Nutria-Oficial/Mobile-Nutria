@@ -15,6 +15,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class NovoIngredienteFragment extends Fragment {
+    //fazer binding depois, bem mais facil e limpo
     private TextInputLayout layoutNome, layoutCaloria, layoutCarboidrato;
     private TextInputLayout layoutAcucar, layoutProteina, layoutGordurasTotais;
     private TextInputLayout layoutGordurasSaturadas, layoutSodio, layoutFibra;

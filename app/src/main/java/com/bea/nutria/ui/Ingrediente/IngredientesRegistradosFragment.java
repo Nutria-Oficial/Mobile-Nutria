@@ -1,9 +1,11 @@
 package com.bea.nutria.ui.Ingrediente;
 
 import android.os.Bundle;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
@@ -15,16 +17,29 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bea.nutria.R;
+import com.bea.nutria.api.IngredienteAPI;
+import com.bea.nutria.api.conexaoApi.ConexaoAPI;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class IngredientesRegistradosFragment extends Fragment {
 
-    private ArrayList<String> listaIngredientes;
-    private ArrayList<String> listaFiltrada;
+    private List<IngredienteResponse> listaIngredientes;
     private IngredienteAdapter adapter;
     private EditText editPesquisar;
     private ImageView iconeBuscar;
+    private ConexaoAPI apiManager;
+    private IngredienteAPI ingredienteApi;
+    private RecyclerView recyclerViewIngredientes;
+    private IngredienteSharedViewModel sharedViewModel; // ADICIONAR
+
+    private static final String TAG = "IngredientesFragment";
+    private static final String url = "https://api-spring-mongodb.onrender.com";
 
     public IngredientesRegistradosFragment() { }
 
@@ -34,38 +49,44 @@ public class IngredientesRegistradosFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ingredientes_registrados, container, false);
 
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(IngredienteSharedViewModel.class);
+
+        listaIngredientes = new ArrayList<>();
+
+        apiManager = new ConexaoAPI(url);
+        ingredienteApi = apiManager.getApi(IngredienteAPI.class);
+
         editPesquisar = view.findViewById(R.id.editPesquisar);
         iconeBuscar = view.findViewById(R.id.iconeBuscar);
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewIngredientes);
+        recyclerViewIngredientes = view.findViewById(R.id.recyclerViewIngredientes);
 
-        // lista de ingredientes - teste
-        listaIngredientes = new ArrayList<>();
-        listaIngredientes.add("Arroz");
-        listaIngredientes.add("Feijão");
-        listaIngredientes.add("Macarrão");
-        listaIngredientes.add("Farinha");
-        listaIngredientes.add("Açúcar");
-        listaIngredientes.add("Sal");
-        listaIngredientes.add("Óleo");
-        listaIngredientes.add("Leite");
-        listaIngredientes.add("Ovos");
-        listaIngredientes.add("Queijo");
-        listaIngredientes.add("Frango");
-        listaIngredientes.add("Carne moída");
-        listaIngredientes.add("Batata");
-        listaIngredientes.add("Cenoura");
-        listaIngredientes.add("Tomate");
-        listaIngredientes.add("Cebola");
-        listaIngredientes.add("Alho");
-        listaIngredientes.add("Pimentão");
+        adapter = new IngredienteAdapter(getContext(), new ArrayList<>());
+        recyclerViewIngredientes.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerViewIngredientes.setAdapter(adapter);
 
-        listaFiltrada = new ArrayList<>(listaIngredientes);
+        sharedViewModel.getIngredientesSelecionados().observe(getViewLifecycleOwner(), selecionados -> {
+            if (selecionados != null) {
+                adapter.restaurarSelecao(selecionados);
+            }
+        });
 
-        adapter = new IngredienteAdapter(getContext(), listaFiltrada);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(adapter);
+        // atualizar ViewModel quando adicionar/remover
+        adapter.setOnIngredienteChangeListener(new IngredienteAdapter.OnIngredienteChangeListener() {
+            @Override
+            public void onIngredienteAdicionado(IngredienteResponse ingrediente) {
+                Log.d(TAG, "Ingrediente adicionado: " + ingrediente.getNomeIngrediente());
+                sharedViewModel.setIngredientesSelecionados(adapter.getListaSelecionados());
+            }
 
-        // pesquisa enquanto digita (parcial)
+            @Override
+            public void onIngredienteRemovido(IngredienteResponse ingrediente) {
+                Log.d(TAG, "Ingrediente removido: " + ingrediente.getNomeIngrediente());
+                sharedViewModel.setIngredientesSelecionados(adapter.getListaSelecionados());
+            }
+        });
+
+        apiManager.iniciarServidor(requireActivity(), () -> getAllIngredientes());
+
         editPesquisar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -79,7 +100,6 @@ public class IngredientesRegistradosFragment extends Fragment {
             }
         });
 
-        // pesquisa exata quando clica na lupa
         iconeBuscar.setOnClickListener(v -> {
             String texto = editPesquisar.getText().toString();
             filtrarIngredientesExata(texto);
@@ -88,35 +108,80 @@ public class IngredientesRegistradosFragment extends Fragment {
         return view;
     }
 
-    //retorna todos que começam com o texto digitado
+    private void getAllIngredientes() {
+        ingredienteApi.getAllIngredientes().enqueue(new Callback<List<IngredienteResponse>>() {
+            @Override
+            public void onResponse(Call<List<IngredienteResponse>> call, Response<List<IngredienteResponse>> response) {
+                if (getActivity() == null) return;
+
+                if (response.isSuccessful() && response.body() != null) {
+                    List<IngredienteResponse> listaCompleta = response.body();
+
+                    listaIngredientes.clear();
+                    listaIngredientes.addAll(listaCompleta);
+
+                    List<IngredienteResponse> listaInicial = new ArrayList<>();
+                    int limite = Math.min(listaIngredientes.size(), 50);
+                    for (int i = 0; i < limite; i++) {
+                        listaInicial.add(listaIngredientes.get(i));
+                    }
+
+                    adapter.atualizarLista(listaInicial);
+                } else {
+                    Log.e(TAG, "Erro na resposta: " + response.code() + " - " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<IngredienteResponse>> call, Throwable throwable) {
+                if (getActivity() != null) {
+                    throwable.printStackTrace();
+                }
+            }
+        });
+    }
+
     private void filtrarIngredientesParcial(String texto) {
-        listaFiltrada.clear();
+        List<IngredienteResponse> listaTemporaria = new ArrayList<>();
 
         if (texto.isEmpty()) {
-            listaFiltrada.addAll(listaIngredientes);
+            int limite = Math.min(listaIngredientes.size(), 50);
+            for (int i = 0; i < limite; i++) {
+                listaTemporaria.add(listaIngredientes.get(i));
+            }
         } else {
-            String textoBusca = texto.toLowerCase();
-            for (String ingrediente : listaIngredientes) {
-                if (ingrediente.toLowerCase().startsWith(textoBusca)) {
-                    listaFiltrada.add(ingrediente);
+            String textoBusca = texto.toLowerCase().trim();
+            int contador = 0;
+
+            for (IngredienteResponse ingrediente : listaIngredientes) {
+                if (ingrediente.getNomeIngrediente().toLowerCase().startsWith(textoBusca)) {
+                    listaTemporaria.add(ingrediente);
+                    contador++;
+
+                    if (contador >= 50) {
+                        break;
+                    }
                 }
             }
         }
 
-        adapter.notifyDataSetChanged();
+        adapter.atualizarLista(listaTemporaria);
     }
 
-
-    // retorna apenas ingredientes com o nome idêntico ao da pesquisa
     private void filtrarIngredientesExata(String texto) {
-        listaFiltrada.clear();
+        List<IngredienteResponse> listaTemporaria = new ArrayList<>();
 
-        for (String ingrediente : listaIngredientes) {
-            if (ingrediente.equalsIgnoreCase(texto)) {
-                listaFiltrada.add(ingrediente);
+        if (!texto.isEmpty()) {
+            String textoBusca = texto.trim();
+
+            for (IngredienteResponse ingrediente : listaIngredientes) {
+                if (ingrediente.getNomeIngrediente().equalsIgnoreCase(textoBusca)) {
+                    listaTemporaria.add(ingrediente);
+                    break;
+                }
             }
         }
 
-        adapter.notifyDataSetChanged();
+        adapter.atualizarLista(listaTemporaria);
     }
 }

@@ -8,11 +8,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bea.nutria.R;
 import com.bea.nutria.api.IngredienteAPI;
+import com.bea.nutria.databinding.FragmentIngredienteBinding;
 import okhttp3.Response;
 import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
@@ -22,13 +21,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class IngredienteFragment extends Fragment {
 
-    private ViewPager2 viewPager;
+    private FragmentIngredienteBinding binding;
     private IngredienteViewPagerAdapter adapter;
-    private IngredienteFragment binding;
-    private TextView txtRegistrados;
-    private TextView txtNovo;
-    private ImageView linha;
-    private ImageView btVoltar;
     private IngredienteAPI api;
     private String credenciais;
     private Retrofit retrofit;
@@ -39,22 +33,16 @@ public class IngredienteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_ingrediente, container, false);
-
-        txtRegistrados = view.findViewById(R.id.registrados);
-        txtNovo = view.findViewById(R.id.novo);
-        linha = view.findViewById(R.id.imageView2);
-        viewPager = view.findViewById(R.id.viewPager2);
-        btVoltar = view.findViewById(R.id.btVoltar);
+        binding = FragmentIngredienteBinding.inflate(inflater, container, false);
 
         adapter = new IngredienteViewPagerAdapter(this);
-        viewPager.setAdapter(adapter);
+        binding.viewPager2.setAdapter(adapter);
 
         // 0 para ingredientes registrados e 1 para novo ingrediente
-        txtRegistrados.setOnClickListener(v -> viewPager.setCurrentItem(0));
-        txtNovo.setOnClickListener(v -> viewPager.setCurrentItem(1));
+        binding.registrados.setOnClickListener(v -> binding.viewPager2.setCurrentItem(0));
+        binding.novo.setOnClickListener(v -> binding.viewPager2.setCurrentItem(1));
 
-        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+        binding.viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
@@ -64,7 +52,7 @@ public class IngredienteFragment extends Fragment {
 
         atualizarTabSelecionada(0);
 
-        btVoltar.setOnClickListener(v -> {
+        binding.btVoltar.setOnClickListener(v -> {
             NavController navController = NavHostFragment.findNavController(IngredienteFragment.this);
             navController.navigate(R.id.action_ingrediente_to_tabela);
         });
@@ -86,7 +74,6 @@ public class IngredienteFragment extends Fragment {
                 })
                 .build();
 
-
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://api-spring-mongodb.onrender.com")
                 .client(client)
@@ -95,69 +82,35 @@ public class IngredienteFragment extends Fragment {
 
         api = retrofit.create(IngredienteAPI.class);
 
-        return view;
+        return binding.getRoot();
     }
 
     private void atualizarTabSelecionada(int position) {
         if (position == 0) {
-            txtRegistrados.setTextColor(getResources().getColor(R.color.orange, null));
-            txtNovo.setTextColor(getResources().getColor(R.color.gray, null));
+            binding.registrados.setTextColor(getResources().getColor(R.color.orange, null));
+            binding.novo.setTextColor(getResources().getColor(R.color.gray, null));
 
-            // move a linha para a esquerda
-            linha.animate()
+            // move a linha laranja para a esquerda
+            binding.imageView2.animate()
                     .translationX(0)
                     .setDuration(200)
                     .start();
         } else {
-            txtRegistrados.setTextColor(getResources().getColor(R.color.gray, null));
-            txtNovo.setTextColor(getResources().getColor(R.color.orange, null));
+            binding.registrados.setTextColor(getResources().getColor(R.color.gray, null));
+            binding.novo.setTextColor(getResources().getColor(R.color.orange, null));
 
-            // move a linha para a direita
+            // move a linha laranja para a direita --> depois precisa ajustar para tablet
             float deslocamento = getResources().getDisplayMetrics().widthPixels / 2f - 30;
-            linha.animate()
+            binding.imageView2.animate()
                     .translationX(deslocamento)
                     .setDuration(200)
                     .start();
         }
     }
 
-    private void iniciandoServidor(Runnable proximoPasso) {
-        long agora = System.currentTimeMillis();
-        if (agora - ultimoWakeMs < JANELA_WAKE_MS) {
-            if (proximoPasso != null) proximoPasso.run();
-            return;
-        }
-        new Thread(() -> {
-            boolean ok = false;
-            for (int tent = 1; tent <= 3 && !ok; tent++) {
-                try {
-                    Request req = new Request.Builder()
-                            .url("https://api-spring-mongodb.onrender.com")
-                            .header("Authorization", credenciais)
-                            .build();
-                    try (Response resp = client.newCall(req).execute()) {
-                        ok = (resp != null && resp.isSuccessful());
-                    }
-                } catch (Exception ignore) {
-                }
-            }
-            ultimoWakeMs = System.currentTimeMillis();
-            if (isAdded()){
-                requireActivity().runOnUiThread(() -> {
-                    if (proximoPasso != null) proximoPasso.run();
-                });
-            }
-        }).start();
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-//        // limpa as referências para evitar memory leaks
-        txtRegistrados = null;
-        txtNovo = null;
-        linha = null;
-        viewPager = null;
-        adapter = null;
+        binding = null;
     }
 }

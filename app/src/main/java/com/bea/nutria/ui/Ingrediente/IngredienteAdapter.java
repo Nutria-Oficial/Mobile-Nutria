@@ -1,6 +1,7 @@
 package com.bea.nutria.ui.Ingrediente;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,21 +15,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bea.nutria.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.ViewHolder> {
 
-    private ArrayList<String> lista;
+    private List<IngredienteResponse> lista;
     private Context context;
-    private ArrayList<Boolean> estadoBotao;
+    private List<IngredienteResponse> ingredientesSelecionados;
+    private OnIngredienteChangeListener listener;
 
-    public IngredienteAdapter(Context context, ArrayList<String> lista) {
+    public interface OnIngredienteChangeListener {
+        void onIngredienteAdicionado(IngredienteResponse ingrediente);
+        void onIngredienteRemovido(IngredienteResponse ingrediente);
+    }
+
+    public IngredienteAdapter(Context context, List<IngredienteResponse> lista) {
         this.lista = lista != null ? lista : new ArrayList<>();
         this.context = context;
+        this.ingredientesSelecionados = new ArrayList<>();
+    }
 
-        estadoBotao = new ArrayList<>();
-        for (int i = 0; i < this.lista.size(); i++) {
-            estadoBotao.add(false);
-        }
+    public void setOnIngredienteChangeListener(OnIngredienteChangeListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -40,18 +48,32 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (!lista.isEmpty()) {
-            String item = lista.get(position);
-            holder.txtNomeIngrediente.setText(item);
+        if (position < 0 || position >= lista.size()) {
+            return;
         }
 
-        boolean clicado = estadoBotao.get(position);
-        configurarBotao(holder.btAddIngrediente, clicado);
+        IngredienteResponse ingrediente = lista.get(position);
+        holder.txtNomeIngrediente.setText(ingrediente.getNomeIngrediente());
+
+        boolean estaSelecionado = estaNaListaSelecionados(ingrediente);
+        configurarBotao(holder.btAddIngrediente, estaSelecionado);
 
         holder.btAddIngrediente.setOnClickListener(v -> {
-            boolean novoEstado = !estadoBotao.get(position);
-            estadoBotao.set(position, novoEstado);
-            configurarBotao(holder.btAddIngrediente, novoEstado);
+            if (estaSelecionado) {
+                removerDaSelecao(ingrediente);
+                configurarBotao(holder.btAddIngrediente, false);
+
+                if (listener != null) {
+                    listener.onIngredienteRemovido(ingrediente);
+                }
+            } else {
+                ingredientesSelecionados.add(ingrediente);
+                configurarBotao(holder.btAddIngrediente, true);
+
+                if (listener != null) {
+                    listener.onIngredienteAdicionado(ingrediente);
+                }
+            }
         });
     }
 
@@ -60,18 +82,67 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
         return lista.size();
     }
 
-    private void configurarBotao(Button botao, boolean clicado) {
-        if (clicado) {
-            botao.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.orange));
+    private boolean estaNaListaSelecionados(IngredienteResponse ingrediente) {
+        for (IngredienteResponse selecionado : ingredientesSelecionados) {
+            if (selecionado.getId().equals(ingrediente.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void removerDaSelecao(IngredienteResponse ingrediente) {
+        for (int i = 0; i < ingredientesSelecionados.size(); i++) {
+            if (ingredientesSelecionados.get(i).getId().equals(ingrediente.getId())) {
+                ingredientesSelecionados.remove(i);
+                break;
+            }
+        }
+    }
+
+    private void configurarBotao(Button botao, boolean selecionado) {
+        if (selecionado) {
+            botao.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.light_gray));
             botao.setTextColor(ContextCompat.getColor(context, R.color.gray));
-            botao.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
             botao.setText("Adicionado");
         } else {
             botao.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.orange));
             botao.setTextColor(ContextCompat.getColor(context, R.color.white));
-            botao.setBackgroundColor(ContextCompat.getColor(context, R.color.orange));
             botao.setText("Adicionar");
         }
+    }
+
+    public void atualizarLista(List<IngredienteResponse> novaLista) {
+        this.lista = novaLista != null ? novaLista : new ArrayList<>();
+        notifyDataSetChanged();
+    }
+
+    // restaurar seleção do ViewModel --> pegar selecionados e restaurar
+    public void restaurarSelecao(List<IngredienteResponse> selecionados) {
+        this.ingredientesSelecionados.clear();
+        if (selecionados != null) {
+            this.ingredientesSelecionados.addAll(selecionados);
+        }
+        notifyDataSetChanged();
+    }
+
+    // obter lista de selecionados
+    public List<IngredienteResponse> getListaSelecionados() {
+        return new ArrayList<>(ingredientesSelecionados);
+    }
+
+    public Bundle getIngredientesSelecionados() {
+        Bundle bundle = new Bundle();
+        for (int i = 0; i < ingredientesSelecionados.size(); i++) {
+            bundle.putSerializable("ingrediente_" + i, ingredientesSelecionados.get(i));
+        }
+        bundle.putInt("total", ingredientesSelecionados.size());
+        return bundle;
+    }
+
+    public void limparSelecao() {
+        ingredientesSelecionados.clear();
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
