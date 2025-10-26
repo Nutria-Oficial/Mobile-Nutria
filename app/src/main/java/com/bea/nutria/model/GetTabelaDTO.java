@@ -7,7 +7,10 @@ public class GetTabelaDTO {
     private String nomeTabela;
     private Double quantidadeTotal;
     private Double porcao;
-    private String avaliacao;
+
+    // ⚠️ CORREÇÃO PRINCIPAL: Alterado de String para AvaliacaoDTO para mapear o objeto JSON.
+    private AvaliacaoDTO avaliacao;
+
     private List<NutrienteDTO> nutrientes;
 
     // Campo de estado da UI (transient para não ser serializado pelo GSON)
@@ -50,11 +53,12 @@ public class GetTabelaDTO {
         this.porcao = porcao;
     }
 
-    public String getAvaliacao() {
+    // ⚠️ Getter e Setter atualizados para AvaliacaoDTO
+    public AvaliacaoDTO getAvaliacao() {
         return avaliacao;
     }
 
-    public void setAvaliacao(String avaliacao) {
+    public void setAvaliacao(AvaliacaoDTO avaliacao) {
         this.avaliacao = avaliacao;
     }
 
@@ -83,7 +87,10 @@ public class GetTabelaDTO {
         private String nutriente;
         private Double total;
         private Double porcao;
-        private String valorDiario; // Mantido como String para lidar com "NaN"
+
+        // 💡 Ajuste para Object: O JSON mostra valorDiario como Double ou a String "NaN".
+        // Mapear como Object é o mais seguro. Mudar para Double/String pode causar IllegalStateException.
+        private Object valorDiario;
 
         public NutrienteDTO() {
         }
@@ -112,11 +119,11 @@ public class GetTabelaDTO {
             this.porcao = porcao;
         }
 
-        public String getValorDiario() {
+        public Object getValorDiario() {
             return valorDiario;
         }
 
-        public void setValorDiario(String valorDiario) {
+        public void setValorDiario(Object valorDiario) {
             this.valorDiario = valorDiario;
         }
     }

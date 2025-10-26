@@ -14,14 +14,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bea.nutria.api.TabelaAPI;
+import com.bea.nutria.api.ProdutoAPI;
+import com.bea.nutria.api.TabelaAPI; // Mantido, mas não usado diretamente para busca de tabelas do produto
 import com.bea.nutria.api.conexaoApi.ConexaoAPI;
 import com.bea.nutria.model.GetTabelaDTO;
 import com.bea.nutria.ui.Comparacao.TabelaAdapter;
 import com.google.android.material.button.MaterialButton;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -30,14 +29,20 @@ import retrofit2.Response;
 
 public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.OnTabelaClickListener {
 
-    // Constantes para salvar estado
+    // Constantes para salvar estado (Mantido para compatibilidade)
     private static final String KEY_TEXT_MUDADO = "text_mudado";
     private static final String KEY_ITEMS_VISIVEL = "items_visivel";
     private static final String KEY_BUTTON_VISIVEL = "button_visivel";
     private static final String TAG = "ComparacaoP2Fragment";
 
+    // Chave do argumento e variável para armazenar o ID do produto
+    private static final String ARG_PRODUTO_ID = "produto_id";
+    private Integer produtoId;
+
     // API e RecyclerView
+    // TabelaAPI mantida, mas ProdutoAPI será usada para buscar a lista de tabelas
     private TabelaAPI tabelaApi;
+    private ProdutoAPI produtoApi;
     private RecyclerView recyclerViewTabelas;
     private TabelaAdapter tabelaAdapter;
 
@@ -54,14 +59,31 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     private GetTabelaDTO tabelaSelecionada1 = null;
     private GetTabelaDTO tabelaSelecionada2 = null;
 
-    // NOVOS IDs MOCKADOS para forçar o carregamento das duas tabelas.
-    // O backend está sendo tratado como se o ID do PRODUTO fosse '1' ou '2'
-    private final List<Integer> MOCKED_TABLE_IDS = Arrays.asList(1, 2);
+    // URL da API
     private static final String url = "https://api-spring-mongodb.onrender.com/";
+
+    /**
+     * MÉTODO FACTORY: Cria uma nova instância do fragment e empacota o ID do produto.
+     */
+    public static ComparacaoParte2Fragment newInstance(Integer produtoId) {
+        ComparacaoParte2Fragment fragment = new ComparacaoParte2Fragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_PRODUTO_ID, produtoId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (getArguments() != null) {
+            produtoId = getArguments().getInt(ARG_PRODUTO_ID, -1);
+            if (produtoId == -1) {
+                Log.e(TAG, "ID do Produto não encontrado nos argumentos!");
+            } else {
+                Log.d(TAG, "ID do Produto Recebido: " + produtoId);
+            }
+        }
         return inflater.inflate(R.layout.activity_comparacao_fragment_parte2, container, false);
     }
 
@@ -72,6 +94,7 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         // --- 1. Inicialização da API ---
         ConexaoAPI apiManager = new ConexaoAPI(url);
         tabelaApi = apiManager.getApi(TabelaAPI.class);
+        produtoApi = apiManager.getApi(ProdutoAPI.class);
 
         // --- 2. Configurações de UI ---
         view.findViewById(R.id.voltar).setOnClickListener(v -> requireActivity().onBackPressed());
@@ -80,11 +103,9 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         listaItensPrincipalContainer = view.findViewById(R.id.listaItensPrincipal);
         botaoComparar = view.findViewById(R.id.btn_comparar);
 
-        // Referências aos Headers de seleção
         headerItem0 = view.findViewById(R.id.header_item);
         headerItem1 = view.findViewById(R.id.header_item1);
 
-        // TextViews para exibir o nome da tabela selecionada
         if (headerItem0 != null) {
             nomeTabela1 = headerItem0.findViewById(R.id.textViewTitulo);
         }
@@ -94,8 +115,6 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
 
         // --- 3. Configuração da RecyclerView ---
         if (listaItensPrincipalContainer != null) {
-            // Verifique se o ID está correto. No log anterior estava 'recyclerViewListaTabelas'
-            // Aqui estamos usando o ID que você forneceu no código, 'recyclerViewTabelas'
             recyclerViewTabelas = listaItensPrincipalContainer.findViewById(R.id.recyclerViewTabelas);
             if (recyclerViewTabelas != null) {
                 recyclerViewTabelas.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -104,8 +123,13 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
             }
         }
 
-        // --- 4. Inicialização da API e Lógica de Comparação ---
-        apiManager.iniciarServidor(requireActivity(), () -> buscarTabelas(MOCKED_TABLE_IDS));
+        // --- 4. Inicialização da API e Lógica de Busca ---
+        if (produtoId != null && produtoId != -1) {
+            // Inicia o servidor e, em seguida, busca TODAS as tabelas do produto
+            apiManager.iniciarServidor(requireActivity(), () -> buscarTodasTabelasDoProduto(produtoId));
+        } else {
+            Toast.makeText(getContext(), "Erro: ID do produto inválido.", Toast.LENGTH_LONG).show();
+        }
 
         // Restaura o estado da UI (simplificado)
         if (savedInstanceState != null) {
@@ -129,7 +153,8 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         if (botaoComparar != null) {
             botaoComparar.setOnClickListener(v -> {
                 if (tabelaSelecionada1 != null && tabelaSelecionada2 != null) {
-                    Toast.makeText(getContext(), "Pronto para Comparar!", Toast.LENGTH_SHORT).show();
+                    // TODO: Implementar navegação para a tela de comparação
+                    Toast.makeText(getContext(), "Pronto para Comparar! Navegando...", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), "Selecione duas tabelas para comparar.", Toast.LENGTH_SHORT).show();
                 }
@@ -137,9 +162,72 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         }
     }
 
+    /**
+     * 🚀 NOVO MÉTODO: Busca todas as tabelas de um produto em uma única chamada de API.
+     */
+    private void buscarTodasTabelasDoProduto(Integer produtoId) {
+        if (produtoApi == null) {
+            Log.e(TAG, "ProdutoAPI não inicializada.");
+            return;
+        }
+
+        // ⚠️ Exibir um ProgressBar se você tiver um no layout
+        // binding.progressBar.setVisibility(View.VISIBLE);
+
+        produtoApi.buscarTodasTabelasDoProduto(produtoId).enqueue(new Callback<List<GetTabelaDTO>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<GetTabelaDTO>> call, @NonNull Response<List<GetTabelaDTO>> response) {
+                // ⚠️ Esconder o ProgressBar
+
+                if (response.isSuccessful() && response.body() != null) {
+                    List<GetTabelaDTO> listaTabelas = response.body();
+
+                    if (!listaTabelas.isEmpty()) {
+                        setupAdapter(listaTabelas);
+                    } else {
+                        Toast.makeText(getContext(), "Nenhuma tabela encontrada para este produto.", Toast.LENGTH_LONG).show();
+                        if (listaItensPrincipalContainer != null) listaItensPrincipalContainer.setVisibility(View.GONE);
+                    }
+                } else {
+                    Log.e(TAG, "Erro ao buscar tabelas: Código " + response.code());
+                    Toast.makeText(getContext(), "Erro na resposta do servidor ao buscar tabelas.", Toast.LENGTH_LONG).show();
+                    if (listaItensPrincipalContainer != null) listaItensPrincipalContainer.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<GetTabelaDTO>> call, @NonNull Throwable t) {
+                // ⚠️ Esconder o ProgressBar
+                Log.e(TAG, "Falha de conexão: " + t.getMessage());
+                Toast.makeText(getContext(), "Falha ao conectar-se à API para buscar tabelas.", Toast.LENGTH_LONG).show();
+                if (listaItensPrincipalContainer != null) listaItensPrincipalContainer.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    /**
+     * Configura o Adapter com a lista de resultados.
+     */
+    private void setupAdapter(List<GetTabelaDTO> listaTabelas) {
+        if (!isAdded() || getContext() == null) return;
+
+        tabelaAdapter = new TabelaAdapter(listaTabelas);
+        tabelaAdapter.setOnTabelaClickListener(ComparacaoParte2Fragment.this);
+        if (recyclerViewTabelas != null) {
+            recyclerViewTabelas.setAdapter(tabelaAdapter);
+            // Garante que a lista seja exibida após o carregamento
+            recyclerViewTabelas.setVisibility(View.VISIBLE);
+        }
+        if (listaItensPrincipalContainer != null) {
+            listaItensPrincipalContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
+
     // Implementação da interface TabelaAdapter.OnTabelaClickListener
     @Override
     public void onEscolherTabelaClick(GetTabelaDTO tabela) {
+        // ... Lógica de seleção (mantida) ...
         boolean tabelaJaSelecionada1 = tabelaSelecionada1 != null && tabela.getTabelaId().equals(tabelaSelecionada1.getTabelaId());
         boolean tabelaJaSelecionada2 = tabelaSelecionada2 != null && tabela.getTabelaId().equals(tabelaSelecionada2.getTabelaId());
 
@@ -177,6 +265,7 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
      * Atualiza a UI com base nas tabelas selecionadas.
      */
     private void atualizarUISelecao() {
+        // ... Lógica de atualização de UI (mantida) ...
         if (tabelaSelecionada1 != null && nomeTabela1 != null) {
             nomeTabela1.setText(tabelaSelecionada1.getNomeTabela());
         }
@@ -185,128 +274,39 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         }
 
         if (tabelaSelecionada1 != null && tabelaSelecionada2 != null) {
-            // 2 selecionadas
             subtitulo.setText("Hora de comparar suas tabelas!");
-            headerItem0.setVisibility(View.VISIBLE);
-            headerItem1.setVisibility(View.VISIBLE);
-            botaoComparar.setVisibility(View.VISIBLE);
+            if (headerItem0 != null) headerItem0.setVisibility(View.VISIBLE);
+            if (headerItem1 != null) headerItem1.setVisibility(View.VISIBLE);
+            if (botaoComparar != null) botaoComparar.setVisibility(View.VISIBLE);
 
-            // Ocultar a lista de seleção
             if (recyclerViewTabelas != null) recyclerViewTabelas.setVisibility(View.GONE);
             if (listaItensPrincipalContainer != null) listaItensPrincipalContainer.setVisibility(View.GONE);
 
         } else if (tabelaSelecionada1 != null) {
-            // 1 selecionada
             subtitulo.setText("Escolha a segunda tabela para comparação");
-            headerItem0.setVisibility(View.VISIBLE);
-            headerItem1.setVisibility(View.GONE);
-            botaoComparar.setVisibility(View.GONE);
+            if (headerItem0 != null) headerItem0.setVisibility(View.VISIBLE);
+            if (headerItem1 != null) headerItem1.setVisibility(View.GONE);
+            if (botaoComparar != null) botaoComparar.setVisibility(View.GONE);
         } else {
-            // 0 selecionadas
             subtitulo.setText("Escolha duas tabelas do produto");
-            headerItem0.setVisibility(View.GONE);
-            headerItem1.setVisibility(View.GONE);
-            botaoComparar.setVisibility(View.GONE);
+            if (headerItem0 != null) headerItem0.setVisibility(View.GONE);
+            if (headerItem1 != null) headerItem1.setVisibility(View.GONE);
+            if (botaoComparar != null) botaoComparar.setVisibility(View.GONE);
         }
     }
 
-
     /**
-     * Busca os dados da API para múltiplos IDs sequencialmente.
-     * Esta é a adaptação para contornar a limitação da API que retorna apenas um objeto por ID.
+     * ❌ REMOVIDO: A lógica de buscar IDs mockados e as chamadas sequenciais
+     * (`getTableIdsForProduto`, `buscarTabelas`, `chamarSegundaTabela`) foram
+     * removidas e substituídas pela única chamada `buscarTodasTabelasDoProduto`.
      */
-    private void buscarTabelas(List<Integer> tableIds) {
-        if (tabelaApi == null || recyclerViewTabelas == null || tableIds.isEmpty()) {
-            return;
-        }
-
-        List<GetTabelaDTO> listaFinalTabelas = new ArrayList<>();
-        Integer firstId = tableIds.get(0);
-
-        // Chamada para o primeiro ID (Ex: Tabela 1)
-        tabelaApi.buscarTabela(firstId).enqueue(new Callback<GetTabelaDTO>() {
-            @Override
-            public void onResponse(@NonNull Call<GetTabelaDTO> call, @NonNull Response<GetTabelaDTO> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    listaFinalTabelas.add(response.body());
-                    Log.d(TAG, "Tabela 1 carregada: " + response.body().getNomeTabela());
-
-                    // Se houver um segundo ID, faça a chamada sequencial
-                    if (tableIds.size() > 1) {
-                        Integer secondId = tableIds.get(1);
-                        chamarSegundaTabela(secondId, listaFinalTabelas);
-                    } else {
-                        // Se houver apenas 1 ID mockado, finalize aqui
-                        setupAdapter(listaFinalTabelas);
-                    }
-                } else {
-                    Log.e(TAG, "Erro ao carregar Tabela " + firstId + ": Código " + response.code());
-                    Toast.makeText(getContext(), "Erro ao carregar Tabela 1.", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<GetTabelaDTO> call, @NonNull Throwable t) {
-                Log.e(TAG, "Falha na requisição da Tabela 1: " + t.getMessage());
-                Toast.makeText(getContext(), "Erro de rede ao buscar Tabela 1.", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    /**
-     * Segunda chamada sequencial para o segundo ID mockado.
-     */
-    private void chamarSegundaTabela(Integer secondId, List<GetTabelaDTO> listaFinalTabelas) {
-        tabelaApi.buscarTabela(secondId).enqueue(new Callback<GetTabelaDTO>() {
-            @Override
-            public void onResponse(@NonNull Call<GetTabelaDTO> call, @NonNull Response<GetTabelaDTO> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    listaFinalTabelas.add(response.body());
-                    Log.d(TAG, "Tabela 2 carregada: " + response.body().getNomeTabela());
-                } else {
-                    Log.e(TAG, "Erro ao carregar Tabela " + secondId + ": Código " + response.code());
-                    Toast.makeText(getContext(), "Erro ao carregar Tabela 2.", Toast.LENGTH_LONG).show();
-                }
-
-                // Finalize com a lista combinada, independentemente do sucesso da segunda chamada
-                setupAdapter(listaFinalTabelas);
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<GetTabelaDTO> call, @NonNull Throwable t) {
-                Log.e(TAG, "Falha na requisição da Tabela 2: " + t.getMessage());
-                Toast.makeText(getContext(), "Erro de rede ao buscar Tabela 2.", Toast.LENGTH_LONG).show();
-
-                // Finalize com a lista que tiver, mesmo se a Tabela 2 falhar
-                setupAdapter(listaFinalTabelas);
-            }
-        });
-    }
-
-    /**
-     * Configura o Adapter com a lista de resultados combinados.
-     */
-    private void setupAdapter(List<GetTabelaDTO> listaFinalTabelas) {
-        if (!isAdded() || getContext() == null) return;
-
-        if (!listaFinalTabelas.isEmpty()) {
-            tabelaAdapter = new TabelaAdapter(listaFinalTabelas);
-            tabelaAdapter.setOnTabelaClickListener(ComparacaoParte2Fragment.this);
-            recyclerViewTabelas.setAdapter(tabelaAdapter);
-
-            // Garante que a lista seja exibida após o carregamento
-            if (listaItensPrincipalContainer != null) {
-                listaItensPrincipalContainer.setVisibility(View.VISIBLE);
-            }
-            recyclerViewTabelas.setVisibility(View.VISIBLE);
-        } else {
-            Toast.makeText(getContext(), "Nenhuma tabela pôde ser carregada.", Toast.LENGTH_LONG).show();
-        }
-    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        // ... (lógica de onSaveInstanceState permanece a mesma) ...
+        // Salvar o estado da UI (simplificado)
+        outState.putBoolean(KEY_TEXT_MUDADO, subtitulo != null && subtitulo.getText().toString().contains("comparar"));
+        outState.putBoolean(KEY_ITEMS_VISIVEL, headerItem0 != null && headerItem0.getVisibility() == View.VISIBLE);
+        outState.putBoolean(KEY_BUTTON_VISIVEL, botaoComparar != null && botaoComparar.getVisibility() == View.VISIBLE);
     }
 }

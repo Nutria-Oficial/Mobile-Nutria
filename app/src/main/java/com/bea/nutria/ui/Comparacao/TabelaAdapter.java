@@ -70,7 +70,6 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaAdapter.TabelaView
             // holder.iconeTabela.setImageResource(R.drawable.xlsx); // Assumindo este ícone
         }
 
-
         // Recupera o estado de expansão do item
         boolean isExpanded = tabelaAtual.isExpanded();
 

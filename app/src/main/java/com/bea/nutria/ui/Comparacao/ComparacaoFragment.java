@@ -52,6 +52,9 @@ public class ComparacaoFragment extends Fragment {
 
     private Integer idUsuario = 1;
 
+    // ⚠️ NOVO: Variável para armazenar o ID do produto selecionado
+    private Integer produtoSelecionadoId = null;
+
     private ProdutoAPI produtoApi;
     private ConexaoAPI apiManager;
 
@@ -130,11 +133,23 @@ public class ComparacaoFragment extends Fragment {
         // Abre ComparacaoParte2Fragment
         if (btnEscolherTabelas != null) {
             btnEscolherTabelas.setOnClickListener(v -> {
-                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(FRAGMENT_CONTAINER_ID, new ComparacaoParte2Fragment());
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+
+                // ⚠️ MODIFICAÇÃO: Verifica se um produto foi selecionado e passa o ID
+                if (produtoSelecionadoId != null) {
+                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                    // Cria o Fragment passando o ID como argumento
+                    ComparacaoParte2Fragment nextFragment =
+                            ComparacaoParte2Fragment.newInstance(produtoSelecionadoId);
+
+                    fragmentTransaction.replace(FRAGMENT_CONTAINER_ID, nextFragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                } else {
+                    Log.w("ComparacaoFragment", "Tentativa de transição sem produto selecionado.");
+                    // Opcional: Adicionar um Toast de aviso aqui.
+                }
             });
         }
     }
@@ -156,6 +171,9 @@ public class ComparacaoFragment extends Fragment {
 
                         comparacaoAdapter.setOnItemClickListener(produto -> {
                             Log.d("Comparacao", "Produto selecionado: " + produto.getNome());
+
+                            // ⚠️ MODIFICAÇÃO: Armazena o ID do produto selecionado
+                            produtoSelecionadoId = produto.getId();
 
                             // Transição visual: Quando um item é SELECIONADO, ocultamos a área de seleção
                             // inicial (demonstracaoItem1) e mostramos a área de item selecionado.
@@ -235,6 +253,9 @@ public class ComparacaoFragment extends Fragment {
         btnEscolherTabelas.setVisibility(View.GONE);
         demonstracaoItem2.setVisibility(View.GONE);
         textViewSelecionarProduto2.setVisibility(View.GONE);
+
+        // NOVO: Reseta o ID selecionado
+        produtoSelecionadoId = null;
 
         // RecyclerView (OCULTA)
         if (recyclerViewProdutos != null) {
