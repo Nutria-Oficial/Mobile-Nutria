@@ -18,7 +18,7 @@ public class ConexaoAPI {
     private static final long JANELA_WAKE_MS = 60_000; // 60 segundos
     private static String BASE_URL = "";
 
-    private final String credenciais = Credentials.basic("", "");
+    private final String credenciais = Credentials.basic("nutria", "nutria123");
 
     private final OkHttpClient client;
     private final Retrofit retrofit;

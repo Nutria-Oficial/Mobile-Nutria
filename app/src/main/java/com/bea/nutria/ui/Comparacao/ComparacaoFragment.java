@@ -13,7 +13,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -167,7 +166,6 @@ public class ComparacaoFragment extends Fragment {
                             nomeProdutoSelecionado.setVisibility(View.VISIBLE);
                             iconeTabela.setVisibility(View.VISIBLE);
                             btnEscolherTabelas.setVisibility(View.VISIBLE);
-                            demonstracaoItem2.setVisibility(View.VISIBLE);
                             textViewSelecionarProduto2.setVisibility(View.VISIBLE);
 
                             nomeProdutoSelecionado.setText(produto.getNome());

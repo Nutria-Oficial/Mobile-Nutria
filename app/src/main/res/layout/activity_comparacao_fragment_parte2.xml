@@ -138,8 +138,8 @@
         android:textColor="#FFFFFF"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:backgroundTint="#EE7026"
         android:visibility="gone"
+        app:backgroundTint="#EE7026"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -162,29 +162,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view" />
 
-    <Button
-        android:id="@+id/botao_teste_transicao"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="SIMULAR SELEÇÃO"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSelecionarProduto3" />
-
     <include
-        android:id="@+id/listaItens"
+        android:id="@+id/listaItensPrincipal"
         layout="@layout/itens_lista_escolha_tabela"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:visibility="gone"
+        android:layout_marginTop="220dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/botao_teste_transicao" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_item1"
@@ -195,6 +183,28 @@
         app:layout_constraintEnd_toEndOf="@+id/view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_item">
+
+        <include
+            android:id="@+id/listaItensSecundaria1"
+            layout="@layout/itens_lista"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_bar_container" />
+
+        <include
+            android:id="@+id/listaItensSecundaria2"
+            layout="@layout/itens_lista"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_bar_container" />
 
         <View
             android:id="@+id/view6"
@@ -259,11 +269,10 @@
         android:id="@+id/header_item"
         android:layout_width="351dp"
         android:layout_height="83dp"
-        android:layout_marginTop="100dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/botao_teste_transicao">
+        app:layout_constraintTop_toTopOf="@+id/textViewSelecionarProduto3">
 
         <View
             android:id="@+id/view2"
@@ -283,19 +292,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_escolherTabelas2"
             android:layout_width="330dp"
             android:layout_height="48dp"
             android:layout_marginBottom="90dp"
             android:fontFamily="@font/montserrat_semibold"
+            android:onClick="openFragmentComparacaoPart2"
             android:text="Escolher tabelas"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"
             android:visibility="gone"
-            android:onClick="openFragmentComparacaoPart2"
             app:backgroundTint="#EE7026"
             app:cornerRadius="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -309,13 +319,13 @@
             android:layout_height="48dp"
             android:layout_marginBottom="90dp"
             android:fontFamily="@font/montserrat_semibold"
+            android:onClick="openFragmentComparacaoPart2"
             android:text="Escolher tabelas"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"
             android:visibility="gone"
-            android:onClick="openFragmentComparacaoPart2"
             app:backgroundTint="#EE7026"
             app:cornerRadius="8dp"
             app:layout_constraintBottom_toBottomOf="parent"

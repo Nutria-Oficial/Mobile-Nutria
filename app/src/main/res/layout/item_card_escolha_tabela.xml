@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:fontFamily="@font/montserrat_medium"
-            android:text="Produto"
+            android:text="Tabela"
             android:textColor="#161515"
             android:textSize="18sp"
             android:textStyle="normal"

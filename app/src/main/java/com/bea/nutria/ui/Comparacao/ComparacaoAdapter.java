@@ -1,7 +1,7 @@
 package com.bea.nutria.ui.Comparacao;
-
-import android.annotation.SuppressLint;
 import android.util.Log; // Adicionado para Log
+import android.annotation.SuppressLint;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
