@@ -3,6 +3,8 @@ package com.bea.nutria.api.conexaoApi;
 import android.app.Activity;
 import android.util.Log;
 
+import androidx.fragment.app.Fragment;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Credentials;
@@ -102,6 +104,34 @@ public class ConexaoAPI {
             ultimoWakeMs = System.currentTimeMillis();
             // Volta para a UI thread para executar o próximo passo
             activity.runOnUiThread(() -> { if (proximoPasso != null) proximoPasso.run(); });
+        }).start();
+    }
+    public void iniciandoServidor(Fragment fragment, Runnable proximoPasso) {
+        long agora = System.currentTimeMillis();
+        if (agora - ultimoWakeMs < JANELA_WAKE_MS) {
+            if (proximoPasso != null) proximoPasso.run();
+            return;
+        }
+        new Thread(() -> {
+            boolean ok = false;
+            for (int tent = 1; tent <= 3 && !ok; tent++) {
+                try {
+                    Request req = new Request.Builder()
+                            .url("https://api-spring-mongodb.onrender.com")
+                            .header("Authorization", credenciais)
+                            .build();
+                    try (Response resp = client.newCall(req).execute()) {
+                        ok = (resp != null && resp.isSuccessful());
+                    }
+                } catch (Exception ignore) {
+                }
+            }
+            ultimoWakeMs = System.currentTimeMillis();
+            if (fragment.isAdded()){
+                fragment.requireActivity().runOnUiThread(() -> {
+                    if (proximoPasso != null) proximoPasso.run();
+                });
+            }
         }).start();
     }
 }
