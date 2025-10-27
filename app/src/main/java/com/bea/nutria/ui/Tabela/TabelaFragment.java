@@ -1,12 +1,17 @@
 package com.bea.nutria.ui.Tabela;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -15,17 +20,17 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.graphics.Insets;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bea.nutria.AvaliacaoTabelaFragment;
 import com.bea.nutria.R;
 import com.bea.nutria.api.TabelaAPI;
+import com.bea.nutria.api.conexaoApi.ConexaoAPI;
 import com.bea.nutria.databinding.FragmentTabelaBinding;
 import com.bea.nutria.model.GetNutrienteDTO;
 import com.bea.nutria.model.GetTabelaDTO;
@@ -33,23 +38,20 @@ import com.bea.nutria.model.ItemIngrediente;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+
 
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TabelaFragment extends Fragment {
 
@@ -59,12 +61,9 @@ public class TabelaFragment extends Fragment {
     private String tipoMedida = "";
     private Integer idTabela = 0;
     private List<ItemIngrediente> ingredienteList = new ArrayList<>();
-    private OkHttpClient client;
-    private Retrofit retrofit;
-    private String credenciais = Credentials.basic("nutria", "nutria123");
+
     private TabelaAPI api;
-    private long ultimoWakeMs = 0L;
-    private static final long JANELA_WAKE_MS = 60_000;
+    private ConexaoAPI conexaoAPI;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -76,32 +75,8 @@ public class TabelaFragment extends Fragment {
         setCheckBoxListener(binding.checkBox3);
         setCheckBoxListener(binding.checkBox4);
 
-        credenciais = Credentials.basic("nutria", "nutria123");
-        client = new OkHttpClient.Builder()
-                .connectTimeout(25, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
-                .pingInterval(30, TimeUnit.SECONDS)
-                .addNetworkInterceptor(chain -> {
-                    Request original = chain.request();
-                    Request req = original.newBuilder()
-                            .header("Authorization", credenciais)
-                            .header("Accept", "application/json")
-                            .method(original.method(), original.body())
-                            .build();
-                    return chain.proceed(req);
-                })
-                .build();
-
-
-        retrofit = new Retrofit.Builder()
-                .baseUrl("https://api-spring-mongodb.onrender.com")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        api = retrofit.create(TabelaAPI.class);
+        conexaoAPI = new ConexaoAPI("https://api-spring-mongodb.onrender.com");
+        api = conexaoAPI.getApi(TabelaAPI.class);
 
         return binding.getRoot();
     }
@@ -110,10 +85,8 @@ public class TabelaFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
-            Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
-            return WindowInsetsCompat.CONSUMED;
-        });
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> WindowInsetsCompat.CONSUMED);
+
 
         binding.porcao.setText(String.valueOf(porcaoAtual));
         binding.porcao.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -196,9 +169,9 @@ public class TabelaFragment extends Fragment {
 
                 if (getArguments() != null) {
                     Integer idProduto = getArguments().getInt("idProduto");
-                    iniciandoServidor(() -> adicionarTabela(1, idProduto, novaTabela));
+                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> adicionarTabela(1, idProduto, novaTabela));
                 } else {
-                    iniciandoServidor(() -> criarTabela(1, novaTabela));
+                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> criarTabela(1, novaTabela));
                 }
             }else {
                 Toast.makeText(getContext(),
@@ -316,28 +289,25 @@ public class TabelaFragment extends Fragment {
         idTabela = tabela.getTabelaId();
         binding.tableLayout.removeAllViews();
 
-        TableRow nomeTabela = new TableRow(getContext());
-        TextView nome = new TextView(getContext());
-        nomeTabela.addView(nome);
-        binding.tableLayout.addView(nomeTabela);
+        binding.tvTabelaTitulo.setText(tabela.getNomeTabela());
+        binding.tvPorcaoColuna.setText(getPorcaoAtual());
+        binding.tvPorcaoEmbalagemColuna.setText(getPorcaoEmbalagemAtual());
 
-        TableRow porcoes = new TableRow(getContext());
-        TextView porcao = new TextView(getContext());
-        porcao.setText(porcaoAtual);
-        TextView porcaoEmbalagem = new TextView(getContext());
-        porcaoEmbalagem.setText(porcaoEmbalagemAtual);
-        porcoes.addView(porcao);
-        porcoes.addView(porcaoEmbalagem);
-        binding.tableLayout.addView(porcoes);
+        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
 
         TableRow nomeColuna = new TableRow(getContext());
+        nomeColuna.setPadding(padding, padding, padding, padding);
+
         TextView coluna1 = new TextView(getContext());
         TextView coluna2 = new TextView(getContext());
         TextView coluna3 = new TextView(getContext());
 
-        coluna1.setText("Item");
+        coluna1.setText("Nutriente");
+        modificarTextStyleColuna(1,coluna1);
         coluna2.setText("Valor");
+        modificarTextStyleColuna(2,coluna2);
         coluna3.setText("%VD*");
+        modificarTextStyleValores(3,coluna3);
 
         nomeColuna.addView(coluna1);
         nomeColuna.addView(coluna2);
@@ -351,8 +321,11 @@ public class TabelaFragment extends Fragment {
             TextView vd = new TextView(getContext());
 
             nutriente.setText(nutrienteDados.getNutriente());
+            modificarTextStyleValores(1,nutriente);
             porcaoNutriente.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getPorcao()));
+            modificarTextStyleValores(2,porcaoNutriente);
             vd.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getValorDiario())+"%");
+            modificarTextStyleValores(3,vd);
 
             nutrientesInformacao.addView(nutriente);
             nutrientesInformacao.addView(porcaoNutriente);
@@ -362,34 +335,36 @@ public class TabelaFragment extends Fragment {
         }
 
     }
-
-    private void iniciandoServidor(Runnable proximoPasso) {
-        long agora = System.currentTimeMillis();
-        if (agora - ultimoWakeMs < JANELA_WAKE_MS) {
-            if (proximoPasso != null) proximoPasso.run();
-            return;
+    private void modificarTextStyleColuna(int coluna,TextView textView){
+        if(coluna == 1){
+            textView.setEllipsize(TextUtils.TruncateAt.END);
         }
-        new Thread(() -> {
-            boolean ok = false;
-            for (int tent = 1; tent <= 3 && !ok; tent++) {
-                try {
-                    Request req = new Request.Builder()
-                            .url("https://api-spring-mongodb.onrender.com")
-                            .header("Authorization", credenciais)
-                            .build();
-                    try (Response resp = client.newCall(req).execute()) {
-                        ok = (resp != null && resp.isSuccessful());
-                    }
-                } catch (Exception ignore) {
-                }
-            }
-            ultimoWakeMs = System.currentTimeMillis();
-            if (isAdded()){
-                requireActivity().runOnUiThread(() -> {
-                    if (proximoPasso != null) proximoPasso.run();
-                });
-            }
-        }).start();
+        else {
+            textView.setGravity(Gravity.END);
+        }
+        Typeface typeface = ResourcesCompat.getFont(requireContext(), R.font.montserrat_semibold);
+        textView.setTypeface(typeface);
+        textView.setMaxLines(1);
+        textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        TableRow.LayoutParams textParams = new TableRow.LayoutParams(
+                0,
+                TableRow.LayoutParams.WRAP_CONTENT,1f
+        );
+        textView.setLayoutParams(textParams);
+    }
+    private void modificarTextStyleValores(int coluna, TextView textView){
+        if(coluna == 1){
+            textView.setEllipsize(TextUtils.TruncateAt.END);
+        }
+        else {
+            textView.setGravity(Gravity.END);
+        }
+        textView.setMaxLines(1);
+        TableRow.LayoutParams textParams = new TableRow.LayoutParams(
+                0,
+                TableRow.LayoutParams.WRAP_CONTENT,1f
+        );
+        textView.setLayoutParams(textParams);
     }
     private void mostrarCarregando(boolean carregando) {
         if (carregando) {

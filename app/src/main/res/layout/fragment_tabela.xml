@@ -34,12 +34,10 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewConteudo"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_marginTop="8dp"
             android:layout_weight="1"
-            android:background="@drawable/card_border"
             app:cardBackgroundColor="#FFFFFF"
-            app:cardCornerRadius="30dp"
             app:cardElevation="4dp">
 
             <ScrollView
@@ -387,16 +385,81 @@
                                 android:textSize="16sp" />
                         </LinearLayout>
 
-                        <TableLayout
-                            android:id="@+id/tableLayout"
-                            android:layout_width="320dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="30dp"
-                            android:stretchColumns="*"
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardConteudo"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="25dp"
                             android:visibility="gone"
+                            app:cardUseCompatPadding="false"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/button" />
+                            app:layout_constraintTop_toBottomOf="@id/button">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="12dp">
+
+                                <TextView
+                                    android:id="@+id/tvTabelaTitulo"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_semibold"
+                                    android:text="Tabela Nutricional"
+                                    android:textColor="#0B0B0B"
+                                    android:textSize="16sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <TextView
+                                    android:id="@+id/tvPorcaoEmbalagemColuna"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="4dp"
+                                    android:layout_marginTop="4dp"
+                                    android:text="Porção por embalagem:"
+                                    android:textColor="#5A5A5A"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tvTabelaTitulo" />
+
+                                <TextView
+                                    android:id="@+id/tvPorcaoColuna"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="4dp"
+                                    android:layout_marginTop="2dp"
+                                    android:text="Porção"
+                                    android:textColor="#5A5A5A"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tvPorcaoEmbalagemColuna" />
+
+                                <View
+                                    android:id="@+id/dividerHeader"
+                                    android:layout_width="0dp"
+                                    android:layout_height="1dp"
+                                    android:layout_marginTop="50dp"
+                                    android:background="#000000"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@id/tvTabelaTitulo" />
+
+                                <TableLayout
+                                    android:id="@+id/tableLayout"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:shrinkColumns="*"
+                                    android:stretchColumns="*"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/dividerHeader" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+                        </com.google.android.material.card.MaterialCardView>
 
                         <Button
                             android:id="@+id/btnNovo"
@@ -412,7 +475,7 @@
                             app:cornerRadius="8dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+                            app:layout_constraintTop_toBottomOf="@+id/cardConteudo" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
