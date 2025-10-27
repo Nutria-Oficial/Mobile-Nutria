@@ -25,12 +25,30 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     buildFeatures {
         viewBinding = true
+    }
+
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/androidx.cardview_cardview.version",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0"
+            )
+        }
     }
 }
 
@@ -47,6 +65,8 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.activity.ktx)
     implementation(libs.cardview)
+    implementation(libs.viewpager2)
+    implementation(libs.recyclerview)      
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

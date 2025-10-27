@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +27,15 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bea.nutria.AvaliacaoTabelaFragment;
 import com.bea.nutria.R;
 import com.bea.nutria.api.TabelaAPI;
 import com.bea.nutria.api.conexaoApi.ConexaoAPI;
+import com.bea.nutria.R;
 import com.bea.nutria.databinding.FragmentTabelaBinding;
 import com.bea.nutria.model.GetNutrienteDTO;
 import com.bea.nutria.model.GetTabelaDTO;
@@ -52,6 +57,9 @@ import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
+import com.bea.nutria.ui.Ingrediente.IngredienteSharedViewModel;
+
+import java.util.ArrayList;
 
 public class TabelaFragment extends Fragment {
 
@@ -64,6 +72,9 @@ public class TabelaFragment extends Fragment {
 
     private TabelaAPI api;
     private ConexaoAPI conexaoAPI;
+    private TabelaAdapter adapter;
+    private IngredienteSharedViewModel sharedViewModel;
+    private static final String TAG = "TabelaFragment";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -77,6 +88,14 @@ public class TabelaFragment extends Fragment {
 
         conexaoAPI = new ConexaoAPI("https://api-spring-mongodb.onrender.com");
         api = conexaoAPI.getApi(TabelaAPI.class);
+
+
+        // Inicializar ViewModel
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(IngredienteSharedViewModel.class);
+
+        setupRecyclerView();
+        observarIngredientes();
+        setupListeners();
 
         return binding.getRoot();
     }
@@ -393,7 +412,44 @@ public class TabelaFragment extends Fragment {
 
         //verificar se tem ingredientes adicionados
         return nomeProdutoValido && nomeTabelaValido && checkBoxSelecionado && !binding.porcao.getText().equals("0") && !binding.porcaoEmbalagem.getText().equals("0");
+    }    
+    private void setupRecyclerView() {
+        adapter = new TabelaAdapter(getContext(), new ArrayList<>());
+
+        // atualizar ViewModel quando remover
+        adapter.setOnItemRemovedListener((ingrediente, newCount) -> {
+            binding.selecionados.setText(String.valueOf(newCount));
+            sharedViewModel.removerIngrediente(ingrediente); // atualizar ViewModel
+        });
+
+        binding.ingredientesSelecionados.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.ingredientesSelecionados.setAdapter(adapter);
     }
+
+    private void observarIngredientes() {
+        sharedViewModel.getIngredientesSelecionados().observe(getViewLifecycleOwner(), selecionados -> {
+            if (selecionados != null) {
+                Log.d(TAG, "Ingredientes recebidos do ViewModel: " + selecionados.size());
+                binding.selecionados.setText(String.valueOf(selecionados.size()));
+
+                adapter = new TabelaAdapter(getContext(), new ArrayList<>(selecionados));
+                adapter.setOnItemRemovedListener((ingrediente, newCount) -> {
+                    binding.selecionados.setText(String.valueOf(newCount));
+                    sharedViewModel.removerIngrediente(ingrediente);
+                });
+                binding.ingredientesSelecionados.setAdapter(adapter);
+            } else {
+                binding.selecionados.setText("0");
+            }
+        });
+    }
+
+    private void setupListeners() {
+        binding.btIngredientes.setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_tabela_to_ingrediente)
+        );
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
