@@ -25,12 +25,30 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     buildFeatures {
         viewBinding = true
+    }
+
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/androidx.cardview_cardview.version",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0"
+            )
+        }
     }
 }
 
@@ -46,6 +64,8 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.activity.ktx)
     implementation(libs.cardview)
+    implementation(libs.viewpager2)
+    implementation(libs.recyclerview)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
@@ -53,6 +73,21 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.google.firebase:firebase-firestore")
+
+    implementation ("androidx.navigation:navigation-fragment:2.7.7")
+    implementation ("androidx.navigation:navigation-ui:2.7.7")
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation ("com.cloudinary:cloudinary-android:2.5.0")
+    implementation ("androidx.exifinterface:exifinterface:1.3.7")
+
+    implementation ("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation("at.favre.lib:bcrypt:0.10.2")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation ("com.google.android.material:material:1.9.0")
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
@@ -62,6 +97,5 @@ dependencies {
     implementation("com.cloudinary:cloudinary-android:2.5.0")
     implementation("androidx.exifinterface:exifinterface:1.3.7")
     implementation("at.favre.lib:bcrypt:0.10.2")
-
 
 }
