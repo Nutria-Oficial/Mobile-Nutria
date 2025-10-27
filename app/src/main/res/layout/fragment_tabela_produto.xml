@@ -13,8 +13,8 @@
         android:id="@+id/voltar"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_margin="16dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="40dp"
         android:src="@drawable/ic_voltar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,27 +23,26 @@
         android:id="@+id/tvTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
         android:text="Nome produto"
         android:textColor="#0B0B0B"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/voltar"
+        app:layout_constraintStart_toEndOf="@id/voltar"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardConteudo"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="25dp"
-        app:layout_constraintTop_toBottomOf="@id/tvTitulo"
+        android:layout_marginTop="15dp"
+        app:cardUseCompatPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/voltar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:cardUseCompatPadding="false">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Rola tudo que estiver dentro (dots + avaliação) sem brigar com o pager horizontal -->
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -56,7 +55,7 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/tvPorcao"
+                    android:id="@+id/txt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Porção aproximada"
@@ -64,43 +63,58 @@
                     android:textColor="#5A5A5A"
                     android:textSize="14sp" />
 
-                <!-- Pager horizontal com as tabelas e a página final de ADD -->
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/pagerTabelas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp" />
 
-                <!-- Pontinhos -->
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tabDots"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="8dp"
-                    app:tabIndicatorHeight="0dp"
                     app:tabGravity="center"
+                    app:tabIndicatorHeight="0dp"
                     app:tabMode="fixed" />
 
-                <!-- Divisor entre dots e avaliação -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="12dp"
                     android:background="#E0E0E0" />
 
-                <!-- AVALIAÇÃO: fica SEMPRE abaixo dos pontinhos -->
                 <TextView
                     android:id="@+id/tvResumoAvaliacao"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:lineSpacingExtra="2dp"
-                    android:text="Veja a avaliação resumida dividida em pontos bons e ruins (0 a 100):&#10;&#10;✅ Pontos bons:&#10;Proteínas (6,2g) – 75: Boa quantidade para lanches.&#10;Cálcio (243mg) – 85: Ótima fonte.&#10;Gorduras Totais (0,7g) – 90: Baixíssimo teor.&#10;Sódio (124mg) – 80: Valor controlado.&#10;Açúcares adicionados (2g) – 70: Moderado.&#10;Valor energético (123 kcal) – 80: Calorias equilibradas.&#10;&#10;⚠️ Pontos ruins:&#10;Gorduras saturadas (24g) – 10: Muito alto.&#10;Gorduras trans (0,3g) – 20: Deveria ser zero.&#10;Açúcares totais (24g) – 25: Quase no limite diário.&#10;Fibra alimentar (1g) – 30: Baixa quantidade.&#10;&#10;📈 O que pode melhorar:&#10;Reduzir gorduras saturadas e trans.&#10;Diminuir açúcares totais.&#10;Aumentar fibras.&#10;Manter os bons níveis de proteínas, cálcio e gorduras totais."
+                    android:textAlignment="center"
                     android:textColor="#333333"
-                    android:textSize="16sp" />
-
+                    android:textSize="16sp"
+                    android:text="Veja a avaliação resumida dividida em pontos bons e ruins (0 a 100):&#10;&#10;✅ Pontos bons:&#10;Proteínas (6,2g) – 75: Boa quantidade para lanches.&#10;Cálcio (243mg) – 85: Ótima fonte.&#10;Gorduras Totais (0,7g) – 90: Baixíssimo teor.&#10;Sódio (124mg) – 80: Valor controlado.&#10;Açúcares adicionados (2g) – 70: Moderado.&#10;Valor energético (123 kcal) – 80: Calorias equilibradas.&#10;&#10;⚠️ Pontos ruins:&#10;Gorduras saturadas (24g) – 10: Muito alto.&#10;Gorduras trans (0,3g) – 20: Deveria ser zero.&#10;Açúcares totais (24g) – 25: Quase no limite diário.&#10;Fibra alimentar (1g) – 30: Baixa quantidade.&#10;&#10;📈 O que pode melhorar:&#10;Reduzir gorduras saturadas e trans.&#10;Diminuir açúcares totais.&#10;Aumentar fibras.&#10;Manter os bons níveis de proteínas, cálcio e gorduras totais." />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </com.google.android.material.card.MaterialCardView>
+    <FrameLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#E8E8E8"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ProgressBar
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:indeterminate="true"
+            android:layout_gravity="center" />
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

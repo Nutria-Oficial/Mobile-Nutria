@@ -38,5 +38,9 @@
         android:id="@+id/tabelaProdutoFragment"
         android:name="com.bea.nutria.ui.Historico.TabelaProdutoFragment"
         android:label="fragment_tabela_produto"
-        tools:layout="@layout/fragment_tabela_produto" />
+        tools:layout="@layout/fragment_tabela_produto" >
+        <action
+            android:id="@+id/action_tabelaProdutoFragment_to_navigation_tabela"
+            app:destination="@id/navigation_tabela" />
+    </fragment>
 </navigation>

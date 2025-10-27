@@ -17,12 +17,14 @@ import java.util.Locale;
 
 public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.ViewHolder> {
 
+    // >>> Assinatura por POSIÇÃO <<<
     public interface OnItemClickListener { void onItemClick(int position); }
 
     private final OnItemClickListener listener;
     private final List<String> nomes = new ArrayList<>();
     private final List<String> nomesOriginais = new ArrayList<>();
-    private final List<HistoricoFragment.ProdutoItem> produtos = new ArrayList<>();
+    // A lista real de produtos fica no Fragment; aqui exibimos só os nomes.
+    // O Fragment já sabe usar 'position' para pegar o ProdutoItem correspondente.
 
     public HistoricoAdapter(List<String> nomesIniciais, OnItemClickListener listener) {
         if (nomesIniciais != null) {
@@ -32,17 +34,14 @@ public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.View
         this.listener = listener;
     }
 
+    // Mantive o submit com nomes + produtos como você já usa no Fragment.
     public void submit(List<String> novosNomes, List<HistoricoFragment.ProdutoItem> novosProdutos) {
         nomes.clear();
         nomesOriginais.clear();
-        produtos.clear();
 
         if (novosNomes != null) {
             nomes.addAll(novosNomes);
             nomesOriginais.addAll(novosNomes);
-        }
-        if (novosProdutos != null) {
-            produtos.addAll(novosProdutos);
         }
         notifyDataSetChanged();
     }
@@ -60,8 +59,7 @@ public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.View
         holder.img.setImageResource(R.drawable.imagem_item_historico);
     }
 
-    @Override
-    public int getItemCount() { return nomes.size(); }
+    @Override public int getItemCount() { return nomes.size(); }
 
     public void filtro(String query) {
         String q = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
@@ -86,7 +84,10 @@ public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.View
             img = itemView.findViewById(R.id.imgProdutoHistorico);
             itemView.setOnClickListener(v -> {
                 int pos = getAdapterPosition();
-                if (listener != null && pos != RecyclerView.NO_POSITION) listener.onItemClick(pos);
+                if (listener != null && pos != RecyclerView.NO_POSITION) {
+                    // >>> Clique por posição <<<
+                    listener.onItemClick(pos);
+                }
             });
         }
     }

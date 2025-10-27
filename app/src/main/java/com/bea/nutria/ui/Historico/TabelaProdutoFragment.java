@@ -1,8 +1,8 @@
 package com.bea.nutria.ui.Historico;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -10,6 +10,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bea.nutria.R;
@@ -19,57 +21,89 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TabelaProdutoFragment extends Fragment {
 
-    public TabelaProdutoFragment() {
-        super(R.layout.fragment_tabela_produto);
-    }
+    public TabelaProdutoFragment() { super(R.layout.fragment_tabela_produto); }
 
     private ViewPager2 pager;
     private TabLayout tabDots;
     private TextView tvResumoAvaliacao;
     private TextView tvTitulo;
-    private TextView tvPorcaoTopo;
+    private View loadingOverlay;
+    private View cardConteudo;
 
-    private TabelasPagerAdapter adapter;
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private TabelasPagerAdapter pagerAdapter;
+    private final List<String> avaliacoes = new ArrayList<>();
 
     private String idProduto;
+    private String nomeProduto;
+
+    private static final String urlBase = "https://api-spring-mongodb.onrender.com/produtos/";
+    private static final String user = "nutria";
+    private static final String password = "nutria123";
+
+    private final Locale LOCALE_PTBR = new Locale("pt", "BR"); //segue o padrao br
+    private final DecimalFormat DF2 = (DecimalFormat) NumberFormat.getNumberInstance(LOCALE_PTBR);
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        pager = view.findViewById(R.id.pagerTabelas);
-        tabDots = view.findViewById(R.id.tabDots);
-        tvResumoAvaliacao = view.findViewById(R.id.tvResumoAvaliacao);
-        tvTitulo = view.findViewById(R.id.tvTitulo);
-        tvPorcaoTopo = view.findViewById(R.id.tvPorcao);
+        DF2.applyPattern("#0.00"); //todo numero com 2 casas
 
-        adapter = new TabelasPagerAdapter(
+        pager= view.findViewById(R.id.pagerTabelas);
+        tabDots= view.findViewById(R.id.tabDots);
+        tvResumoAvaliacao= view.findViewById(R.id.tvResumoAvaliacao);
+        tvTitulo= view.findViewById(R.id.tvTitulo);
+        loadingOverlay    = view.findViewById(R.id.loadingOverlay);
+        cardConteudo      = view.findViewById(R.id.cardConteudo);
+
+        if (getArguments() != null) {
+            idProduto   = getArguments().getString("idProduto");
+            nomeProduto = getArguments().getString("nomeProduto", "Produto");
+        }
+        if (nomeProduto != null) tvTitulo.setText(nomeProduto);
+        if (idProduto == null || idProduto.trim().isEmpty()) {
+            Toast.makeText(requireContext(), "Produto inválido", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        View btnVoltar = view.findViewById(R.id.voltar);
+        if (btnVoltar != null) {
+            btnVoltar.setOnClickListener(v -> {
+                NavController nav = NavHostFragment.findNavController(this);
+                nav.navigateUp();
+            });
+        }
+
+        pagerAdapter = new TabelasPagerAdapter(
                 requireContext(),
                 new ArrayList<>(),
-                () -> Toast.makeText(requireContext(), "Adicionar nova tabela", Toast.LENGTH_SHORT).show()
+                () -> navegarParaAdicionarTabela(nomeProduto)
         );
-        pager.setAdapter(adapter);
+        pager.setAdapter(pagerAdapter);
         pager.setOffscreenPageLimit(1);
 
-        new TabLayoutMediator(tabDots, pager, (tab, position) -> { /* sem texto nos tabs */ }).attach();
+        new TabLayoutMediator(tabDots, pager, (tab, position) -> { }).attach();
 
         pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override public void onPageSelected(int position) {
@@ -78,25 +112,25 @@ public class TabelaProdutoFragment extends Fragment {
             }
         });
 
-        // Pega o id do produto via arguments
-        if (getArguments() != null) {
-            idProduto = getArguments().getString("idProduto");
-        }
-        if (idProduto == null || idProduto.isEmpty()) {
-            Toast.makeText(requireContext(), "Produto inválido", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Busca sem Retrofit
-        carregarProdutoSemRetrofit(idProduto);
+        showLoading(true);
+        carregarTabelasPorProduto(idProduto);
     }
 
-    private void carregarProdutoSemRetrofit(String id) {
+    // empurra o usuário pra tela de criar tabela
+    private void navegarParaAdicionarTabela(@NonNull String nomeProduto) {
+        Bundle args = new Bundle();
+        args.putString("nomeProduto", nomeProduto);
+        args.putString("idProduto", idProduto);
+        NavController nav = NavHostFragment.findNavController(this);
+        nav.navigate(R.id.action_tabelaProdutoFragment_to_navigation_tabela, args);
+    }
+
+    // conversa com a APiI
+    private void carregarTabelasPorProduto(String id) {
         new Thread(() -> {
             HttpURLConnection conn = null;
             try {
-                String base = "https://api-spring-mongodb.onrender.com/produtos/";
-                String urlStr = base + URLEncoder.encode(id, "UTF-8");
+                String urlStr = urlBase + URLEncoder.encode(id, "UTF-8");
                 URL url = new URL(urlStr);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setConnectTimeout(20000);
@@ -104,83 +138,154 @@ public class TabelaProdutoFragment extends Fragment {
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Accept", "application/json");
 
+                String basic = user + ":" + password;
+                String auth = "Basic " + Base64.encodeToString(
+                        basic.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
+                conn.setRequestProperty("Authorization", auth);
+
                 int code = conn.getResponseCode();
-                InputStream is = (code >= 200 && code < 300)
+                InputStream stream = (code >= 200 && code < 300)
                         ? new BufferedInputStream(conn.getInputStream())
                         : new BufferedInputStream(conn.getErrorStream());
+                String body = readAll(stream);
 
-                String body = readAll(is);
                 if (code < 200 || code >= 300) {
-                    postToast("Erro HTTP " + code);
+                    Log.e("TabelaProduto", "HTTP " + code + " body=" + body);
+                    postUi(() -> {
+                        showLoading(false);
+                        Toast.makeText(requireContext(), "Erro HTTP " + code, Toast.LENGTH_SHORT).show();
+                    });
+                    return;
+                }
+                if (body == null || body.trim().isEmpty()) {
+                    postUi(() -> {
+                        showLoading(false);
+                        Toast.makeText(requireContext(), "Resposta vazia", Toast.LENGTH_SHORT).show();
+                    });
                     return;
                 }
 
-                JSONObject json = new JSONObject(body);
-                ProdutoDTO produto = parseProduto(json);
+                JSONArray arr = new JSONArray(body);
 
-                mainHandler.post(() -> aplicarProdutoNaUI(produto));
+                List<Tabela> novasTabelas = new ArrayList<>();
+                List<String> novasAvaliacoes = new ArrayList<>();
 
-            } catch (IOException | JSONException e) {
-                postToast("Falha: " + e.getMessage());
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject o = arr.optJSONObject(i);
+                    if (o == null) continue;
+
+                    String nomeTabela  = o.optString("nomeTabela", "Tabela Nutricional");
+                    String porcaoTexto = resolvePorcaoTexto(o);
+
+                    List<Linha> linhas = new ArrayList<>();
+                    JSONArray ns = o.optJSONArray("nutrientes");
+                    if (ns != null) {
+                        for (int k = 0; k < ns.length(); k++) {
+                            JSONObject jn = ns.optJSONObject(k);
+                            if (jn == null) continue;
+
+                            String nome = jn.optString("nutriente", "");
+                            String valorFmt = formatAnyNumberToTwoDecimals(anyToString(jn.opt("porcao")));
+                            String vdFmt    = formatAnyNumberToTwoDecimals(anyToString(jn.opt("valorDiario")));
+
+                            linhas.add(new Linha(nome, valorFmt, vdFmt));
+                        }
+                    }
+
+                    long idEstavel = o.has("tabelaId")
+                            ? (long) o.optInt("tabelaId", i) * 31L + i
+                            : i;
+
+                    novasTabelas.add(new Tabela(nomeTabela, porcaoTexto, linhas, idEstavel));
+
+                    String avText = "";
+                    Object avObj = o.opt("avaliacao");
+                    if (avObj == null) avObj = o.opt("avaliacaoTexto");
+
+                    if (avObj instanceof JSONObject) {
+                        avText = normalizeAvaliacao((JSONObject) avObj);
+                    } else if (avObj instanceof String) {
+                        String raw = ((String) avObj).trim();
+                        if (raw.startsWith("{") && raw.endsWith("}")) {
+                            try { avText = normalizeAvaliacao(new JSONObject(raw)); }
+                            catch (Exception ignore) { avText = normalizeAvaliacao(raw); }
+                        } else {
+                            avText = normalizeAvaliacao(raw);
+                        }
+                    }
+
+                    novasAvaliacoes.add(avText);
+                }
+
+                postUi(() -> {
+                    aplicarTabelas(novasTabelas, novasAvaliacoes);
+                    showLoading(false);
+                });
+
+            } catch (Exception e) {
+                Log.e("TabelaProduto", "Falha carregando tabelas", e);
+                postUi(() -> {
+                    showLoading(false);
+                    Toast.makeText(requireContext(),
+                            "Falha: " + (e.getMessage() == null ? "desconhecida" : e.getMessage()),
+                            Toast.LENGTH_SHORT).show();
+                });
             } finally {
                 if (conn != null) conn.disconnect();
             }
         }).start();
     }
 
-    private void aplicarProdutoNaUI(ProdutoDTO p) {
-        if (p == null) {
-            Toast.makeText(requireContext(), "Resposta inválida do servidor", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    // decide o texto de porção
+    private String resolvePorcaoTexto(JSONObject tabela) {
+        String porcaoTxt = tabela.optString("porcaoTexto", null);
+        if (porcaoTxt != null && !porcaoTxt.trim().isEmpty()) return porcaoTxt;
+        String p = anyToString(tabela.opt("porcao"));
+        if (!p.isEmpty()) return "Porção " + formatAnyNumberToTwoDecimals(p);
+        return "Porção";
+    }
 
-        tvTitulo.setText(p.nome != null ? p.nome : "Produto");
-        if (p.porcaoTopo != null && !p.porcaoTopo.isEmpty()) {
-            tvPorcaoTopo.setText(p.porcaoTopo);
-        }
-
-        adapter.submit(p.tabelas);
-
-        // Ajusta avaliação inicial: se não tem tabela, cai no “ADD”
+    // joga tudo na tela
+    private void aplicarTabelas(@NonNull List<Tabela> tabelas,
+                                @NonNull List<String> novasAvaliacoes) {
+        avaliacoes.clear();
+        avaliacoes.addAll(novasAvaliacoes != null ? novasAvaliacoes : new ArrayList<>());
+        pagerAdapter.submit(tabelas);
         atualizarAvaliacao(0);
     }
 
+    // mostra o textinho da avaliação
     private void atualizarAvaliacao(int position) {
-        if (position >= adapter.getRealCount()) {
-            tvResumoAvaliacao.setText("Pronto para adicionar uma nova tabela nutricional?");
+        if (pagerAdapter == null || tvResumoAvaliacao == null) return;
+        if (position >= pagerAdapter.getRealCount()) {
+            tvResumoAvaliacao.setText("");
             return;
         }
-
-        // TODO: se quiser avaliação específica por tabela, gere aqui com base nas linhas da tabela atual.
-        String avaliacao = "Veja a avaliação resumida dividida em pontos bons e ruins (0 a 100):\n\n" +
-                "✅ Pontos bons:\n" +
-                "Proteínas (6,2g) – 75: Boa quantidade para lanches.\n" +
-                "Cálcio (243mg) – 85: Ótima fonte.\n" +
-                "Gorduras Totais (0,7g) – 90: Baixíssimo teor.\n" +
-                "Sódio (124mg) – 80: Valor controlado.\n" +
-                "Açúcares adicionados (2g) – 70: Moderado.\n" +
-                "Valor energético (123 kcal) – 80: Calorias equilibradas.\n\n" +
-                "⚠️ Pontos ruins:\n" +
-                "Gorduras saturadas (24g) – 10: Muito alto.\n" +
-                "Gorduras trans (0,3g) – 20: Deveria ser zero.\n" +
-                "Açúcares totais (24g) – 25: Quase no limite diário.\n" +
-                "Fibra alimentar (1g) – 30: Baixa quantidade.\n\n" +
-                "📈 O que pode melhorar:\n" +
-                "Reduzir gorduras saturadas e trans.\n" +
-                "Diminuir açúcares totais.\n" +
-                "Aumentar fibras.\n" +
-                "Manter os bons níveis de proteínas, cálcio e gorduras totais.";
-        tvResumoAvaliacao.setText(avaliacao);
+        String txt = "";
+        if (position >= 0 && position < avaliacoes.size()) {
+            String a = avaliacoes.get(position);
+            if (a != null) txt = a.trim();
+        }
+        if (txt.isEmpty() || "null".equalsIgnoreCase(txt)) {
+            tvResumoAvaliacao.setText("Opa! Parece que essa tabela não tem uma avaliação");
+        } else {
+            tvResumoAvaliacao.setText(txt);
+        }
     }
 
-    // ---------- Helpers de rede/JSON ----------
-
-    private void postToast(String msg) {
-        mainHandler.post(() -> Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show());
+    // liga/desliga o carregamento
+    private void showLoading(boolean show) {
+        if (loadingOverlay != null) loadingOverlay.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (cardConteudo != null)   cardConteudo.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
     }
 
-    private String readAll(InputStream is) throws IOException {
-        if (is == null) return "";
+    // manda pro main thread
+    private void postUi(Runnable r) {
+        if (isAdded()) requireActivity().runOnUiThread(r);
+    }
+
+    // lê a resposta
+    private String readAll(InputStream is) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         StringBuilder sb = new StringBuilder();
         String line;
@@ -188,56 +293,64 @@ public class TabelaProdutoFragment extends Fragment {
         return sb.toString();
     }
 
-    private ProdutoDTO parseProduto(JSONObject json) throws JSONException {
-        ProdutoDTO dto = new ProdutoDTO();
-        dto.id = json.optString("_id", "");
-        dto.nome = json.optString("nome", "");
-        // se existir uma porção geral do produto
-        dto.porcaoTopo = json.optString("porcao", "");
+    // transforma qualquer coisa em string
+    private String anyToString(Object o) {
+        return o == null ? "" : String.valueOf(o);
+    }
 
-        JSONArray arrTabelas = json.optJSONArray("tabelas");
-        dto.tabelas = new ArrayList<>();
-
-        if (arrTabelas != null) {
-            for (int i = 0; i < arrTabelas.length(); i++) {
-                JSONObject jt = arrTabelas.optJSONObject(i);
-                if (jt == null) continue;
-
-                String titulo = jt.optString("titulo", "Tabela Nutricional");
-                String porcaoTexto = jt.optString("porcaoTexto", "Porção");
-                long idEstavel = jt.optLong("idEstavel", criarIdEstavelHeuristico(dto.id, i));
-
-                JSONArray arrLinhas = jt.optJSONArray("linhas");
-                List<Linha> linhas = new ArrayList<>();
-                if (arrLinhas != null) {
-                    for (int k = 0; k < arrLinhas.length(); k++) {
-                        JSONObject jl = arrLinhas.optJSONObject(k);
-                        if (jl == null) continue;
-                        String nome = jl.optString("nome", "");
-                        String valor = jl.optString("valor", "");
-                        String vd = jl.optString("vd", "");
-                        linhas.add(new Linha(nome, valor, vd));
-                    }
-                }
-
-                dto.tabelas.add(new Tabela(titulo, porcaoTexto, linhas, idEstavel));
+    // pega o primeiro número e deixa bonitinho com 2 casas
+    private String formatAnyNumberToTwoDecimals(String raw) {
+        if (raw == null) return "";
+        String s = raw.trim();
+        if (s.isEmpty()) return "";
+        Pattern p = Pattern.compile("(-?\\d+(?:[\\.,]\\d+)?)");
+        Matcher m = p.matcher(s);
+        if (m.find()) {
+            String numStr = m.group(1).replace(',', '.');
+            try {
+                double v = Double.parseDouble(numStr);
+                String fmt = DF2.format(v);
+                return s.substring(0, m.start()) + fmt + s.substring(m.end());
+            } catch (NumberFormatException ignore) {
+                return s;
             }
         }
-
-        return dto;
+        return s;
     }
 
-    private long criarIdEstavelHeuristico(String produtoId, int indexTabela) {
-        // gera um id estável quando backend não mandar. Qualquer heurística determinística serve.
-        long base = produtoId != null ? produtoId.hashCode() : 0;
-        return (base & 0x7FFFFFFFL) * 31L + indexTabela;
+    //pega o melhor texto de um JSON de avaliação
+    private String normalizeAvaliacao(JSONObject obj) {
+        if (obj == null) return "";
+        String t = obj.optString("texto", null);
+        if (t != null && !t.trim().isEmpty()) {
+            return normalizeAvaliacao(t);
+        }
+        String best = "";
+        int bestLen = 0;
+        for (Iterator<String> it = obj.keys(); it.hasNext();) {
+            String k = it.next();
+            if ("classificacao".equalsIgnoreCase(k) || "pontuacao".equalsIgnoreCase(k)) continue;
+            Object v = obj.opt(k);
+            if (v instanceof String) {
+                String sv = ((String) v).trim();
+                if (sv.length() > bestLen) {
+                    best = sv;
+                    bestLen = sv.length();
+                }
+            }
+        }
+        return normalizeAvaliacao(best);
     }
 
-    // DTO interno só para transporte temporário
-    static class ProdutoDTO {
-        String id;
-        String nome;
-        String porcaoTopo;
-        List<Tabela> tabelas;
+    // tira aspas e converte \n em quebra real
+    private String normalizeAvaliacao(String raw) {
+        if (raw == null) return "";
+        String s = raw.trim();
+        if ((s.startsWith("\"") && s.endsWith("\"")) || (s.startsWith("'") && s.endsWith("'"))) {
+            s = s.substring(1, s.length() - 1);
+        }
+        s = s.replace("\\n", "\n");
+        if ("null".equalsIgnoreCase(s)) return "";
+        return s;
     }
 }

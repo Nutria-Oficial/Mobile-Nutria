@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#E8E8E8">
+    android:background="@android:color/transparent">
 
-    <!-- ScrollView só pode ter UM filho direto -->
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp">
 
-        <!-- Card ocupa a largura toda do pai (0dp + start/end + bottom) -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardBlocoTabela"
             android:layout_width="0dp"
@@ -27,13 +27,11 @@
             app:strokeColor="#000000"
             app:cardBackgroundColor="#FFFFFF">
 
-            <!-- Conteúdo do card -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="12dp">
 
-                <!-- Título -->
                 <TextView
                     android:id="@+id/tvTabelaTitulo"
                     android:layout_width="0dp"
@@ -48,7 +46,6 @@
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constrainedWidth="true" />
 
-                <!-- Porção à direita, alinhada na mesma linha -->
                 <TextView
                     android:id="@+id/tvPorcaoColuna"
                     android:layout_width="wrap_content"
@@ -59,7 +56,6 @@
                     app:layout_constraintBaseline_toBaselineOf="@id/tvTabelaTitulo"
                     app:layout_constraintEnd_toEndOf="parent" />
 
-                <!-- Divisor -->
                 <View
                     android:id="@+id/dividerHeader"
                     android:layout_width="0dp"
@@ -70,7 +66,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
 
-                <!-- Tabela dinâmica: largura por constraints (0dp) -->
                 <TableLayout
                     android:id="@+id/tableNutri"
                     android:layout_width="0dp"
@@ -83,7 +78,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent">
 
-                    <!-- Cabeçalho inicial (ok manter, o adapter pode limpar e recriar) -->
                     <TableRow
                         android:padding="12dp">
 
