@@ -1,5 +1,5 @@
 package com.bea.nutria.ui.Comparacao;
-import android.util.Log; // Adicionado para Log
+import android.util.Log;
 import android.annotation.SuppressLint;
 
 import android.view.LayoutInflater;
@@ -20,10 +20,11 @@ import java.util.Locale;
 
 public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.ProdutoViewHolder> {
 
-    private List<GetProdutoDTO> listaProdutosExibida;
+    // A lista de exibição AGORA PODE SER MODIFICADA (Mutable)
+    private final List<GetProdutoDTO> listaProdutosExibida;
     private final List<GetProdutoDTO> listaProdutosOriginal;
     private OnItemClickListener listener;
-    private static final String TAG = "ComparacaoAdapter"; // Tag para Log
+    private static final String TAG = "ComparacaoAdapter";
 
     public interface OnItemClickListener {
         void onItemClick(GetProdutoDTO produto);
@@ -34,6 +35,7 @@ public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.Pr
     }
 
     public ComparacaoAdapter(List<GetProdutoDTO> produtos) {
+        // Inicializa ambas as listas
         this.listaProdutosExibida = new ArrayList<>(produtos);
         this.listaProdutosOriginal = new ArrayList<>(produtos);
     }
@@ -46,9 +48,8 @@ public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.Pr
                     .inflate(R.layout.item_card_comparacao, parent, false);
             return new ProdutoViewHolder(view);
         } catch (Exception e) {
-            // Este log será útil se o layout não puder ser inflado
             Log.e(TAG, "Erro ao inflar o layout item_card_comparacao: " + e.getMessage());
-            throw e; // Lança a exceção para que ela apareça no logcat
+            throw e;
         }
     }
 
@@ -56,7 +57,6 @@ public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.Pr
     public void onBindViewHolder(@NonNull ProdutoViewHolder holder, @SuppressLint("RecyclerView") int position) {
         GetProdutoDTO produtoAtual = listaProdutosExibida.get(position);
 
-        // Verificação de NULO no holder antes de tentar usar o setText
         if (holder.txtNome != null) {
             holder.txtNome.setText(produtoAtual.getNome());
         } else {
@@ -66,6 +66,7 @@ public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.Pr
         // Define o listener de clique
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
+                // Passa o produto completo para o Fragment
                 listener.onItemClick(produtoAtual);
             }
         });
@@ -76,6 +77,27 @@ public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.Pr
         return listaProdutosExibida.size();
     }
 
+    /**
+     * NOVO: Método para remover um item e notificar a RecyclerView.
+     * @param produto O produto a ser removido.
+     */
+    public void removeItem(GetProdutoDTO produto) {
+        int position = listaProdutosExibida.indexOf(produto);
+        if (position != -1) {
+            listaProdutosExibida.remove(position);
+            // Notifica o adapter para animar a remoção
+            notifyItemRemoved(position);
+        }
+    }
+
+    /**
+     * NOVO: Permite que o Fragment acesse a lista de produtos atualizada.
+     */
+    public List<GetProdutoDTO> getListaProdutosExibida() {
+        return listaProdutosExibida;
+    }
+
+
     // ... (Métodos filtro e updateList existentes) ...
 
     public static class ProdutoViewHolder extends RecyclerView.ViewHolder {
@@ -84,7 +106,6 @@ public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.Pr
 
         ProdutoViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Verificação de ID: Se esta linha retornar null, a falha acontece no onBind.
             txtNome = itemView.findViewById(R.id.textViewTitulo);
             img = itemView.findViewById(R.id.imageView3);
         }

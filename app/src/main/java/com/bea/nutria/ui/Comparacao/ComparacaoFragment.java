@@ -52,7 +52,7 @@ public class ComparacaoFragment extends Fragment {
 
     private Integer idUsuario = 1;
 
-    // ⚠️ NOVO: Variável para armazenar o ID do produto selecionado
+    // Variável para armazenar o ID do produto selecionado
     private Integer produtoSelecionadoId = null;
 
     private ProdutoAPI produtoApi;
@@ -134,7 +134,7 @@ public class ComparacaoFragment extends Fragment {
         if (btnEscolherTabelas != null) {
             btnEscolherTabelas.setOnClickListener(v -> {
 
-                // ⚠️ MODIFICAÇÃO: Verifica se um produto foi selecionado e passa o ID
+                // MODIFICAÇÃO: Verifica se um produto foi selecionado e passa o ID
                 if (produtoSelecionadoId != null) {
                     FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -172,7 +172,13 @@ public class ComparacaoFragment extends Fragment {
                         comparacaoAdapter.setOnItemClickListener(produto -> {
                             Log.d("Comparacao", "Produto selecionado: " + produto.getNome());
 
-                            // ⚠️ MODIFICAÇÃO: Armazena o ID do produto selecionado
+                            // NOVO: 1. REMOVE O ITEM DA LISTA E ATUALIZA A RECYCLER VIEW
+                            if (comparacaoAdapter != null) {
+                                // O Adapter remove o item da sua lista interna e notifica a UI
+                                comparacaoAdapter.removeItem(produto);
+                            }
+
+                            // MODIFICAÇÃO: Armazena o ID do produto selecionado
                             produtoSelecionadoId = produto.getId();
 
                             // Transição visual: Quando um item é SELECIONADO, ocultamos a área de seleção
@@ -194,10 +200,6 @@ public class ComparacaoFragment extends Fragment {
 
                         // 4. Mostrar a lista.
                         recyclerViewProdutos.setVisibility(View.VISIBLE);
-
-                        // CORREÇÃO APLICADA:
-                        // demonstracaoItem1 e textViewSelecionarProduto1 PERMANECEM VISÍVEIS aqui,
-                        // pois a lista está apenas carregando, e não um item foi selecionado ainda.
 
                     } else {
                         Log.d("API:", "Lista de produtos vazia ou RecyclerView não inicializada.");
@@ -257,7 +259,9 @@ public class ComparacaoFragment extends Fragment {
         // NOVO: Reseta o ID selecionado
         produtoSelecionadoId = null;
 
-        // RecyclerView (OCULTA)
+        // Se houver adapter e dados, a lista deve ser atualizada para exibir os itens restantes.
+        // Se a lógica de comparação exigir que o item volte ao reset, a lista deve ser recarregada.
+        // Por enquanto, apenas ocultamos a RecyclerView.
         if (recyclerViewProdutos != null) {
             recyclerViewProdutos.setVisibility(View.GONE);
         }
