@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bea.nutria.R;
-import com.bea.nutria.databinding.ItemCardEscolhaTabelaBinding; // ⚠️ NOVO: Assumindo que o nome do binding é este, baseado no R.layout.item_card_escolha_tabela
+import com.bea.nutria.databinding.ItemCardEscolhaTabelaBinding;
 import com.bea.nutria.model.GetTabelaDTO;
 
 import java.util.List;
@@ -23,7 +23,8 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
 
     // Interface para cliques no botão "Escolher Tabela"
     public interface OnTabelaClickListener {
-        void onEscolherTabelaClick(GetTabelaDTO tabela);
+        // MUDANÇA: Agora passa a posição junto com o objeto Tabela
+        void onEscolherTabelaClick(GetTabelaDTO tabela, int position);
     }
 
     public void setOnTabelaClickListener(OnTabelaClickListener listener) {
@@ -37,7 +38,7 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
     @NonNull
     @Override
     public TabelaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // 🚀 USANDO VIEW BINDING para inflar o layout e passá-lo para o ViewHolder
+        // USANDO VIEW BINDING para inflar o layout e passá-lo para o ViewHolder
         try {
             ItemCardEscolhaTabelaBinding binding = ItemCardEscolhaTabelaBinding.inflate(
                     LayoutInflater.from(parent.getContext()),
@@ -47,7 +48,6 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
             return new TabelaViewHolder(binding);
         } catch (Exception e) {
             Log.e(TAG, "Erro ao inflar o layout: " + e.getMessage());
-            // Em um ambiente de produção, substitua por tratamento de erro mais robusto.
             throw new RuntimeException("Erro ao criar ViewHolder", e);
         }
     }
@@ -71,7 +71,8 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
         if (holder.btnSelecionarTabela != null) {
             holder.btnSelecionarTabela.setOnClickListener(v -> {
                 if (listener != null) {
-                    listener.onEscolherTabelaClick(tabelaAtual);
+                    // MUDANÇA: Passa a posição para o listener
+                    listener.onEscolherTabelaClick(tabelaAtual, position);
                 }
             });
         }
@@ -80,5 +81,20 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
     @Override
     public int getItemCount() {
         return listaTabelas.size();
+    }
+
+    // NOVO MÉTODO: Remove um item da lista e notifica a RecyclerView
+    public void removeItem(int position) {
+        if (position >= 0 && position < listaTabelas.size()) {
+            listaTabelas.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    // NOVO MÉTODO: Adiciona um item de volta (usado na deseleção)
+    // Para simplificar, adicionamos no final.
+    public void addItem(GetTabelaDTO tabela) {
+        listaTabelas.add(tabela);
+        notifyItemInserted(listaTabelas.size() - 1);
     }
 }
