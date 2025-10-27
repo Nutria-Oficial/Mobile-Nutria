@@ -36,7 +36,7 @@ public class IngredientesRegistradosFragment extends Fragment {
     private ConexaoAPI apiManager;
     private IngredienteAPI ingredienteApi;
     private RecyclerView recyclerViewIngredientes;
-    private IngredienteSharedViewModel sharedViewModel; // ADICIONAR
+    private IngredienteSharedViewModel sharedViewModel;
 
     private static final String TAG = "IngredientesFragment";
     private static final String url = "https://api-spring-mongodb.onrender.com";
@@ -70,18 +70,41 @@ public class IngredientesRegistradosFragment extends Fragment {
             }
         });
 
-        // atualizar ViewModel quando adicionar/remover
+        // observar novos ingredientes criados
+        sharedViewModel.getNovoIngredienteAdicionado().observe(getViewLifecycleOwner(), novoIngrediente -> {
+            if (novoIngrediente != null) {
+                // adicionar no início da lista principal
+                listaIngredientes.add(0, novoIngrediente);
+
+                // atualizar o adapter com o novo ingrediente no topo
+                atualizarListaExibida();
+
+                // scroll para o topo para mostrar o novo ingrediente
+                recyclerViewIngredientes.scrollToPosition(0);
+            }
+        });
+
         adapter.setOnIngredienteChangeListener(new IngredienteAdapter.OnIngredienteChangeListener() {
             @Override
             public void onIngredienteAdicionado(IngredienteResponse ingrediente) {
-                Log.d(TAG, "Ingrediente adicionado: " + ingrediente.getNomeIngrediente());
                 sharedViewModel.setIngredientesSelecionados(adapter.getListaSelecionados());
+
+                // mover ingrediente para o topo da lista principal
+                moverIngredienteParaTopo(ingrediente);
+
+                // atualizar a exibição
+                atualizarListaExibida();
+
+                // scroll para o topo
+                recyclerViewIngredientes.scrollToPosition(0);
             }
 
             @Override
             public void onIngredienteRemovido(IngredienteResponse ingrediente) {
-                Log.d(TAG, "Ingrediente removido: " + ingrediente.getNomeIngrediente());
                 sharedViewModel.setIngredientesSelecionados(adapter.getListaSelecionados());
+
+                // atualizar a exibição para reordenar
+                atualizarListaExibida();
             }
         });
 
@@ -120,13 +143,7 @@ public class IngredientesRegistradosFragment extends Fragment {
                     listaIngredientes.clear();
                     listaIngredientes.addAll(listaCompleta);
 
-                    List<IngredienteResponse> listaInicial = new ArrayList<>();
-                    int limite = Math.min(listaIngredientes.size(), 50);
-                    for (int i = 0; i < limite; i++) {
-                        listaInicial.add(listaIngredientes.get(i));
-                    }
-
-                    adapter.atualizarLista(listaInicial);
+                    atualizarListaExibida();
                 } else {
                     Log.e(TAG, "Erro na resposta: " + response.code() + " - " + response.message());
                 }
@@ -139,6 +156,36 @@ public class IngredientesRegistradosFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void moverIngredienteParaTopo(IngredienteResponse ingrediente) {
+        // remover o ingrediente da posição atual
+        for (int i = 0; i < listaIngredientes.size(); i++) {
+            if (listaIngredientes.get(i).getId().equals(ingrediente.getId())) {
+                listaIngredientes.remove(i);
+                break;
+            }
+        }
+
+        // adicionar no topo
+        listaIngredientes.add(0, ingrediente);
+    }
+
+    private void atualizarListaExibida() {
+        String textoBusca = editPesquisar.getText().toString();
+
+        if (textoBusca.isEmpty()) {
+            // sem filtro, mostrar os primeiros 50
+            List<IngredienteResponse> listaInicial = new ArrayList<>();
+            int limite = Math.min(listaIngredientes.size(), 50);
+            for (int i = 0; i < limite; i++) {
+                listaInicial.add(listaIngredientes.get(i));
+            }
+            adapter.atualizarLista(listaInicial);
+        } else {
+            // reaplica o filtro atual
+            filtrarIngredientesParcial(textoBusca);
+        }
     }
 
     private void filtrarIngredientesParcial(String texto) {
@@ -183,5 +230,14 @@ public class IngredientesRegistradosFragment extends Fragment {
         }
 
         adapter.atualizarLista(listaTemporaria);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // reordenar a lista quando voltar para a tela
+        if (adapter != null && listaIngredientes != null && !listaIngredientes.isEmpty()) {
+            atualizarListaExibida();
+        }
     }
 }
