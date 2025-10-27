@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +42,7 @@ import com.bea.nutria.databinding.FragmentTabelaBinding;
 import com.bea.nutria.model.GetNutrienteDTO;
 import com.bea.nutria.model.GetTabelaDTO;
 import com.bea.nutria.model.ItemIngrediente;
+import com.bea.nutria.ui.Ingrediente.IngredienteResponse;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -93,9 +96,8 @@ public class TabelaFragment extends Fragment {
         // Inicializar ViewModel
         sharedViewModel = new ViewModelProvider(requireActivity()).get(IngredienteSharedViewModel.class);
 
-        setupRecyclerView();
+        //setupRecyclerView();
         observarIngredientes();
-        setupListeners();
 
         return binding.getRoot();
     }
@@ -161,6 +163,10 @@ public class TabelaFragment extends Fragment {
             }
         });
 
+        binding.btnIngredientes.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(TabelaFragment.this);
+            navController.navigate(R.id.action_tabela_to_ingrediente);
+        });
         binding.button.setOnClickListener(v -> {
             if (validarTodosCamposObrigatorios()) {
 
@@ -413,41 +419,61 @@ public class TabelaFragment extends Fragment {
         //verificar se tem ingredientes adicionados
         return nomeProdutoValido && nomeTabelaValido && checkBoxSelecionado && !binding.porcao.getText().equals("0") && !binding.porcaoEmbalagem.getText().equals("0");
     }    
-    private void setupRecyclerView() {
-        adapter = new TabelaAdapter(getContext(), new ArrayList<>());
-
-        // atualizar ViewModel quando remover
-        adapter.setOnItemRemovedListener((ingrediente, newCount) -> {
-            binding.selecionados.setText(String.valueOf(newCount));
-            sharedViewModel.removerIngrediente(ingrediente); // atualizar ViewModel
-        });
-
-        binding.ingredientesSelecionados.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.ingredientesSelecionados.setAdapter(adapter);
-    }
+//    private void setupRecyclerView() {
+//        adapter = new TabelaAdapter(getContext(), new ArrayList<>());
+//
+//        // atualizar ViewModel quando remover
+//        adapter.setOnItemRemovedListener((ingrediente, newCount) -> {
+////            binding.selecionados.setText(String.valueOf(newCount));
+//            sharedViewModel.removerIngrediente(ingrediente); // atualizar ViewModel
+//        });
+//
+//        binding.ingredientesSelecionados.setLayoutManager(new LinearLayoutManager(getContext()));
+//        binding.ingredientesSelecionados.setAdapter(adapter);
+//    }
 
     private void observarIngredientes() {
         sharedViewModel.getIngredientesSelecionados().observe(getViewLifecycleOwner(), selecionados -> {
-            if (selecionados != null) {
-                Log.d(TAG, "Ingredientes recebidos do ViewModel: " + selecionados.size());
-                binding.selecionados.setText(String.valueOf(selecionados.size()));
+            LinearLayout container = binding.layoutIngredientes;
+            container.removeAllViews();
 
-                adapter = new TabelaAdapter(getContext(), new ArrayList<>(selecionados));
-                adapter.setOnItemRemovedListener((ingrediente, newCount) -> {
-                    binding.selecionados.setText(String.valueOf(newCount));
-                    sharedViewModel.removerIngrediente(ingrediente);
-                });
-                binding.ingredientesSelecionados.setAdapter(adapter);
-            } else {
-                binding.selecionados.setText("0");
+            if (selecionados != null && !selecionados.isEmpty()){
+                for (IngredienteResponse response : selecionados){
+                    mostrarIngredientesNaTela(response, container);
+                }
             }
         });
     }
+    private void mostrarIngredientesNaTela(IngredienteResponse ingrediente, LinearLayout container){
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.item_ingrediente_tabela,container, false);
+        TextView textView = view.findViewById(R.id.txtNomeIngrediente);
+        EditText editText = view.findViewById(R.id.txtNomeIngrediente);
+        ImageView btnRemover = view.findViewById(R.id.btnRemover);
 
-    private void setupListeners() {
-        binding.btIngredientes.setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.action_tabela_to_ingrediente)
-        );
+        textView.setText(ingrediente.getNomeIngrediente());
+        btnRemover.setOnClickListener(v -> {
+            sharedViewModel.removerIngrediente(ingrediente);
+        });
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                try {
+
+                }catch (NumberFormatException exception){
+                }
+            }
+        });
+        container.addView(view);
     }
 
     @Override
