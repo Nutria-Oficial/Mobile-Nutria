@@ -21,7 +21,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bea.nutria.ComparacaoParte2Fragment;
 import com.bea.nutria.R;
 import com.bea.nutria.api.ProdutoAPI;
 import com.bea.nutria.api.conexaoApi.ConexaoAPI;

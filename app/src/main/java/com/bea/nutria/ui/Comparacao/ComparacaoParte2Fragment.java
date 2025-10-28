@@ -1,4 +1,4 @@
-package com.bea.nutria;
+package com.bea.nutria.ui.Comparacao;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -16,11 +16,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bea.nutria.R;
 import com.bea.nutria.api.ProdutoAPI;
 import com.bea.nutria.api.TabelaAPI;
 import com.bea.nutria.api.conexaoApi.ConexaoAPI;
 import com.bea.nutria.model.GetTabelaDTO;
-import com.bea.nutria.ui.Comparacao.TabelaAdapter;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.List;

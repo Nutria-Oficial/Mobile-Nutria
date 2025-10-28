@@ -3,7 +3,8 @@ package com.bea.nutria.model;
 import java.util.List;
 
 public class GetTabelaDTO {
-    private Integer tabelaId;
+    // ⭐️ CORREÇÃO 1: Alterado para Long (Tipo ideal para IDs de banco de dados e IDs Estáveis)
+    private Long tabelaId;
     private String nomeTabela;
     private Double quantidadeTotal;
     private Double porcao;
@@ -21,13 +22,21 @@ public class GetTabelaDTO {
 
     // --- Getters e Setters para GetTabelaDTO ---
 
-    public Integer getTabelaId() {
+    // ⭐️ CORREÇÃO 2: Renomeado para getId() para clareza no Adapter (o Adapter espera o retorno Long)
+    public Long getId() {
         return tabelaId;
     }
 
-    public void setTabelaId(Integer tabelaId) {
+    public void setTabelaId(Long tabelaId) {
         this.tabelaId = tabelaId;
     }
+
+    // Se você deseja manter o getTabelaId(), ele pode coexistir com getId():
+    public Long getTabelaId() {
+        return tabelaId;
+    }
+
+    // ... (restante do código original)
 
     public String getNomeTabela() {
         return nomeTabela;
@@ -89,7 +98,7 @@ public class GetTabelaDTO {
         private Double porcao;
 
         // 💡 Ajuste para Object: O JSON mostra valorDiario como Double ou a String "NaN".
-        // Mapear como Object é o mais seguro. Mudar para Double/String pode causar IllegalStateException.
+        // Mapear como Object é o mais seguro.
         private Object valorDiario;
 
         public NutrienteDTO() {

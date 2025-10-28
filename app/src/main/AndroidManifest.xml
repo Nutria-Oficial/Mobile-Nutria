@@ -22,7 +22,7 @@
 
         <!-- Tela de comparação -->
         <activity
-            android:name=".ComparacaoParte2Fragment"
+            android:name=".ui.Comparacao.ComparacaoParte2Fragment"
             android:exported="false" />
 
         <!-- Tela de perfil -->

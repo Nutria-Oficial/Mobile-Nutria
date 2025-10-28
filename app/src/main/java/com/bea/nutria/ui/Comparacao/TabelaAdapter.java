@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bea.nutria.R;
-import com.bea.nutria.databinding.ItemCardEscolhaTabelaBinding;
 import com.bea.nutria.model.GetTabelaDTO;
 
 import java.util.List;
@@ -23,7 +22,6 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
 
     // Interface para cliques no botão "Escolher Tabela"
     public interface OnTabelaClickListener {
-        // MUDANÇA: Agora passa a posição junto com o objeto Tabela
         void onEscolherTabelaClick(GetTabelaDTO tabela, int position);
     }
 
@@ -33,19 +31,32 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
 
     public TabelaAdapter(List<GetTabelaDTO> tabelas) {
         this.listaTabelas = tabelas;
+
+        // ⭐️ 1. HABILITA IDs ESTÁVEIS
+        setHasStableIds(true);
+    }
+
+    // ⭐️ 2. NOVO MÉTODO OBRIGATÓRIO: Retorna o ID único do item
+    @Override
+    public long getItemId(int position) {
+        if (position >= 0 && position < listaTabelas.size()) {
+            // Se o GetTabelaDTO tiver um campo 'id', use-o.
+            // Exemplo assumindo que GetTabelaDTO tem um método getId() que retorna long.
+            return listaTabelas.get(position).getId();
+        }
+        return RecyclerView.NO_ID;
     }
 
     @NonNull
     @Override
     public TabelaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // USANDO VIEW BINDING para inflar o layout e passá-lo para o ViewHolder
         try {
-            ItemCardEscolhaTabelaBinding binding = ItemCardEscolhaTabelaBinding.inflate(
-                    LayoutInflater.from(parent.getContext()),
+            View view = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.item_card_escolha_tabela,
                     parent,
                     false
             );
-            return new TabelaViewHolder(binding);
+            return new TabelaViewHolder(view);
         } catch (Exception e) {
             Log.e(TAG, "Erro ao inflar o layout: " + e.getMessage());
             throw new RuntimeException("Erro ao criar ViewHolder", e);
@@ -63,7 +74,10 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
         if (holder.headerItem != null) {
             holder.headerItem.setOnClickListener(v -> {
                 tabelaAtual.setExpanded(!tabelaAtual.isExpanded()); // Inverte o estado
-                notifyItemChanged(position); // Notifica o adapter
+
+                // ⭐️ Recomenda-se usar getBindingAdapterPosition() se a posição for usada em lógica complexa
+                // mas para notifyItemChanged, a 'position' anotada já funciona.
+                notifyItemChanged(position);
             });
         }
 
@@ -71,7 +85,6 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
         if (holder.btnSelecionarTabela != null) {
             holder.btnSelecionarTabela.setOnClickListener(v -> {
                 if (listener != null) {
-                    // MUDANÇA: Passa a posição para o listener
                     listener.onEscolherTabelaClick(tabelaAtual, position);
                 }
             });
@@ -87,12 +100,14 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
     public void removeItem(int position) {
         if (position >= 0 && position < listaTabelas.size()) {
             listaTabelas.remove(position);
+
+            // ⭐️ O notifyItemRemoved(position) ainda é usado, mas com IDs estáveis,
+            // a RecyclerView recalcula as posições de forma mais confiável.
             notifyItemRemoved(position);
         }
     }
 
     // NOVO MÉTODO: Adiciona um item de volta (usado na deseleção)
-    // Para simplificar, adicionamos no final.
     public void addItem(GetTabelaDTO tabela) {
         listaTabelas.add(tabela);
         notifyItemInserted(listaTabelas.size() - 1);
