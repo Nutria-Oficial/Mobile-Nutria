@@ -197,10 +197,13 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
                 if (tabelaSelecionada1 != null && tabelaSelecionada2 != null) {
                     // *** LÓGICA ATUALIZADA PARA INICIAR ComparacaoParte3Fragment ***
 
-                    // Cria uma nova instância do fragmento de destino, passando os IDs
+                    // Cria uma nova instância do fragmento de destino, passando os IDs E OS NOMES
                     Fragment nextFragment = ComparacaoParte3Fragment.newInstance(
                             tabelaSelecionada1.getTabelaId(),
-                            tabelaSelecionada2.getTabelaId()
+                            tabelaSelecionada2.getTabelaId(),
+                            // NOVO: Passando os nomes
+                            tabelaSelecionada1.getNomeTabela(),
+                            tabelaSelecionada2.getNomeTabela()
                     );
 
                     // Usa o FragmentManager para iniciar a transação

@@ -1,4 +1,4 @@
-package com.bea.nutria.ui.Comparacao;
+package com.bea.nutria.model;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.Map;
