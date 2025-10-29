@@ -1,4 +1,4 @@
-package com.bea.nutria.ui.NutrIA;
+package com.bea.nutria.ui.Chat;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +13,7 @@ import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
 
-    private List<ChatMessage> messages = new ArrayList<>();
-
-    public void addMessage(ChatMessage message) {
-        messages.add(message);
-        notifyItemInserted(messages.size() - 1);
-    }
+    private List<String> messages = new ArrayList<>();
 
     public void clearMessages() {
         messages.clear();
@@ -35,12 +30,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
-        holder.bind(messages.get(position));
+        // começa pelo chat
+        boolean isUserMessage = (position % 2 == 0);
+        holder.bind(messages.get(position), isUserMessage);
     }
 
     @Override
     public int getItemCount() {
         return messages.size();
+    }
+
+    public void carregarChat(List<String> mensagens) {
+        messages.clear();
+        messages.addAll(mensagens);
+        notifyDataSetChanged();
+    }
+
+    public void addMessage(String mensagem) {
+        messages.add(mensagem);
+        notifyItemInserted(messages.size() - 1);
     }
 
     static class ChatViewHolder extends RecyclerView.ViewHolder {
@@ -57,17 +65,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             txtBotMessage = itemView.findViewById(R.id.txtBotMessage);
         }
 
-        public void bind(ChatMessage message) {
-            if (message.isUser()) {
-                // Mostrar mensagem do usuário
+        public void bind(String message, boolean isUserMessage) {
+            if (isUserMessage) {
+                // mostrar mensagem do usuário
                 layoutUserMessage.setVisibility(View.VISIBLE);
                 layoutBotMessage.setVisibility(View.GONE);
-                txtUserMessage.setText(message.getMessage());
+                txtUserMessage.setText(message);
             } else {
-                // Mostrar mensagem do bot
+                // mostrar mensagem do bot
                 layoutUserMessage.setVisibility(View.GONE);
                 layoutBotMessage.setVisibility(View.VISIBLE);
-                txtBotMessage.setText(message.getMessage());
+                txtBotMessage.setText(message);
             }
         }
     }

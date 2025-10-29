@@ -36,7 +36,7 @@ public class IngredientesRegistradosFragment extends Fragment {
     private ConexaoAPI apiManager;
     private IngredienteAPI ingredienteApi;
     private RecyclerView recyclerViewIngredientes;
-    private IngredienteSharedViewModel sharedViewModel; // ADICIONAR
+    private IngredienteSharedViewModel sharedViewModel;
 
     private static final String TAG = "IngredientesFragment";
     private static final String url = "https://api-spring-mongodb.onrender.com";
