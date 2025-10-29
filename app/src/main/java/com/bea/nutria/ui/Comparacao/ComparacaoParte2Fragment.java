@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager; // Importação necessária
+import androidx.fragment.app.FragmentTransaction; // Importação necessária
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -76,6 +78,8 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
 
     // URL da API
     private static final String url = "https://api-spring-mongodb.onrender.com/";
+
+    private static final int FRAGMENT_CONTAINER_ID = R.id.nav_host_fragment_activity_main;
 
     /**
      * MÉTODO FACTORY: Cria uma nova instância do fragment e empacota o ID do produto.
@@ -191,8 +195,26 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         if (botaoComparar != null) {
             botaoComparar.setOnClickListener(v -> {
                 if (tabelaSelecionada1 != null && tabelaSelecionada2 != null) {
-                    // TODO: Implementar navegação para a tela de comparação
-                    Toast.makeText(getContext(), "Pronto para Comparar! Navegando...", Toast.LENGTH_SHORT).show();
+                    // *** LÓGICA ATUALIZADA PARA INICIAR ComparacaoParte3Fragment ***
+
+                    // Cria uma nova instância do fragmento de destino, passando os IDs
+                    Fragment nextFragment = ComparacaoParte3Fragment.newInstance(
+                            tabelaSelecionada1.getTabelaId(),
+                            tabelaSelecionada2.getTabelaId()
+                    );
+
+                    // Usa o FragmentManager para iniciar a transação
+                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                    // Substitui o fragmento atual pelo novo.
+                    // Certifique-se de que o ID do container (R.id.fragment_container, por exemplo) está correto no seu layout da Activity.
+                    // Adiciona a transação à Back Stack para que o usuário possa voltar.
+                    fragmentTransaction.replace(FRAGMENT_CONTAINER_ID, nextFragment); // Substitua 'R.id.fragment_container' pelo ID do seu container de fragmentos
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+
+                    // Removido o Intent, pois estamos navegando entre Fragments, não Activities
                 } else {
                     Toast.makeText(getContext(), "Selecione duas tabelas para comparar.", Toast.LENGTH_SHORT).show();
                 }

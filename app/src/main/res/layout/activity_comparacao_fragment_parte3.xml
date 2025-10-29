@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F2F2F2">
+    android:background="#F2F2F2"
+    android:id="@+id/main_constraint">
 
     <TextView
         android:id="@+id/TextView_tituloTelaComparacao"
@@ -32,905 +33,494 @@
         app:layout_constraintVertical_bias="1.0"
         tools:ignore="ContentDescription" />
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="413dp"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_view_comparacao"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/fundo_arredondado"
-        android:backgroundTint="#FFFFFF"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TextView_tituloTelaComparacao"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/TextView_tituloTelaComparacao">
 
-    <TextView
-        android:id="@+id/textViewTitulo4"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:clickable="false"
-        android:focusable="false"
-        android:fontFamily="@font/montserrat_medium"
-        android:text="Produto 2"
-
-        android:textColor="#161515"
-        android:textSize="18sp"
-
-        android:textStyle="normal"
-        app:layout_constraintBottom_toTopOf="@+id/view_linha4"
-        app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem"
-        app:layout_constraintTop_toBottomOf="@+id/view_linha2"
-        app:layout_constraintVertical_bias="0.509" />
-
-    <TextView
-        android:id="@+id/textViewTitulo2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:clickable="false"
-        android:focusable="false"
-        android:fontFamily="@font/montserrat_medium"
-        android:text="Produto 1"
-
-        android:textColor="#161515"
-        android:textSize="18sp"
-
-        android:textStyle="normal"
-        app:layout_constraintBottom_toTopOf="@+id/view_linha2"
-        app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem3"
-        app:layout_constraintTop_toTopOf="@+id/view"
-        app:layout_constraintVertical_bias="0.647" />
-
-    <View
-        android:id="@+id/view_linha5"
-        android:layout_width="360dp"
-        android:layout_height="3dp"
-        android:layout_marginTop="30dp"
-        android:background="#D0D0D0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_linha4" />
-
-    <View
-        android:id="@+id/view_linha4"
-        android:layout_width="270dp"
-        android:layout_height="3dp"
-        android:layout_marginStart="16dp"
-        android:background="#EEEDF7"
-        app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem"
-        app:layout_constraintTop_toBottomOf="@+id/view_demonstracaoItem" />
-
-    <View
-        android:id="@+id/view_demonstracaoItem3"
-        android:layout_width="63dp"
-        android:layout_height="73dp"
-        android:layout_marginStart="25dp"
-        android:background="@drawable/quadrado_arredondado"
-        app:circularflow_defaultRadius="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/view_linha2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.174" />
-
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="58dp"
-        android:layout_height="58dp"
-
-        android:clickable="false"
-        android:focusable="false"
-
-        app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem3"
-        app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem3"
-        app:layout_constraintHorizontal_bias="0.2"
-        app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem3"
-        app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem3"
-        app:layout_constraintVertical_bias="0.533"
-        app:srcCompat="@drawable/xlsx"
-        tools:ignore="ContentDescription" />
-
-    <View
-        android:id="@+id/view_linha3"
-        android:layout_width="270dp"
-        android:layout_height="3dp"
-        android:layout_marginStart="16dp"
-        android:background="#EEEDF7"
-        app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem"
-        app:layout_constraintTop_toBottomOf="@+id/view_demonstracaoItem" />
-
-    <View
-        android:id="@+id/view_demonstracaoItem"
-        android:layout_width="63dp"
-        android:layout_height="73dp"
-        android:layout_marginStart="25dp"
-        android:background="@drawable/quadrado_arredondado"
-        app:circularflow_defaultRadius="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/view_linha2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.272" />
-
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="58dp"
-        android:layout_height="58dp"
-
-        android:clickable="false"
-        android:focusable="false"
-
-        app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem"
-        app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem"
-        app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem"
-        app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem"
-        app:srcCompat="@drawable/xlsx"
-        tools:ignore="ContentDescription" />
-
-    <View
-        android:id="@+id/view_linha2"
-        android:layout_width="270dp"
-        android:layout_height="3dp"
-        android:layout_marginEnd="20dp"
-        android:background="#EEEDF7"
-        app:layout_constraintBottom_toTopOf="@+id/conteudo_expansivel_tabela1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_demonstracaoItem3"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_comparar"
-        android:layout_width="330dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="90dp"
-        android:fontFamily="@font/montserrat_semibold"
-        android:onClick="openFragmentComparacaoPart2"
-        android:text="Comparar"
-        android:textAllCaps="false"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:backgroundTint="#EE7026"
-        app:cornerRadius="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/header_item"
-        android:layout_width="351dp"
-        android:layout_height="83dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="207dp">
-
-        <View
-            android:id="@+id/view2"
-            android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:background="#EEEDF7"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <View
-            android:id="@+id/view_fundo_branco_item1"
-            android:layout_width="345dp"
-            android:layout_height="68dp"
-            android:layout_marginHorizontal="5dp"
-            android:background="#FFFFFF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:id="@+id/imageButtonSeta"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/seta"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/view_fundo_branco_item1"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="ContentDescription" />
-
-        <ImageView
-            android:id="@+id/icon_selecionado1"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_selecionado"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/imageButtonSeta"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="ContentDescription" />
-
-        <View
-            android:id="@+id/view_demonstracaoItem4"
-            android:layout_width="63dp"
-            android:layout_height="73dp"
-            android:background="@drawable/quadrado_arredondado"
-            app:circularflow_defaultRadius="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textViewTitulo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:fontFamily="@font/montserrat_medium"
-            android:text="Produto"
-            android:textColor="#161515"
-            android:textSize="18sp"
-            android:textStyle="normal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem4"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="58dp"
-            android:layout_height="58dp"
-            app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem4"
-            app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem4"
-            app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem4"
-            app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem4"
-            app:srcCompat="@drawable/xlsx"
-            tools:ignore="ContentDescription" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/conteudo_expansivel_tabela1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="30dp"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/fundo_arredondado"
-        android:backgroundTint="#FFFFFF"
-        android:paddingTop="8dp"
-        android:paddingBottom="16dp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_linha5">
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardBlocoTabela1"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="#FFFFFF"
-            app:cardCornerRadius="8dp"
-            app:cardUseCompatPadding="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:strokeColor="#0B0B0B"
-            app:strokeWidth="1dp">
+            android:paddingBottom="100dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/fundo_arredondado"
+            android:backgroundTint="#FFFFFF">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/textViewTitulo2"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp">
+                android:layout_marginStart="20dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="Produto 1"
+                android:textColor="#161515"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                app:layout_constraintBottom_toTopOf="@+id/view_linha2"
+                app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.647" />
 
-                <TextView
-                    android:id="@+id/tvTabelaTitulo1"
+            <View
+                android:id="@+id/view_demonstracaoItem3"
+                android:layout_width="63dp"
+                android:layout_height="73dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/quadrado_arredondado"
+                app:circularflow_defaultRadius="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:clickable="false"
+                android:focusable="false"
+                app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem3"
+                app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem3"
+                app:layout_constraintHorizontal_bias="0.2"
+                app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem3"
+                app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem3"
+                app:layout_constraintVertical_bias="0.533"
+                app:srcCompat="@drawable/xlsx"
+                tools:ignore="ContentDescription" />
+
+            <View
+                android:id="@+id/view_linha2"
+                android:layout_width="270dp"
+                android:layout_height="3dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="20dp"
+                android:background="#EEEDF7"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_demonstracaoItem3" />
+
+            <TextView
+                android:id="@+id/textViewTitulo4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="Produto 2"
+                android:textColor="#161515"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                app:layout_constraintBottom_toTopOf="@+id/view_linha4"
+                app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem"
+                app:layout_constraintTop_toBottomOf="@+id/view_linha2"
+                app:layout_constraintVertical_bias="0.509" />
+
+            <View
+                android:id="@+id/view_demonstracaoItem"
+                android:layout_width="63dp"
+                android:layout_height="73dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/quadrado_arredondado"
+                app:circularflow_defaultRadius="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_linha2" />
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:clickable="false"
+                android:focusable="false"
+                app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem"
+                app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem"
+                app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem"
+                app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem"
+                app:srcCompat="@drawable/xlsx"
+                tools:ignore="ContentDescription" />
+
+            <View
+                android:id="@+id/view_linha4"
+                android:layout_width="270dp"
+                android:layout_height="3dp"
+                android:layout_marginStart="16dp"
+                android:background="#EEEDF7"
+                app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem"
+                app:layout_constraintTop_toBottomOf="@+id/view_demonstracaoItem" />
+
+            <View
+                android:id="@+id/view_linha5"
+                android:layout_width="360dp"
+                android:layout_height="3dp"
+                android:layout_marginTop="30dp"
+                android:background="#D0D0D0"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_linha4" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/header_item"
+                android:layout_width="351dp"
+                android:layout_height="83dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_linha5">
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:background="#EEEDF7"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view_fundo_branco_item1"
+                    android:layout_width="345dp"
+                    android:layout_height="68dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:background="#FFFFFF"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/imageButtonSeta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="10dp"
-                    android:fontFamily="@font/montserrat_semibold"
-                    android:text="Detalhes Nutricionais - Tabela 1"
-                    android:textColor="#0B0B0B"
-                    android:textSize="16sp" />
+                    android:layout_marginEnd="16dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/seta"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/view_fundo_branco_item1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="ContentDescription" />
 
-                <LinearLayout
+                <ImageView
+                    android:id="@+id/icon_selecionado1"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_selecionado"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/imageButtonSeta"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="ContentDescription" />
+
+                <View
+                    android:id="@+id/view_demonstracaoItem4"
+                    android:layout_width="63dp"
+                    android:layout_height="73dp"
+                    android:background="@drawable/quadrado_arredondado"
+                    app:circularflow_defaultRadius="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textViewTitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="Produto"
+                    android:textColor="#161515"
+                    android:textSize="18sp"
+                    android:textStyle="normal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem4"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem4"
+                    app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem4"
+                    app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem4"
+                    app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem4"
+                    app:srcCompat="@drawable/xlsx"
+                    tools:ignore="ContentDescription" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/conteudo_expansivel_tabela1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/fundo_arredondado"
+                android:backgroundTint="#FFFFFF"
+                android:paddingTop="8dp"
+                android:paddingBottom="16dp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/header_item"
+                app:layout_constraintBottom_toBottomOf="parent">
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardBlocoTabela1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingVertical="8dp">
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="8dp"
+                    app:cardUseCompatPadding="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="#0B0B0B"
+                    app:strokeWidth="1dp">
 
-                    <TextView
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/montserrat_semibold"
-                        android:text="Nutriente"
-                        android:textColor="#0B0B0B"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:fontFamily="@font/montserrat_semibold"
-                        android:gravity="end"
-                        android:text="Valor"
-                        android:textColor="#0B0B0B"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#0B0B0B" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Valor Calórico" />
-
-                    <TextView
-                        android:id="@+id/tv_valor_calorico_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="120 kcal" />
-
-                    <ImageView
-                        android:id="@+id/iv_valor_calorico_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Proteína" />
-
-                    <TextView
-                        android:id="@+id/tv_proteina_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="5.5 g" />
-
-                    <ImageView
-                        android:id="@+id/iv_proteina_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Carboidrato" />
-
-                    <TextView
-                        android:id="@+id/tv_carboidrato_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="25.0 g" />
-
-                    <ImageView
-                        android:id="@+id/iv_carboidrato_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Açúcar Total" />
-
-                    <TextView
-                        android:id="@+id/tv_acucar_total_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="10.5 g" />
-
-                    <ImageView
-                        android:id="@+id/iv_acucar_total_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Fibra Alimentar" />
-
-                    <TextView
-                        android:id="@+id/tv_fibra_alimentar_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="3.0 g" />
-
-                    <ImageView
-                        android:id="@+id/iv_fibra_alimentar_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Gordura Total" />
-
-                    <TextView
-                        android:id="@+id/tv_gordura_total_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="8.0 g" />
-
-                    <ImageView
-                        android:id="@+id/iv_gordura_total_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Gordura Saturada" />
-
-                    <TextView
-                        android:id="@+id/tv_gordura_saturada_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="4.0 g" />
-
-                    <ImageView
-                        android:id="@+id/iv_gordura_saturada_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Gordura Monoinsaturada" />
-
-                    <TextView
-                        android:id="@+id/tv_gordura_monoinsaturada_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="2.0 g" />
-
-                    <ImageView
-                        android:id="@+id/iv_gordura_monoinsaturada_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Gordura Poli-Insaturada" />
-
-                    <TextView
-                        android:id="@+id/tv_gordura_poliinsaturada_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="1.5 g" />
-
-                    <ImageView
-                        android:id="@+id/iv_gordura_poliinsaturada_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Colesterol" />
-
-                    <TextView
-                        android:id="@+id/tv_colesterol_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="15 mg" />
-
-                    <ImageView
-                        android:id="@+id/iv_colesterol_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Retinol/Vitamina A" />
-
-                    <TextView
-                        android:id="@+id/tv_vitamina_a_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="100 μg" />
-
-                    <ImageView
-                        android:id="@+id/iv_vitamina_a_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Tiamina" />
-
-                    <TextView
-                        android:id="@+id/tv_tiamina_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="0.5 mg" />
-
-                    <ImageView
-                        android:id="@+id/iv_tiamina_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Riboflavina" />
-
-                    <TextView
-                        android:id="@+id/tv_riboflavina_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="0.3 mg" />
-
-                    <ImageView
-                        android:id="@+id/iv_riboflavina_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Niacina" />
-
-                    <TextView
-                        android:id="@+id/tv_niacina_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="5.0 mg" />
-
-                    <ImageView
-                        android:id="@+id/iv_niacina_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Vitamina B-6" />
-
-                    <TextView
-                        android:id="@+id/tv_vitamina_b6_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="0.2 mg" />
-
-                    <ImageView
-                        android:id="@+id/iv_vitamina_b6_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Ácido Fólico" />
-
-                    <TextView
-                        android:id="@+id/tv_acido_folico_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="40 μg" />
-
-                    <ImageView
-                        android:id="@+id/iv_acido_folico_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Colina" />
-
-                    <TextView
-                        android:id="@+id/tv_colina_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="50 mg" />
-
-                    <ImageView
-                        android:id="@+id/iv_colina_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Vitamina B-12" />
-
-                    <TextView
-                        android:id="@+id/tv_vitamina_b12_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="1.0 μg" />
-
-                    <ImageView
-                        android:id="@+id/iv_vitamina_b12_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Vitamina C" />
-
-                    <TextView
-                        android:id="@+id/tv_vitamina_c_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="10 mg" />
-
-                    <ImageView
-                        android:id="@+id/iv_vitamina_c_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Vitamina D" />
-
-                    <TextView
-                        android:id="@+id/tv_vitamina_d_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="2.0 μg" />
-
-                    <ImageView
-                        android:id="@+id/iv_vitamina_d_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-                <LinearLayout style="@style/NutrientDetailRow">
-
-                    <TextView
-                        style="@style/NutrientNameText"
-                        android:text="Vitamina E" />
-
-                    <TextView
-                        android:id="@+id/tv_vitamina_e_t1"
-                        style="@style/NutrientValueText"
-                        android:layout_marginEnd="16dp"
-                        tools:text="1.5 mg" />
-
-                    <ImageView
-                        android:id="@+id/iv_vitamina_e_subtracao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        app:srcCompat="@drawable/ic_subtracao"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#E0E0E0" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            android:id="@+id/tvAvisoVD"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:fontFamily="@font/montserrat_regular"
-            android:text="*O %VD é baseado em uma dieta de 2.000 kcal."
-            android:textColor="#5A5A5A"
-            android:textSize="12sp"
-            android:textStyle="italic"
-            app:layout_constraintTop_toBottomOf="@id/cardBlocoTabela1"
-            tools:layout_editor_absoluteX="12dp" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tvTabelaTitulo1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginBottom="10dp"
+                            android:fontFamily="@font/montserrat_semibold"
+                            android:text="Detalhes Nutricionais - Tabela 1"
+                            android:textColor="#0B0B0B"
+                            android:textSize="16sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingVertical="8dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/montserrat_semibold"
+                                android:text="Nutriente"
+                                android:textColor="#0B0B0B"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="40dp"
+                                android:gravity="end"
+                                android:text="Valor"
+                                android:textColor="#0B0B0B"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#0B0B0B" />
+
+                        <!-- LINHA 1: Valor Calórico (kcal) - MANTER --><LinearLayout style="@style/NutrientDetailRow">
+
+                        <TextView
+                            style="@style/NutrientNameText"
+                            android:text="Valor Calórico" />
+
+                        <TextView
+                            android:id="@+id/tv_valor_calorico_t1"
+                            style="@style/NutrientValueText"
+                            android:layout_marginEnd="16dp"
+                            tools:text="120 kcal" />
+
+                        <ImageView
+                            android:id="@+id/iv_valor_calorico_subtracao"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            app:srcCompat="@drawable/ic_subtracao"
+                            tools:ignore="ContentDescription" />
+
+                    </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+                        <!-- LINHA 2: Proteína (g) - MANTER --><LinearLayout style="@style/NutrientDetailRow">
+
+                        <TextView
+                            style="@style/NutrientNameText"
+                            android:text="Proteína" />
+
+                        <TextView
+                            android:id="@+id/tv_proteina_t1"
+                            style="@style/NutrientValueText"
+                            android:layout_marginEnd="16dp"
+                            tools:text="5.5 g" />
+
+                        <ImageView
+                            android:id="@+id/iv_proteina_subtracao"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            app:srcCompat="@drawable/ic_subtracao"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+                        <!-- LINHA 3: Carboidrato (g) - MANTER --><LinearLayout style="@style/NutrientDetailRow">
+
+                        <TextView
+                            style="@style/NutrientNameText"
+                            android:text="Carboidrato" />
+
+                        <TextView
+                            android:id="@+id/tv_carboidrato_t1"
+                            style="@style/NutrientValueText"
+                            android:layout_marginEnd="16dp"
+                            tools:text="25.0 g" />
+
+                        <ImageView
+                            android:id="@+id/iv_carboidrato_subtracao"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            app:srcCompat="@drawable/ic_subtracao"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+                        <!-- LINHA 4: Açúcar Total (g) - MANTER --><LinearLayout style="@style/NutrientDetailRow">
+
+                        <TextView
+                            style="@style/NutrientNameText"
+                            android:text="Açúcar Total" />
+
+                        <TextView
+                            android:id="@+id/tv_acucar_total_t1"
+                            style="@style/NutrientValueText"
+                            android:layout_marginEnd="16dp"
+                            tools:text="10.5 g" />
+
+                        <ImageView
+                            android:id="@+id/iv_acucar_total_subtracao"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            app:srcCompat="@drawable/ic_subtracao"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+                        <!-- LINHA 5: Gordura Total (g) - MANTER --><LinearLayout style="@style/NutrientDetailRow">
+
+                        <TextView
+                            style="@style/NutrientNameText"
+                            android:text="Gordura Total" />
+
+                        <TextView
+                            android:id="@+id/tv_gordura_total_t1"
+                            style="@style/NutrientValueText"
+                            android:layout_marginEnd="16dp"
+                            tools:text="8.0 g" />
+
+                        <ImageView
+                            android:id="@+id/iv_gordura_total_subtracao"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            app:srcCompat="@drawable/ic_subtracao"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+                        <!-- LINHA 6: Gordura Saturada (g) - MANTER --><LinearLayout style="@style/NutrientDetailRow">
+
+                        <TextView
+                            style="@style/NutrientNameText"
+                            android:text="Gordura Saturada" />
+
+                        <TextView
+                            android:id="@+id/tv_gordura_saturada_t1"
+                            style="@style/NutrientValueText"
+                            android:layout_marginEnd="16dp"
+                            tools:text="4.0 g" />
+
+                        <ImageView
+                            android:id="@+id/iv_gordura_saturada_subtracao"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            app:srcCompat="@drawable/ic_subtracao"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+                        <!-- LINHA 7: Sódio (mg) - MANTER --><LinearLayout style="@style/NutrientDetailRow">
+
+                        <TextView
+                            style="@style/NutrientNameText"
+                            android:text="Sódio" />
+
+                        <TextView
+                            android:id="@+id/tv_sodio_t1"
+                            style="@style/NutrientValueText"
+                            android:layout_marginEnd="16dp"
+                            tools:text="500 mg" />
+
+                        <ImageView
+                            android:id="@+id/iv_sodio_subtracao"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            app:srcCompat="@drawable/ic_subtracao"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
