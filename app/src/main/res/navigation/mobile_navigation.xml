@@ -41,6 +41,20 @@
         tools:layout="@layout/fragment_tabela_produto" >
         <action
             android:id="@+id/action_tabelaProdutoFragment_to_navigation_tabela"
+        android:label="Tabela"/>
+
+        <action
+            android:id="@+id/action_tabela_to_ingrediente"
+            app:destination="@id/navigation_ingrediente" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_ingrediente"
+        android:name="com.bea.nutria.ui.Ingrediente.IngredienteFragment"
+        android:label="fragment_ingrediente"
+        tools:layout="@layout/fragment_ingrediente" >
+
+        <action
+            android:id="@+id/action_ingrediente_to_tabela"
             app:destination="@id/navigation_tabela" />
     </fragment>
 </navigation>

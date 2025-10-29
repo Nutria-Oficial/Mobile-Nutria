@@ -2,19 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permissões essenciais -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
-    <!-- O resto aqui é opcional, mas mantive porque você já usa -->
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- Leitura de mídia moderna (Android 13+) -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <!-- Legacy para <= Android 12 (API 32). Não tem efeito em 33+ -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -28,9 +24,8 @@
         android:roundIcon="@drawable/logo_nutria"
         android:supportsRtl="true"
         android:theme="@style/Theme.Nutria"
-        tools:targetApi="31">
+        tools:targetApi="31"/>
 
-        <!-- Activities existentes -->
         <activity
             android:name=".ui.Perfil.PerfilActivity"
             android:exported="false" />
@@ -53,13 +48,10 @@
             android:name=".MainActivity"
             android:exported="false" />
 
-        <!-- RECEIVERS PARA AS NOTIFICAÇÕES -->
-        <!-- Broadcast interno usado pelo AlarmManager. Sem intent-filter, não exporta. -->
         <receiver
             android:name=".notification.NotificationReceiver"
             android:exported="false" />
 
-        <!-- Reagenda alarmes após reboot. Precisa ser exportado e ter os filtros. -->
         <receiver
             android:name=".notification.BootReceiver"
             android:exported="true">
@@ -69,8 +61,5 @@
             </intent-filter>
         </receiver>
 
-        <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
-    </application>
+
 </manifest>
