@@ -13,10 +13,10 @@ import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
 
-    private List<String> messages = new ArrayList<>();
+    private List<String> mensagens = new ArrayList<>();
 
     public void clearMessages() {
-        messages.clear();
+        mensagens.clear();
         notifyDataSetChanged();
     }
 
@@ -30,25 +30,37 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
-        // começa pelo chat
         boolean isUserMessage = (position % 2 == 0);
-        holder.bind(messages.get(position), isUserMessage);
+        holder.bind(mensagens.get(position), isUserMessage);
+    }
+
+    public void enviarMensagem(String mensagem){
+        mensagens.add(mensagem);
+        notifyDataSetChanged();
+    }
+
+    public void deletarMensagem() {
+        if (!mensagens.isEmpty()) {
+            int ultimaPosicao = mensagens.size() - 1;
+            mensagens.remove(ultimaPosicao);
+            notifyItemRemoved(ultimaPosicao);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return messages.size();
+        return mensagens.size();
     }
 
     public void carregarChat(List<String> mensagens) {
-        messages.clear();
-        messages.addAll(mensagens);
+        this.mensagens.clear();
+        this.mensagens.addAll(mensagens);
         notifyDataSetChanged();
     }
 
     public void addMessage(String mensagem) {
-        messages.add(mensagem);
-        notifyItemInserted(messages.size() - 1);
+        mensagens.add(mensagem);
+        notifyItemInserted(mensagens.size() - 1);
     }
 
     static class ChatViewHolder extends RecyclerView.ViewHolder {

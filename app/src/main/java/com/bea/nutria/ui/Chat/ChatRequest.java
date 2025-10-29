@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class ChatRequest {
     @SerializedName("cPrompt")
     private String pergunta;
-    @SerializedName("idUser")
+    @SerializedName("nCdUser")
     private int idUser;
 
     public ChatRequest(){};
