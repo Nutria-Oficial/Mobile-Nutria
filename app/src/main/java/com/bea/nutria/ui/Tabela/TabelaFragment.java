@@ -43,10 +43,12 @@ import com.bea.nutria.model.GetNutrienteDTO;
 import com.bea.nutria.model.GetTabelaDTO;
 import com.bea.nutria.model.ItemIngrediente;
 import com.bea.nutria.ui.Ingrediente.IngredienteResponse;
+import com.bea.nutria.ui.Ingrediente.QuantidadeViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +69,7 @@ import java.util.ArrayList;
 public class TabelaFragment extends Fragment {
 
     private FragmentTabelaBinding binding;
-    private int porcaoAtual= 0;
+    private Double porcaoAtual= 0.0;
     private int porcaoEmbalagemAtual= 0;
     private String tipoMedida = "";
     private Integer idTabela = 0;
@@ -77,7 +79,7 @@ public class TabelaFragment extends Fragment {
     private ConexaoAPI conexaoAPI;
     private TabelaAdapter adapter;
     private IngredienteSharedViewModel sharedViewModel;
-    private static final String TAG = "TabelaFragment";
+    private QuantidadeViewModel quantidadeViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -89,14 +91,14 @@ public class TabelaFragment extends Fragment {
         setCheckBoxListener(binding.checkBox3);
         setCheckBoxListener(binding.checkBox4);
 
-        conexaoAPI = new ConexaoAPI("https://api-spring-mongodb.onrender.com");
+        conexaoAPI = new ConexaoAPI("http://localhost:8080");
         api = conexaoAPI.getApi(TabelaAPI.class);
 
 
         // Inicializar ViewModel
         sharedViewModel = new ViewModelProvider(requireActivity()).get(IngredienteSharedViewModel.class);
-
-        //setupRecyclerView();
+        quantidadeViewModel = new ViewModelProvider(requireActivity()).get(QuantidadeViewModel.class);
+        setupRecyclerView();
         observarIngredientes();
 
         return binding.getRoot();
@@ -136,9 +138,9 @@ public class TabelaFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 try {
-                    porcaoAtual = Integer.parseInt(charSequence.toString());
+                    porcaoAtual = Double.parseDouble(charSequence.toString());
                 }catch (NumberFormatException exception){
-                    porcaoAtual = 0;
+                    porcaoAtual = 0.0;
                 }
             }
         });
@@ -170,33 +172,11 @@ public class TabelaFragment extends Fragment {
         binding.button.setOnClickListener(v -> {
             if (validarTodosCamposObrigatorios()) {
 
-                //adicionar métodos para verificar se todos os campos foram preenchidos
-                Map<String, Object> novaTabela = new HashMap<>();
-
-                //ingredientes mockados
-                List<Map<String, Number>> ingredientes = new ArrayList<>();
-                Map<String, Number> ingrediente1 = new HashMap<>();
-                ingrediente1.put("nCdIngrediente", 1);
-                ingrediente1.put("iQuantidade", 200.0);
-
-                Map<String, Number> ingrediente2 = new HashMap<>();
-                ingrediente2.put("nCdIngrediente", 2);
-                ingrediente2.put("iQuantidade", 150.5);
-
-                ingredientes.add(ingrediente1);
-                ingredientes.add(ingrediente2);
-
-                novaTabela.put("nomeProduto", binding.nomeProdutoLayout.getEditText().getText());
-                novaTabela.put("nomeTabela", binding.nomeTabelaLayout.getEditText().getText());
-                novaTabela.put("tipoMedida", tipoMedida);
-                novaTabela.put("porcao", getPorcaoAtual());
-                novaTabela.put("ingredientes", ingredientes);
-
                 if (getArguments() != null) {
                     Integer idProduto = getArguments().getInt("idProduto");
-                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> adicionarTabela(1, idProduto, novaTabela));
+                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> adicionarTabela(2, idProduto, getTabelaInformacoes(adapter.getQuantidades())));
                 } else {
-                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> criarTabela(1, novaTabela));
+                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> criarTabela(2, getTabelaInformacoes(adapter.getQuantidades())));
                 }
             }else {
                 Toast.makeText(getContext(),
@@ -216,11 +196,11 @@ public class TabelaFragment extends Fragment {
 
 
     }
-    public void atualizarPorcao(int novoValor){
+    public void atualizarPorcao(double novoValor){
         porcaoAtual = novoValor;
         binding.porcao.setText(String.valueOf(porcaoAtual));
     }
-    public int getPorcaoAtual(){
+    public Double getPorcaoAtual(){
         return porcaoAtual;
     }
     public int getPorcaoEmbalagemAtual(){
@@ -261,9 +241,15 @@ public class TabelaFragment extends Fragment {
                     mostrarCarregando(false);
                     Toast.makeText(
                             getContext(),
-                            "Erro ao carregar usuário (" + code + ")\n",
+                            "Erro ao inserir Tabela (" + code + ")\n",
                             Toast.LENGTH_LONG
                     ).show();
+                    Log.e("API_ERROR", "Erro na requisição: " + response.message());
+                    try {
+                        Log.e("API_ERROR", "Erro na requisição: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
@@ -273,6 +259,8 @@ public class TabelaFragment extends Fragment {
                 Toast.makeText(getContext(),
                         "Falha de conexão: " + (t.getMessage() == null ? "desconhecida" : t.getMessage()),
                         Toast.LENGTH_LONG).show();
+                Log.e("API_ERROR", "Erro na requisição: " + t.getMessage(), t);
+
             }
         });
     }
@@ -294,7 +282,7 @@ public class TabelaFragment extends Fragment {
                     mostrarCarregando(false);
                     Toast.makeText(
                             getContext(),
-                            "Erro ao carregar usuário (" + code + ")\n",
+                            "Erro ao inserir Tabela (" + code + ")\n",
                             Toast.LENGTH_LONG
                     ).show();
                 }
@@ -315,7 +303,7 @@ public class TabelaFragment extends Fragment {
         binding.tableLayout.removeAllViews();
 
         binding.tvTabelaTitulo.setText(tabela.getNomeTabela());
-        binding.tvPorcaoColuna.setText(getPorcaoAtual());
+        binding.tvPorcaoColuna.setText(getPorcaoAtual().toString());
         binding.tvPorcaoEmbalagemColuna.setText(getPorcaoEmbalagemAtual());
 
         int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
@@ -417,63 +405,62 @@ public class TabelaFragment extends Fragment {
         boolean checkBoxSelecionado = binding.checkBox.isChecked() || binding.checkBox2.isChecked() || binding.checkBox3.isChecked() || binding.checkBox4.isChecked();
 
         //verificar se tem ingredientes adicionados
-        return nomeProdutoValido && nomeTabelaValido && checkBoxSelecionado && !binding.porcao.getText().equals("0") && !binding.porcaoEmbalagem.getText().equals("0");
+        return nomeProdutoValido && nomeTabelaValido && checkBoxSelecionado && !binding.porcao.getText().equals("0") && !binding.porcaoEmbalagem.getText().equals("0") && (adapter.getItemCount() > 0);
     }    
-//    private void setupRecyclerView() {
-//        adapter = new TabelaAdapter(getContext(), new ArrayList<>());
-//
-//        // atualizar ViewModel quando remover
-//        adapter.setOnItemRemovedListener((ingrediente, newCount) -> {
-////            binding.selecionados.setText(String.valueOf(newCount));
-//            sharedViewModel.removerIngrediente(ingrediente); // atualizar ViewModel
-//        });
-//
-//        binding.ingredientesSelecionados.setLayoutManager(new LinearLayoutManager(getContext()));
-//        binding.ingredientesSelecionados.setAdapter(adapter);
-//    }
+    private void setupRecyclerView() {
+        adapter = new TabelaAdapter(getContext(), new ArrayList<>(), quantidadeViewModel);
+
+        // atualizar ViewModel quando remover
+        adapter.setOnItemRemovedListener((ingrediente, newCount) -> {
+            sharedViewModel.removerIngrediente(ingrediente);
+        });
+
+        binding.ingredientesSelecionados.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.ingredientesSelecionados.setAdapter(adapter);
+    }
 
     private void observarIngredientes() {
         sharedViewModel.getIngredientesSelecionados().observe(getViewLifecycleOwner(), selecionados -> {
-            LinearLayout container = binding.layoutIngredientes;
-            container.removeAllViews();
 
-            if (selecionados != null && !selecionados.isEmpty()){
-                for (IngredienteResponse response : selecionados){
-                    mostrarIngredientesNaTela(response, container);
-                }
+            if (selecionados != null){
+               adapter.setIngredientes(selecionados);
             }
         });
     }
-    private void mostrarIngredientesNaTela(IngredienteResponse ingrediente, LinearLayout container){
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.item_ingrediente_tabela,container, false);
-        TextView textView = view.findViewById(R.id.txtNomeIngrediente);
-        EditText editText = view.findViewById(R.id.txtNomeIngrediente);
-        ImageView btnRemover = view.findViewById(R.id.btnRemover);
+    private Map<String, Object> getTabelaInformacoes(Map<String, Double> valoresIngredientes){
+        Map<String, Object> novaTabela = new HashMap<>();
+        List<String> chaves = new ArrayList<>(valoresIngredientes.keySet());
+        List<Map<String, Number>> ingredientes = new ArrayList<>();
 
-        textView.setText(ingrediente.getNomeIngrediente());
-        btnRemover.setOnClickListener(v -> {
-            sharedViewModel.removerIngrediente(ingrediente);
-        });
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable editable) {
+        for (int i = 0; i < valoresIngredientes.size(); i++) {
+            Map<String, Number> ingrediente = new HashMap<>();
 
-            }
+            ingrediente.put("nCdIngrediente", Integer.parseInt(chaves.get(i)));
+            ingrediente.put("iQuantidade", valoresIngredientes.get(chaves.get(i)));
 
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            ingredientes.add(ingrediente);
+            Log.d("DEBUG_MAP", "ingredientes: " + ingrediente.toString());
+        }
+//        //ingredientes mockados
+//
+//        Map<String, Number> ingrediente1 = new HashMap<>();
+//        ingrediente1.put("nCdIngrediente", 1);
+//        ingrediente1.put("iQuantidade", 200.0);
+//
+//        Map<String, Number> ingrediente2 = new HashMap<>();
+//        ingrediente2.put("nCdIngrediente", 2);
+//        ingrediente2.put("iQuantidade", 150.5);
+//
+//        ingredientes.add(ingrediente1);
+//        ingredientes.add(ingrediente2);
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                try {
-
-                }catch (NumberFormatException exception){
-                }
-            }
-        });
-        container.addView(view);
+        novaTabela.put("nomeProduto", binding.nomeProdutoLayout.getEditText().getText().toString());
+        novaTabela.put("nomeTabela", binding.nomeTabelaLayout.getEditText().getText().toString());
+        novaTabela.put("tipoMedida", tipoMedida);
+        novaTabela.put("porcao", getPorcaoAtual());
+        novaTabela.put("ingredientes", ingredientes);
+        Log.d("DEBUG_MAP", "ingredientes: " + novaTabela.toString());
+        return novaTabela;
     }
 
     @Override
