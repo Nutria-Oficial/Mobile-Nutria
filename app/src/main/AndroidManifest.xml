@@ -1,46 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-  <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-      <uses-permission android:name="android.permission.INTERNET" />
-      <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-      <uses-permission
-          android:name="android.permission.READ_EXTERNAL_STORAGE"
-          android:maxSdkVersion="32" />
+    <!-- Permissões essenciais -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
-      <application
-          android:allowBackup="true"
-          android:dataExtractionRules="@xml/data_extraction_rules"
-          android:fullBackupContent="@xml/backup_rules"
-          android:icon="@drawable/logo_nutria"
-          android:label="@string/app_name"
-          android:roundIcon="@drawable/logo_nutria"
-          android:supportsRtl="true"
-          android:theme="@style/Theme.Nutria"
-          tools:targetApi="31">
-          <activity
-              android:name=".ui.Perfil.PerfilActivity"
-              android:exported="false" />
-          <activity
-              android:name=".ui.Login.LoginActivity"
-              android:exported="false" />
+    <!-- O resto aqui é opcional, mas mantive porque você já usa -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
-          <activity
-              android:name=".ui.SplashScreen.SplashScreen"
-              android:exported="true"
-              android:label="@string/app_name">
-              <intent-filter>
-                  <action android:name="android.intent.action.MAIN" />
+    <!-- Leitura de mídia moderna (Android 13+) -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!-- Legacy para <= Android 12 (API 32). Não tem efeito em 33+ -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
-                  <category android:name="android.intent.category.LAUNCHER" />
-              </intent-filter>
-          </activity>
-          <activity
-              android:name=".MainActivity"
-              android:exported="false"
-              />
-          <meta-data
-              android:name="preloaded_fonts"
-              android:resource="@array/preloaded_fonts" />
-      </application>
-  </manifest>
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/logo_nutria"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/logo_nutria"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Nutria"
+        tools:targetApi="31">
+
+        <!-- Activities existentes -->
+        <activity
+            android:name=".ui.Perfil.PerfilActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.Login.LoginActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.SplashScreen.SplashScreen"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
+        <!-- RECEIVERS PARA AS NOTIFICAÇÕES -->
+        <!-- Broadcast interno usado pelo AlarmManager. Sem intent-filter, não exporta. -->
+        <receiver
+            android:name=".notification.NotificationReceiver"
+            android:exported="false" />
+
+        <!-- Reagenda alarmes após reboot. Precisa ser exportado e ter os filtros. -->
+        <receiver
+            android:name=".notification.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+    </application>
+</manifest>

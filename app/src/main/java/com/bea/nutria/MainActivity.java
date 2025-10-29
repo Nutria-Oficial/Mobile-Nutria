@@ -1,19 +1,29 @@
 package com.bea.nutria;
 
+import static android.Manifest.permission.POST_NOTIFICATIONS;
+
+import android.app.AlarmManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bea.nutria.api.UsuarioAPI;
 import com.bea.nutria.model.Usuario;
+import com.bea.nutria.notification.NotificationScheduler;
 import com.bea.nutria.ui.Cadastro.CadastroActivity;
 import com.bea.nutria.ui.Login.LoginActivity;
 import com.bea.nutria.ui.Perfil.PerfilActivity;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -36,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView perfil;
     private UsuarioAPI api;
     private String credenciais = Credentials.basic("nutria", "nutria123");
+    private static final int REQ_POST_NOTIFICATIONS = 42;
 
 
     @Override
@@ -44,6 +55,17 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{POST_NOTIFICATIONS}, REQ_POST_NOTIFICATIONS);
+                return;
+            }
+        }
+
+        maybeRequestExactAlarm();
+        //notificação
+        NotificationScheduler.startLoop(this);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -84,6 +106,29 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         //recarrega caso a foto tenha sido atualizada no Perfil
         carregarFotoPerfil();
+    }
+    private void maybeRequestExactAlarm() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            android.app.AlarmManager am = (android.app.AlarmManager) getSystemService(ALARM_SERVICE);
+            if (am != null && !am.canScheduleExactAlarms()) {
+                Intent i = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                i.setData(Uri.parse("package:" + getPackageName()));
+                // Não obriga ninguém; só abre a tela. O fallback inexacto já está implementado.
+                startActivity(i);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] perms, @NonNull int[] results) {
+        super.onRequestPermissionsResult(requestCode, perms, results);
+        if (requestCode == REQ_POST_NOTIFICATIONS) {
+            // Se concedeu, segue o baile. Se negou, azar: sem notificação não tem mágica.
+            if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
+                maybeRequestExactAlarm();
+                NotificationScheduler.startLoop(this);
+            }
+        }
     }
 
     private void carregarFotoPerfil() {
