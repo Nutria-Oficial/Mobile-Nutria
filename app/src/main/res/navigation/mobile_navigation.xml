@@ -9,7 +9,11 @@
         android:id="@+id/navigation_historico"
         android:name="com.bea.nutria.ui.Historico.HistoricoFragment"
         android:label="Histórico"
-        tools:layout="@layout/fragment_historico" />
+        tools:layout="@layout/fragment_historico" >
+        <action
+            android:id="@+id/action_navigation_historico_to_tabelaProdutoFragment"
+            app:destination="@id/tabelaProdutoFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_nutria"
@@ -29,7 +33,15 @@
     <fragment
         android:id="@+id/navigation_tabela"
         android:name="com.bea.nutria.ui.Tabela.TabelaFragment"
-        android:label="Tabela">
+        android:label="Tabela" />
+    <fragment
+        android:id="@+id/tabelaProdutoFragment"
+        android:name="com.bea.nutria.ui.Historico.TabelaProdutoFragment"
+        android:label="fragment_tabela_produto"
+        tools:layout="@layout/fragment_tabela_produto" >
+        <action
+            android:id="@+id/action_tabelaProdutoFragment_to_navigation_tabela"
+        android:label="Tabela"/>
 
         <action
             android:id="@+id/action_tabela_to_ingrediente"
