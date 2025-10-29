@@ -328,16 +328,17 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/textView6">
 
-                            <LinearLayout
-                                android:id="@+id/layoutIngredientes"
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/ingredientesSelecionados"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical"/>
+                                android:divider="@color/gray"
+                                android:showDividers="middle" />
 
                             <ImageView
                                 android:id="@+id/btnIngredientes"
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
                                 android:layout_marginTop="9dp"
                                 android:layout_marginBottom="9dp"
                                 app:srcCompat="@drawable/adicionar_ingrediente" />
@@ -363,7 +364,7 @@
 
                         <LinearLayout
                             android:id="@+id/layoutCarregando"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="15dp"
                             android:background="#80FFFFFF"
