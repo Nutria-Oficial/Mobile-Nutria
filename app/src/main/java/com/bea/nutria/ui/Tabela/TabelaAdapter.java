@@ -139,6 +139,7 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaAdapter.ViewHolder
                 IngredienteResponse ingredienteRemovido = listaIngredientes.get(posicaoAtual);
                 listaIngredientes.remove(posicaoAtual);
                 quantidades.remove(id);
+                quantidadeViewModel.removerQuantidade(Integer.parseInt(id));
                 notifyItemRemoved(posicaoAtual);
                 notifyItemRangeChanged(posicaoAtual, listaIngredientes.size());
 

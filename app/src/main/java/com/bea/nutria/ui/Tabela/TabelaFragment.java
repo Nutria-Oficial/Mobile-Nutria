@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,12 +75,12 @@ public class TabelaFragment extends Fragment {
     private String tipoMedida = "";
     private Integer idTabela = 0;
     private List<ItemIngrediente> ingredienteList = new ArrayList<>();
-
     private TabelaAPI api;
     private ConexaoAPI conexaoAPI;
     private TabelaAdapter adapter;
     private IngredienteSharedViewModel sharedViewModel;
     private QuantidadeViewModel quantidadeViewModel;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -91,7 +92,7 @@ public class TabelaFragment extends Fragment {
         setCheckBoxListener(binding.checkBox3);
         setCheckBoxListener(binding.checkBox4);
 
-        conexaoAPI = new ConexaoAPI("http://localhost:8080");
+        conexaoAPI = new ConexaoAPI("https://api-spring-mongodb.onrender.com");
         api = conexaoAPI.getApi(TabelaAPI.class);
 
 
@@ -109,7 +110,6 @@ public class TabelaFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> WindowInsetsCompat.CONSUMED);
-
 
         binding.porcao.setText(String.valueOf(porcaoAtual));
         binding.porcao.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -189,6 +189,7 @@ public class TabelaFragment extends Fragment {
         binding.btnNovo.setOnClickListener(v -> {
             Bundle result = new Bundle();
             result.putInt("idTabela", idTabela);
+            result.putDouble("porcaoEmbalagem", getPorcaoEmbalagemAtual());
 
             NavController navController = NavHostFragment.findNavController(TabelaFragment.this);
             navController.navigate(R.id.action_tabela_to_avaliacao_tabela, result);
@@ -232,7 +233,7 @@ public class TabelaFragment extends Fragment {
                     GetTabelaDTO tabelaCriada = response.body();
                     preencherDadosTabela(tabelaCriada);
                     mostrarCarregando(false);
-                    binding.tableLayout.setVisibility(View.VISIBLE);
+                    binding.cardConteudo.setVisibility(View.VISIBLE);
                     binding.btnNovo.setVisibility(View.VISIBLE);
                     Toast.makeText(getContext(), "Tabela adicionada com sucesso!", Toast.LENGTH_SHORT).show();
 
@@ -273,7 +274,7 @@ public class TabelaFragment extends Fragment {
                     GetTabelaDTO tabelaCriada = response.body();
                     preencherDadosTabela(tabelaCriada);
                     mostrarCarregando(false);
-                    binding.tableLayout.setVisibility(View.VISIBLE);
+                    binding.cardConteudo.setVisibility(View.VISIBLE);
                     binding.btnNovo.setVisibility(View.VISIBLE);
 
                     Toast.makeText(getContext(), "Tabela adicionada com sucesso!", Toast.LENGTH_SHORT).show();
@@ -303,8 +304,8 @@ public class TabelaFragment extends Fragment {
         binding.tableLayout.removeAllViews();
 
         binding.tvTabelaTitulo.setText(tabela.getNomeTabela());
-        binding.tvPorcaoColuna.setText(getPorcaoAtual().toString());
-        binding.tvPorcaoEmbalagemColuna.setText(getPorcaoEmbalagemAtual());
+        binding.tvPorcaoColuna.setText(String.valueOf(getPorcaoAtual()));
+        binding.tvPorcaoEmbalagemColuna.setText(String.valueOf(getPorcaoEmbalagemAtual()));
 
         int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
 
@@ -337,7 +338,12 @@ public class TabelaFragment extends Fragment {
             modificarTextStyleValores(1,nutriente);
             porcaoNutriente.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getPorcao()));
             modificarTextStyleValores(2,porcaoNutriente);
-            vd.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getValorDiario())+"%");
+            if (nutrienteDados.getValorDiario() == null){
+                vd.setText("NaN");
+            }
+            else {
+                vd.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f%%", nutrienteDados.getValorDiario()));
+            }
             modificarTextStyleValores(3,vd);
 
             nutrientesInformacao.addView(nutriente);
@@ -434,12 +440,13 @@ public class TabelaFragment extends Fragment {
 
         for (int i = 0; i < valoresIngredientes.size(); i++) {
             Map<String, Number> ingrediente = new HashMap<>();
-
-            ingrediente.put("nCdIngrediente", Integer.parseInt(chaves.get(i)));
-            ingrediente.put("iQuantidade", valoresIngredientes.get(chaves.get(i)));
-
+            try {
+                ingrediente.put("nCdIngrediente", Integer.parseInt(chaves.get(i)));
+                ingrediente.put("iQuantidade", valoresIngredientes.get(chaves.get(i)));
+            }catch (NumberFormatException e){
+                Log.d("DEBUG_MAP", "ingredientes: " + ingrediente.toString());
+            }
             ingredientes.add(ingrediente);
-            Log.d("DEBUG_MAP", "ingredientes: " + ingrediente.toString());
         }
 //        //ingredientes mockados
 //
@@ -459,7 +466,7 @@ public class TabelaFragment extends Fragment {
         novaTabela.put("tipoMedida", tipoMedida);
         novaTabela.put("porcao", getPorcaoAtual());
         novaTabela.put("ingredientes", ingredientes);
-        Log.d("DEBUG_MAP", "ingredientes: " + novaTabela.toString());
+        Log.d("DEBUG_MAP", "tabela: " + novaTabela.toString());
         return novaTabela;
     }
 

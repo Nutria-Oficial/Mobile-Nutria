@@ -5,12 +5,17 @@ import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -27,8 +32,11 @@ public class ConexaoAPI {
 
     public ConexaoAPI(String url) {
         BASE_URL = url;
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> Log.d("API_LOG", message));
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         // 1. Configura OkHttpClient
         client = new OkHttpClient.Builder()
+                .addInterceptor(logging)
                 .connectTimeout(25, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
@@ -96,7 +104,11 @@ public class ConexaoAPI {
                     try (Response resp = client.newCall(req).execute()) {
                         ok = (resp != null && resp.isSuccessful());
                         Log.d("WakeUp", "Tentativa " + tent + ": " + (ok ? "SUCESSO" : "FALHA") + " | Código: " + (resp != null ? resp.code() : "N/A"));
-                    }
+
+                        if (resp != null && !resp.isSuccessful() && resp.body() != null) {
+                            String errorBody = resp.body().string();
+                            Log.e("WakeUp", "Erro na resposta: " + errorBody);
+                        }                    }
                 } catch (Exception e) {
                     Log.e("WakeUp", "Erro na tentativa " + tent + ": " + e.getMessage());
                 }
@@ -122,7 +134,12 @@ public class ConexaoAPI {
                             .build();
                     try (Response resp = client.newCall(req).execute()) {
                         ok = (resp != null && resp.isSuccessful());
-                    }
+                        Log.d("WakeUp", "Tentativa " + tent + ": " + (ok ? "SUCESSO" : "FALHA") + " | Código: " + (resp != null ? resp.code() : "N/A"));
+
+                        if (resp != null && !resp.isSuccessful() && resp.body() != null) {
+                            String errorBody = resp.body().string();
+                            Log.e("WakeUp", "Erro na resposta: " + errorBody);
+                        }                    }
                 } catch (Exception ignore) {
                 }
             }

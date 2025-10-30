@@ -6,7 +6,7 @@ public class GetNutrienteDTO  implements Serializable {
     String nutriente;
     double total;
     double porcao;
-    double valorDiario;
+    Double valorDiario;
 
     public GetNutrienteDTO(){
 
@@ -42,11 +42,11 @@ public class GetNutrienteDTO  implements Serializable {
         this.porcao = porcao;
     }
 
-    public double getValorDiario() {
+    public Double getValorDiario() {
         return valorDiario;
     }
 
-    public void setValorDiario(double valorDiario) {
+    public void setValorDiario(Double valorDiario) {
         this.valorDiario = valorDiario;
     }
 }
