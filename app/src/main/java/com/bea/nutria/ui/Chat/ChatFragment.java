@@ -1,6 +1,8 @@
 package com.bea.nutria.ui.Chat;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -53,9 +55,8 @@ public class ChatFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentNutriaBinding.inflate(inflater, container, false);
 
-//        SharedPreferences prefs = requireActivity().getSharedPreferences(prefsName, Context.MODE_PRIVATE);
-//        idUser = prefs.getInt("id", 1);
-        idUser = 100;
+        SharedPreferences prefs = requireActivity().getSharedPreferences(prefsName, Context.MODE_PRIVATE);
+        idUser = prefs.getInt("id", 1);
 
         if(idUser == 0){
             mostrarTelaVazia();
