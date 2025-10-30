@@ -26,27 +26,37 @@
         android:name="com.bea.nutria.ui.Scanner.ScannerFragment"
         android:label="Scanner"
         tools:layout="@layout/fragment_scanner" />
+
     <fragment
         android:id="@+id/navigation_comparacao"
         android:name="com.bea.nutria.ui.Comparacao.ComparacaoFragment"
         android:label="Comparação" />
+
     <fragment
         android:id="@+id/navigation_tabela"
         android:name="com.bea.nutria.ui.Tabela.TabelaFragment"
-        android:label="Tabela" />
-    <fragment
-        android:id="@+id/tabelaProdutoFragment"
-        android:name="com.bea.nutria.ui.Historico.TabelaProdutoFragment"
-        android:label="fragment_tabela_produto"
-        tools:layout="@layout/fragment_tabela_produto" >
-        <action
-            android:id="@+id/action_tabelaProdutoFragment_to_navigation_tabela"
-        android:label="Tabela"/>
+        android:label="Tabela" >
 
         <action
             android:id="@+id/action_tabela_to_ingrediente"
             app:destination="@id/navigation_ingrediente" />
     </fragment>
+
+    <fragment
+        android:id="@+id/tabelaProdutoFragment"
+        android:name="com.bea.nutria.ui.Historico.TabelaProdutoFragment"
+        android:label="fragment_tabela_produto"
+        tools:layout="@layout/fragment_tabela_produto" >
+
+        <action
+            android:id="@+id/action_tabelaProdutoFragment_to_navigation_tabela"
+            app:destination="@id/navigation_tabela" />
+
+        <action
+            android:id="@+id/action_tabelaProduto_to_ingrediente"
+            app:destination="@id/navigation_ingrediente" />
+    </fragment>
+
     <fragment
         android:id="@+id/navigation_ingrediente"
         android:name="com.bea.nutria.ui.Ingrediente.IngredienteFragment"

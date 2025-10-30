@@ -62,6 +62,9 @@ public class HistoricoFragment extends Fragment implements HistoricoAdapter.OnIt
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if (binding == null) return;
+
         binding.rvHistorico.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new HistoricoAdapter(new ArrayList<>(), this);
         binding.rvHistorico.setAdapter(adapter);
@@ -206,6 +209,8 @@ public class HistoricoFragment extends Fragment implements HistoricoAdapter.OnIt
     }
 
     private void aplicarLista(List<ProdutoItem> lista) {
+        if (binding == null) return;
+
         produtos.clear();
         if (lista != null) produtos.addAll(lista);
         List<String> nomes = new ArrayList<>();
@@ -215,6 +220,8 @@ public class HistoricoFragment extends Fragment implements HistoricoAdapter.OnIt
     }
 
     private void toggleEmpty() {
+        if (binding == null) return;
+
         boolean vazio = adapter == null || adapter.getItemCount() == 0;
         binding.rvHistorico.setVisibility(vazio ? View.GONE : View.VISIBLE);
         binding.triaSemHistorico.setVisibility(vazio ? View.VISIBLE : View.GONE);
@@ -240,8 +247,13 @@ public class HistoricoFragment extends Fragment implements HistoricoAdapter.OnIt
         Bundle args = new Bundle();
         args.putString("idProduto", produto.id);
         args.putString("nomeProduto", produto.nome);
-        NavController nav = NavHostFragment.findNavController(this);
-        nav.navigate(R.id.action_navigation_historico_to_tabelaProdutoFragment, args);
+
+        try {
+            NavController nav = NavHostFragment.findNavController(this);
+            nav.navigate(R.id.action_navigation_historico_to_tabelaProdutoFragment, args);
+        } catch (Exception e) {
+            android.util.Log.e("Historico", "Erro na navegação", e);
+        }
     }
 
     @Override

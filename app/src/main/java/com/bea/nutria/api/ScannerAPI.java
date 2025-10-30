@@ -24,9 +24,9 @@ public interface ScannerAPI {
     }
 
     @Multipart
-    @POST("scanner/")  // sem barra inicial pra evitar duplicação na baseUrl
+    @POST("scanner/")
     Call<ScannerResultadoDTO> enviarScanner(
             @Part MultipartBody.Part file,
-            @Query("nome_ingrediente") String nomeIngrediente  // só esse param, como o backend pede
+            @Query("nome_ingrediente") String nomeIngrediente
     );
 }

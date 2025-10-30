@@ -16,7 +16,6 @@ firebaseAuth = "24.0.1"
 activity = "1.11.0"
 firebaseCrashlyticsBuildtools = "3.0.6"
 cardview = "1.0.0"
-firebaseCrashlyticsBuildtools = "3.0.6"
 viewpager2 = "1.1.0"
 recyclerview = "1.4.0"
 
@@ -38,8 +37,6 @@ cardview = { group = "androidx.cardview", name = "cardview", version.ref = "card
 viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
 recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
-firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
-
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
