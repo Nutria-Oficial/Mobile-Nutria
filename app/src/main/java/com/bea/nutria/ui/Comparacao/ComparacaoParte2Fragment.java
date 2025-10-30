@@ -9,12 +9,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar; // NOVO: Importação da ProgressBar
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager; // Importação necessária
-import androidx.fragment.app.FragmentTransaction; // Importação necessária
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,6 +58,9 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     private TextView nomeTabela1;
     private TextView nomeTabela2;
     private MaterialButton botaoComparar;
+
+    // NOVO: Referência para a ProgressBar
+    private ProgressBar progressBarLoading;
 
     // Elementos de expansão para as tabelas selecionadas
     private ImageButton seta1;
@@ -115,6 +119,9 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         tabelaApi = apiManager.getApi(TabelaAPI.class);
         produtoApi = apiManager.getApi(ProdutoAPI.class);
 
+        // NOVO: Referência para a ProgressBar
+        progressBarLoading = view.findViewById(R.id.progress_bar_loading2);
+
         // --- 2. Configurações de UI ---
         view.findViewById(R.id.voltar).setOnClickListener(v -> requireActivity().onBackPressed());
 
@@ -167,10 +174,24 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
 
         // --- 4. Inicialização da API e Lógica de Busca ---
         if (produtoId != null && produtoId != -1) {
+
+            // NOVO: Exibe a ProgressBar antes de qualquer chamada de rede
+            if (progressBarLoading != null) {
+                progressBarLoading.setVisibility(View.VISIBLE);
+            }
+            // Oculta a lista enquanto carrega
+            if (listaItensPrincipalContainer != null) {
+                listaItensPrincipalContainer.setVisibility(View.GONE);
+            }
+
             // Inicia o servidor e, em seguida, busca TODAS as tabelas do produto
             apiManager.iniciarServidor(requireActivity(), () -> buscarTodasTabelasDoProduto(produtoId));
         } else {
             Toast.makeText(getContext(), "Erro: ID do produto inválido.", Toast.LENGTH_LONG).show();
+            // NOVO: Oculta a ProgressBar em caso de erro imediato
+            if (progressBarLoading != null) {
+                progressBarLoading.setVisibility(View.GONE);
+            }
         }
 
         // Restaura o estado da UI (simplificado)
@@ -186,6 +207,11 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
             }
             if (buttonVisivel) {
                 if (botaoComparar != null) botaoComparar.setVisibility(View.VISIBLE);
+            }
+            // NOVO: Garante que a ProgressBar esteja oculta após a restauração do estado,
+            // presumindo que o carregamento já ocorreu.
+            if (progressBarLoading != null) {
+                progressBarLoading.setVisibility(View.GONE);
             }
         } else {
             atualizarUISelecao(); // Estado inicial
@@ -211,9 +237,7 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
                     // Substitui o fragmento atual pelo novo.
-                    // Certifique-se de que o ID do container (R.id.fragment_container, por exemplo) está correto no seu layout da Activity.
-                    // Adiciona a transação à Back Stack para que o usuário possa voltar.
-                    fragmentTransaction.replace(FRAGMENT_CONTAINER_ID, nextFragment); // Substitua 'R.id.fragment_container' pelo ID do seu container de fragmentos
+                    fragmentTransaction.replace(FRAGMENT_CONTAINER_ID, nextFragment);
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
 
@@ -266,6 +290,10 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     private void buscarTodasTabelasDoProduto(Integer produtoId) {
         if (produtoApi == null) {
             Log.e(TAG, "ProdutoAPI não inicializada.");
+            // Oculta a ProgressBar
+            if (progressBarLoading != null) {
+                progressBarLoading.setVisibility(View.GONE);
+            }
             return;
         }
 
@@ -286,6 +314,11 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
                     Toast.makeText(getContext(), "Erro na resposta do servidor ao buscar tabelas.", Toast.LENGTH_LONG).show();
                     if (listaItensPrincipalContainer != null) listaItensPrincipalContainer.setVisibility(View.GONE);
                 }
+
+                // NOVO: Oculta a ProgressBar após o processamento (sucesso ou erro)
+                if (progressBarLoading != null) {
+                    progressBarLoading.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -293,6 +326,11 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
                 Log.e(TAG, "Falha de conexão: " + t.getMessage());
                 Toast.makeText(getContext(), "Falha ao conectar-se à API para buscar tabelas.", Toast.LENGTH_LONG).show();
                 if (listaItensPrincipalContainer != null) listaItensPrincipalContainer.setVisibility(View.GONE);
+
+                // NOVO: Oculta a ProgressBar na falha
+                if (progressBarLoading != null) {
+                    progressBarLoading.setVisibility(View.GONE);
+                }
             }
         });
     }
@@ -427,6 +465,7 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
             if (headerItem1 != null) headerItem1.setVisibility(View.VISIBLE);
             if (botaoComparar != null) botaoComparar.setVisibility(View.VISIBLE);
 
+            // Oculta a lista de seleção
             if (recyclerViewTabelas != null) recyclerViewTabelas.setVisibility(View.GONE);
             if (listaItensPrincipalContainer != null) listaItensPrincipalContainer.setVisibility(View.GONE);
 

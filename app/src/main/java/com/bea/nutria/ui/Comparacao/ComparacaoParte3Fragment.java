@@ -10,18 +10,16 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.NestedScrollView;
 
 import com.bea.nutria.R;
 import com.bea.nutria.api.TabelaAPI;
 import com.bea.nutria.api.conexaoApi.ConexaoAPI;
 import com.bea.nutria.model.ComparacaoNutrienteDTO;
-// Importação do View Binding (A classe gerada é baseada no nome do seu layout)
-import com.bea.nutria.databinding.ActivityComparacaoFragmentParte3Binding;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,16 +27,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
  * Fragmento responsável por exibir a comparação detalhada entre duas tabelas.
- * Implementa a expansão/colapso das linhas de nutriente usando os IDs corretos do XML,
- * e preenche os detalhes expandidos com os valores individuais de cada produto.
+ * Refatorado para usar findViewById() e corrigir os IDs das views principais
+ * de acordo com o XML fornecido.
  */
 public class ComparacaoParte3Fragment extends Fragment {
 
@@ -62,8 +58,17 @@ public class ComparacaoParte3Fragment extends Fragment {
     // API Service
     private TabelaAPI tabelaAPI;
 
-    // View Binding Instance
-    private ActivityComparacaoFragmentParte3Binding binding;
+    // --- VARIÁVEIS DE UI (findViewById) ---
+    // ID CORRIGIDO: R.id.progress_bar_loading3
+    private ProgressBar progressBarLoading;
+    // ID CORRIGIDO: R.id.scroll_view_comparacao
+    private NestedScrollView scrollViewBlocoTabelas;
+    private TextView tvNomeP1Header; // textViewTitulo2
+    private TextView tvNomeP2Header; // textViewTitulo4
+    private TextView tvDiffTitle;   // tvTabelaTitulo1
+    private ImageView ivInverter;   // imageView2 (Presumindo que seja o ícone de inversão)
+    private ImageView ivVoltar;     // voltar
+    // ---------------------------------------------------
 
     // --- VARIÁVEIS PARA A LÓGICA DE INVERSÃO E DADOS ---
     private List<ComparacaoNutrienteDTO> originalComparisonData;
@@ -73,14 +78,12 @@ public class ComparacaoParte3Fragment extends Fragment {
     // Estado de expansão: CHAVE=NomeNutriente, VALOR=isExpanded
     private final Map<String, Boolean> expandedState = new HashMap<>();
 
-    // Mapeamento dos IDs de recursos
+    // Mapeamento dos IDs de recursos (permanecem os mesmos que você já tinha)
     private final Map<String, Integer> nutrientComparacaoTextViewMap = new HashMap<>(); // Diferença formatada
     private final Map<String, Integer> nutrientIconViewMap = new HashMap<>(); // Ícone de comparação (+, -, =)
     private final Map<String, Integer> nutrientExpansionIconMap = new HashMap<>(); // Ícone de Expansão/Rotação (seta)
     private final Map<String, Integer> nutrientLineViewMap = new HashMap<>(); // Linha Clicável (row_...)
     private final Map<String, Integer> nutrientDetailViewMap = new HashMap<>(); // View de Detalhes (detail_expansion_...)
-
-    // NOVOS MAPAS PARA OS DETALHES EXPANDIDOS (Nome Produto 1, Valor Produto 1, Nome Produto 2, Valor Produto 2)
     private final Map<String, Integer> detailNameP1Map = new HashMap<>();
     private final Map<String, Integer> detailValueP1Map = new HashMap<>();
     private final Map<String, Integer> detailNameP2Map = new HashMap<>();
@@ -121,6 +124,7 @@ public class ComparacaoParte3Fragment extends Fragment {
             tabelaAPI = conexaoAPI.getApi(TabelaAPI.class);
 
             if (tabelaId1 > 0 && tabelaId2 > 0) {
+                // A chamada fetchComparisonData será iniciada após o servidor
                 conexaoAPI.iniciarServidor(getActivity(), () ->
                         fetchComparisonData(tabelaId1.intValue(), tabelaId2.intValue())
                 );
@@ -133,43 +137,76 @@ public class ComparacaoParte3Fragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = ActivityComparacaoFragmentParte3Binding.inflate(inflater, container, false);
-        return binding.getRoot();
+        return inflater.inflate(R.layout.activity_comparacao_fragment_parte3, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Mapeamento dos componentes de UI para nomes de nutrientes da API
+        // ----------------------------------------------------
+        // OBTENDO REFERÊNCIAS DE VIEWS USANDO findViewById() com IDs CORRIGIDOS
+        // ----------------------------------------------------
+        progressBarLoading = view.findViewById(R.id.progress_bar_loading3); // ID CORRIGIDO
+        scrollViewBlocoTabelas = view.findViewById(R.id.scroll_view_comparacao); // ID CORRIGIDO
+        tvNomeP1Header = view.findViewById(R.id.textViewTitulo2);
+        tvNomeP2Header = view.findViewById(R.id.textViewTitulo4);
+        tvDiffTitle = view.findViewById(R.id.tvTabelaTitulo1);
+        ivInverter = view.findViewById(R.id.imageView2);
+        ivVoltar = view.findViewById(R.id.voltar);
+
+        // 1. Lógica de Carregamento (Loading)
+        if (progressBarLoading != null) {
+            progressBarLoading.setVisibility(View.VISIBLE);
+        }
+        if (scrollViewBlocoTabelas != null) {
+            scrollViewBlocoTabelas.setVisibility(View.GONE); // OCULTANDO O CONTEÚDO PRINCIPAL
+        }
+
+        // 2. Mapeamento dos componentes de UI
         setupNutrientMaps();
 
-        // 1. Exibir os nomes das tabelas no cabeçalho
+        // 3. Exibir os nomes das tabelas no cabeçalho
         displayTableNames();
 
-        // 2. Configura o botão de voltar
-        binding.voltar.setOnClickListener(v -> requireActivity().onBackPressed());
+        // 4. Configura o botão de voltar
+        if (ivVoltar != null) {
+            ivVoltar.setOnClickListener(v -> requireActivity().onBackPressed());
+        }
 
-        // 3. Configura o botão de inversão (imageView2)
-        if (binding.imageView2 != null) {
-            binding.imageView2.setOnClickListener(v -> handleFlip());
+        // 5. Configura o botão de inversão
+        if (ivInverter != null) {
+            ivInverter.setOnClickListener(v -> handleFlip());
         } else {
             Log.w(TAG, "ImageView com ID 'imageView2' não encontrado para o botão de inversão.");
         }
 
-        // 4. Configura os listeners de clique para expansão/colapso
+        // 6. Configura os listeners de clique para expansão/colapso
         setupExpansionListeners(view);
+
+        // Se os IDs foram inválidos em onCreate, oculta a progress bar.
+        if (tabelaId1.equals(-1L) || tabelaId2.equals(-1L)) {
+            if (progressBarLoading != null) {
+                progressBarLoading.setVisibility(View.GONE);
+            }
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
+        // Limpar referências
+        progressBarLoading = null;
+        scrollViewBlocoTabelas = null;
+        tvNomeP1Header = null;
+        tvNomeP2Header = null;
+        tvDiffTitle = null;
+        ivInverter = null;
+        ivVoltar = null;
     }
 
     /**
-     * Mapeia os nomes dos nutrientes da API para os IDs dos Views no layout,
-     * utilizando os IDs corretos fornecidos no XML.
+     * Mapeia os nomes dos nutrientes da API para os IDs dos Views no layout.
      */
     private void setupNutrientMaps() {
         // Nomes dos nutrientes (devem vir da API)
@@ -286,9 +323,14 @@ public class ComparacaoParte3Fragment extends Fragment {
      * Exibe os nomes dos produtos/tabelas nos TextViews de cabeçalho.
      */
     private void displayTableNames() {
-        if (binding == null) return;
-        binding.textViewTitulo2.setText(tabelaNome1);
-        binding.textViewTitulo4.setText(tabelaNome2);
+        if (tvNomeP1Header != null) {
+            // Se invertido, o P1 (esquerda) mostra o Nome 2
+            tvNomeP1Header.setText(isFlipped ? tabelaNome2 : tabelaNome1);
+        }
+        if (tvNomeP2Header != null) {
+            // Se invertido, o P2 (direita) mostra o Nome 1
+            tvNomeP2Header.setText(isFlipped ? tabelaNome1 : tabelaNome2);
+        }
     }
 
 
@@ -298,6 +340,9 @@ public class ComparacaoParte3Fragment extends Fragment {
     private void fetchComparisonData(Integer idTabela1, Integer idTabela2) {
         if (tabelaAPI == null) {
             Toast.makeText(getContext(), "Serviço de API não inicializado.", Toast.LENGTH_SHORT).show();
+            if (progressBarLoading != null) {
+                progressBarLoading.setVisibility(View.GONE);
+            }
             return;
         }
 
@@ -307,14 +352,26 @@ public class ComparacaoParte3Fragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().isEmpty()) {
                         Toast.makeText(getContext(), "Nenhum dado de comparação encontrado.", Toast.LENGTH_LONG).show();
+                        if (scrollViewBlocoTabelas != null) scrollViewBlocoTabelas.setVisibility(View.GONE);
+                        if (progressBarLoading != null) progressBarLoading.setVisibility(View.GONE);
                         return;
                     }
 
                     originalComparisonData = response.body();
                     displayComparisonData(originalComparisonData, isFlipped);
+
+                    if (scrollViewBlocoTabelas != null) scrollViewBlocoTabelas.setVisibility(View.VISIBLE);
+
+
                 } else {
                     Toast.makeText(getContext(), "Erro ao carregar dados da comparação. Código: " + response.code(), Toast.LENGTH_LONG).show();
                     Log.e(TAG, "Erro na resposta: " + response.code() + " - " + response.message());
+
+                    if (scrollViewBlocoTabelas != null) scrollViewBlocoTabelas.setVisibility(View.GONE);
+                }
+
+                if (progressBarLoading != null) {
+                    progressBarLoading.setVisibility(View.GONE);
                 }
             }
 
@@ -322,6 +379,11 @@ public class ComparacaoParte3Fragment extends Fragment {
             public void onFailure(Call<List<ComparacaoNutrienteDTO>> call, Throwable t) {
                 Toast.makeText(getContext(), "Falha na comunicação com a API.", Toast.LENGTH_LONG).show();
                 Log.e(TAG, "Falha de rede: " + t.getMessage());
+
+                if (scrollViewBlocoTabelas != null) scrollViewBlocoTabelas.setVisibility(View.GONE);
+                if (progressBarLoading != null) {
+                    progressBarLoading.setVisibility(View.GONE);
+                }
             }
         });
     }
@@ -330,20 +392,20 @@ public class ComparacaoParte3Fragment extends Fragment {
      * Lida com o clique no botão de inversão.
      */
     private void handleFlip() {
-        if (originalComparisonData == null || getContext() == null || binding == null) {
+        if (originalComparisonData == null || getContext() == null) {
             Toast.makeText(getContext(), "Dados de comparação ainda não carregados.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         isFlipped = !isFlipped;
 
-        // Inverte os nomes dos produtos no cabeçalho
-        displayTableNames(); // Reexibe os nomes (que já são atualizados)
+        // 1. Inverte os nomes dos produtos no cabeçalho
+        displayTableNames();
 
-        // Re-exibe os dados, aplicando a lógica de inversão de sinal/ícone
+        // 2. Re-exibe os dados, aplicando a lógica de inversão de sinal/ícone
         displayComparisonData(originalComparisonData, isFlipped);
 
-        // Atualiza o estado visual de expansão (rotação da seta) e os valores internos dos detalhes
+        // 3. Atualiza o estado visual de expansão (rotação da seta) e os valores internos dos detalhes
         updateAllExpansionVisuals();
     }
 
@@ -352,29 +414,23 @@ public class ComparacaoParte3Fragment extends Fragment {
      * Configura os listeners de clique para expansão/colapso para todas as linhas de nutriente.
      */
     private void setupExpansionListeners(@NonNull View view) {
-        if (binding == null) return;
-
         for (Map.Entry<String, Integer> lineEntry : nutrientLineViewMap.entrySet()) {
             final String nutrientName = lineEntry.getKey();
             Integer lineResId = lineEntry.getValue();
             Integer detailResId = nutrientDetailViewMap.get(nutrientName);
-            Integer expansionIconResId = nutrientExpansionIconMap.get(nutrientName); // Ícone de rotação
+            Integer expansionIconResId = nutrientExpansionIconMap.get(nutrientName);
 
-            // Acha a Linha Clicável, a View de detalhes e o Ícone de Expansão
             final View lineView = view.findViewById(lineResId);
             final View detailView = detailResId != null ? view.findViewById(detailResId) : null;
             final ImageView expansionIconView = expansionIconResId != null ? (ImageView) view.findViewById(expansionIconResId) : null;
 
             if (lineView != null && detailView != null && expansionIconView != null) {
-                // Garante que os detalhes estejam recolhidos inicialmente
                 detailView.setVisibility(View.GONE);
 
-                // Adiciona o listener na linha principal
                 lineView.setOnClickListener(v ->
                         handleExpansionClick(nutrientName, expansionIconView, detailView)
                 );
             } else {
-                // Log de aviso se algum ID estiver faltando no seu XML
                 Log.w(TAG, String.format(Locale.getDefault(), "Listener de expansão não configurado para '%s'. Verifique os IDs: Linha (%d), Detalhe (%d), Ícone Expansão (%d)",
                         nutrientName, lineResId, detailResId, expansionIconResId));
             }
@@ -396,7 +452,7 @@ public class ComparacaoParte3Fragment extends Fragment {
             animateIcon(expansionIconView, 0f); // Rotaciona de volta para 0 graus (seta para baixo)
         } else {
             // Expandir
-            displayNutrientDetails(nutrientName); // *** CHAMA A FUNÇÃO DE EXIBIÇÃO DE VALORES INDIVIDUAIS ***
+            displayNutrientDetails(nutrientName); // Preenche os valores individuais antes de mostrar
             detailView.setVisibility(View.VISIBLE);
             expandedState.put(nutrientName, true);
             animateIcon(expansionIconView, 90f); // Rotaciona para 90 graus (simula seta para o lado/aberta)
@@ -408,14 +464,13 @@ public class ComparacaoParte3Fragment extends Fragment {
      */
     private void animateIcon(ImageView imageView, float endRotation) {
         ObjectAnimator animator = ObjectAnimator.ofFloat(imageView, "rotation", imageView.getRotation(), endRotation);
-        animator.setDuration(200); // Rotação rápida
+        animator.setDuration(200);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         animator.start();
     }
 
     /**
      * Percorre todas as views de expansão e aplica o estado de visibilidade e rotação do ícone.
-     * Usado para manter o estado após o 'handleFlip'.
      */
     private void updateAllExpansionVisuals() {
         if (getView() == null) return;
@@ -434,10 +489,8 @@ public class ComparacaoParte3Fragment extends Fragment {
 
                 if (detailView != null && expansionIconView != null) {
                     detailView.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
-                    // Define a rotação final sem animação para refletir o estado instantaneamente
                     expansionIconView.setRotation(isExpanded ? 90f : 0f);
 
-                    // Se estiver expandido, garante que os detalhes sejam recarregados com a ordem correta
                     if (isExpanded) {
                         displayNutrientDetails(nutrientName);
                     }
@@ -448,14 +501,11 @@ public class ComparacaoParte3Fragment extends Fragment {
 
 
     /**
-     * NOVO: Preenche os detalhes expandidos (nome e valor) para os dois produtos.
-     * * ALTERADO: Extrai o valor do mapa porcaoPorTabela usando os nomes dinâmicos da tabela
-     * (tabelaNome1 e tabelaNome2) para resolver o bug do "Teste2" fixo.
+     * Preenche os detalhes expandidos (nome e valor) para os dois produtos.
      */
     private void displayNutrientDetails(String nutrientName) {
-        if (originalComparisonData == null || binding == null || getView() == null) return;
+        if (originalComparisonData == null || getView() == null) return;
 
-        // 1. Encontrar o DTO de comparação para este nutriente
         ComparacaoNutrienteDTO item = originalComparisonData.stream()
                 .filter(dto -> nutrientName.equals(dto.getNomeNutriente()))
                 .findFirst()
@@ -466,41 +516,31 @@ public class ComparacaoParte3Fragment extends Fragment {
             return;
         }
 
-        // --- INÍCIO DA ALTERAÇÃO CRÍTICA PARA EXTRAÇÃO DINÂMICA ---
-        // Dados originais: Extrai os valores do mapa usando os nomes reais das tabelas (tabelaNome1 e tabelaNome2)
         Map<String, Double> porcaoMap = item.getPorcaoPorTabela();
         Double valorTabela1 = porcaoMap.get(tabelaNome1);
         Double valorTabela2 = porcaoMap.get(tabelaNome2);
 
-        // --- FIM DA ALTERAÇÃO CRÍTICA PARA EXTRAÇÃO DINÂMICA ---
 
-
-        // 2. Determinar a ordem dos produtos (P1 vs P2)
+        // Determinar a ordem dos produtos (P1 vs P2)
         String nomeP1;
         Double valorP1;
         String nomeP2;
         Double valorP2;
 
         if (isFlipped) {
-            // Se invertido: P1 (esquerda) exibe dados da Tabela 2, P2 (direita) exibe dados da Tabela 1
+            // Invertido
             nomeP1 = tabelaNome2;
             valorP1 = valorTabela2;
             nomeP2 = tabelaNome1;
             valorP2 = valorTabela1;
         } else {
-            // Ordem normal: P1 (esquerda) exibe dados da Tabela 1, P2 (direita) exibe dados da Tabela 2
+            // Ordem normal
             nomeP1 = tabelaNome1;
             valorP1 = valorTabela1;
             nomeP2 = tabelaNome2;
             valorP2 = valorTabela2;
         }
 
-        // Log de Debug
-        Log.d(TAG, String.format(Locale.getDefault(), "Nutriente: %s | Flipped: %b | P1 (%s): %s | P2 (%s): %s",
-                nutrientName, isFlipped, nomeP1, valorP1, nomeP2, valorP2));
-
-
-        // 3. Obter os IDs dos TextViews do ConstraintLayout de detalhes
         Integer nameP1Id = detailNameP1Map.get(nutrientName);
         Integer valueP1Id = detailValueP1Map.get(nutrientName);
         Integer nameP2Id = detailNameP2Map.get(nutrientName);
@@ -513,19 +553,16 @@ public class ComparacaoParte3Fragment extends Fragment {
 
         View rootView = getView();
 
-        // 4. Preencher os TextViews
+        // Preencher os TextViews
         TextView tvNameP1 = rootView.findViewById(nameP1Id);
         TextView tvValueP1 = rootView.findViewById(valueP1Id);
         TextView tvNameP2 = rootView.findViewById(nameP2Id);
         TextView tvValueP2 = rootView.findViewById(valueP2Id);
 
         if (tvNameP1 != null) tvNameP1.setText(nomeP1);
-        // Usa a formatação que trata null como 0
         if (tvValueP1 != null) tvValueP1.setText(formatNutrientValueDetails(nutrientName, valorP1));
 
-        // ATRIBUIÇÃO PARA O PRODUTO 2 (Que estava falhando com null/ "-")
         if (tvNameP2 != null) tvNameP2.setText(nomeP2);
-        // Usa a formatação que trata null como 0
         if (tvValueP2 != null) tvValueP2.setText(formatNutrientValueDetails(nutrientName, valorP2));
     }
 
@@ -534,27 +571,32 @@ public class ComparacaoParte3Fragment extends Fragment {
      * Preenche a UI com os dados de comparação (diferença e ícone) recebidos da API.
      */
     private void displayComparisonData(List<ComparacaoNutrienteDTO> comparacoes, boolean flipped) {
-        if (binding == null || getContext() == null) return;
+        if (getContext() == null) return;
+        View rootView = getView();
+        if (rootView == null) return;
 
         // 1. Atualizar o título do bloco da tabela de comparação
         String nomeTabela1 = flipped ? tabelaNome2 : tabelaNome1;
         String nomeTabela2 = flipped ? tabelaNome1 : tabelaNome2;
-        binding.tvTabelaTitulo1.setText(String.format(Locale.getDefault(), "Diferença Nutricional (%s - %s)", nomeTabela1, nomeTabela2));
+        if (tvDiffTitle != null) {
+            tvDiffTitle.setText(String.format(Locale.getDefault(), "Diferença Nutricional (%s - %s)", nomeTabela1, nomeTabela2));
+        }
+
 
         for (ComparacaoNutrienteDTO item : comparacoes) {
             String nutrientName = item.getNomeNutriente();
+            Double originalValorComparacao = item.getValorComparacao();
+
+            if (originalValorComparacao == null) continue;
+
+            // Aplicar a inversão: multiplicar por -1 se o estado estiver invertido
+            double valorComparacaoAjustado = flipped ? -originalValorComparacao : originalValorComparacao;
 
             // 2. Preencher o TextView com o valor da diferença (valorComparacao)
             Integer diffResId = nutrientComparacaoTextViewMap.get(nutrientName);
             if (diffResId != null) {
-                TextView tvDiff = (TextView) binding.getRoot().findViewById(diffResId);
+                TextView tvDiff = rootView.findViewById(diffResId);
                 if (tvDiff != null) {
-                    Double originalValorComparacao = item.getValorComparacao();
-                    if (originalValorComparacao == null) continue;
-
-                    // Aplicar a inversão: multiplicar por -1 se o estado estiver invertido
-                    double valorComparacaoAjustado = flipped ? -originalValorComparacao : originalValorComparacao;
-
                     tvDiff.setText(formatNutrientValueDifference(nutrientName, valorComparacaoAjustado));
                 }
             }
@@ -562,13 +604,8 @@ public class ComparacaoParte3Fragment extends Fragment {
             // 3. Preencher a coluna de Comparação (Ícone +, -, =)
             Integer iconResId = nutrientIconViewMap.get(nutrientName);
             if (iconResId != null) {
-                ImageView ivIndicator = (ImageView) binding.getRoot().findViewById(iconResId);
+                ImageView ivIndicator = rootView.findViewById(iconResId);
                 if (ivIndicator != null) {
-                    Double originalValorComparacao = item.getValorComparacao();
-                    if (originalValorComparacao == null) continue;
-                    double valorComparacaoAjustado = flipped ? -originalValorComparacao : originalValorComparacao;
-
-                    // Atualiza o recurso de imagem (soma/subtracao/igual)
                     updateComparisonIcon(ivIndicator, valorComparacaoAjustado);
                 }
             }
@@ -577,79 +614,60 @@ public class ComparacaoParte3Fragment extends Fragment {
 
 
     /**
-     * Formata o valor do nutriente (Double) para uma String com formatação decimal
-     * e a unidade correta, extraindo a unidade do nome do nutriente.
-     * Versão usada para a exibição da DIFERENÇA (com sinal +/-).
+     * Formata o valor do nutriente para a exibição da DIFERENÇA (com sinal +/-).
      */
     private String formatNutrientValueDifference(String nutrientName, Double value) {
         if (value == null) return "-";
 
-        // 1. Extrair a unidade (o que está entre parênteses)
         Matcher matcher = UNIT_PATTERN.matcher(nutrientName);
         String unit = "";
         if (matcher.find()) {
-            unit = " " + matcher.group(1); // Ex: " g" ou " kcal"
+            unit = " " + matcher.group(1);
         }
 
-        // 2. Definir o formato decimal
+        final double INT_TOLERANCE = 0.01;
         String formatString;
 
-        // Tolerância para verificar se é um inteiro
-        final double INT_TOLERANCE = 0.01;
-
         if (Math.abs(value - Math.round(value)) < INT_TOLERANCE) {
-            formatString = "%.0f"; // Sem casas decimais
+            formatString = "%.0f";
         } else if (nutrientName.contains("(kcal)") || nutrientName.contains("(mg)")) {
-            formatString = "%.1f"; // Uma casa decimal
+            formatString = "%.1f";
         } else {
-            formatString = "%.2f"; // Duas casas decimais
+            formatString = "%.2f";
         }
 
-        // 3. Formatar o valor numérico (já com sinal, se for negativo)
         String formattedValue = String.format(Locale.getDefault(), formatString, value);
-
-        // 4. Concatenar o valor formatado com a unidade
         return formattedValue + unit;
     }
 
     /**
-     * NOVO: Formata o valor do nutriente (Double) para uma String com formatação decimal
-     * e a unidade correta. Versão usada para a exibição dos VALORES INDIVIDUAIS (sem sinal +/-).
-     *
-     * CORRIGIDO: Se o valor for null, retorna "0" com a unidade em vez de "-".
+     * Formata o valor do nutriente para a exibição dos VALORES INDIVIDUAIS (sem sinal +/-).
      */
     private String formatNutrientValueDetails(String nutrientName, Double value) {
 
-        // 1. Extrair a unidade (o que está entre parênteses)
         Matcher matcher = UNIT_PATTERN.matcher(nutrientName);
         String unit = "";
         if (matcher.find()) {
-            unit = " " + matcher.group(1); // Ex: " g" ou " kcal"
+            unit = " " + matcher.group(1);
         }
 
-        // CORREÇÃO: Se o valor for null (ausente na API), retorna "0" com a unidade.
         if (value == null) {
             return "0" + unit;
         }
 
-        // 2. Definir o formato decimal
         String formatString;
-
-        // Tolerância para verificar se é um inteiro
         final double INT_TOLERANCE = 0.01;
 
         if (Math.abs(value - Math.round(value)) < INT_TOLERANCE) {
-            formatString = "%.0f"; // Sem casas decimais
+            formatString = "%.0f";
         } else if (nutrientName.contains("(kcal)") || nutrientName.contains("(mg)")) {
-            formatString = "%.1f"; // Uma casa decimal
+            formatString = "%.1f";
         } else {
-            formatString = "%.2f"; // Duas casas decimais
+            formatString = "%.2f";
         }
 
-        // 3. Formatar o valor numérico (usando valor absoluto)
         String formattedValue = String.format(Locale.getDefault(), formatString, Math.abs(value));
 
-        // 4. Concatenar o valor formatado com a unidade
         return formattedValue + unit;
     }
 
@@ -659,15 +677,14 @@ public class ComparacaoParte3Fragment extends Fragment {
     private void updateComparisonIcon(ImageView imageView, double valorComparacao) {
         if (getContext() == null) return;
 
-        // Usa uma pequena tolerância para considerar valores próximos de zero como iguais.
         final double TOLERANCE = 0.01;
 
         if (valorComparacao > TOLERANCE) {
-            imageView.setImageResource(R.drawable.ic_soma); // Produto P1 tem mais
+            imageView.setImageResource(R.drawable.ic_soma);
         } else if (valorComparacao < -TOLERANCE) {
-            imageView.setImageResource(R.drawable.ic_subtracao); // Produto P1 tem menos
+            imageView.setImageResource(R.drawable.ic_subtracao);
         } else {
-            imageView.setImageResource(R.drawable.ic_igual); // São iguais
+            imageView.setImageResource(R.drawable.ic_igual);
         }
 
         imageView.clearColorFilter();

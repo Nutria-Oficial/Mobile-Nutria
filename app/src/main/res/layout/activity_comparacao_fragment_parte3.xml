@@ -53,6 +53,16 @@
 
             <!-- ... [Conteúdo do Produto 1 e Produto 2 (omitido por brevidade)] ... -->
 
+            <ProgressBar
+                android:id="@+id/progress_bar_loading3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="#EE7026"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/header_item" />
+
             <TextView
                 android:id="@+id/textViewTitulo2"
                 android:layout_width="0dp"
@@ -1049,14 +1059,14 @@
 
             <TextView
                 android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="216dp"
+                android:layout_height="40dp"
                 android:text="Clique na seta laranja para adquirir mais detalhes"
                 android:textColor="#000000"
+                android:gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/conteudo_expansivel_tabela1" />
-
             <ImageView
                 android:id="@+id/imageView8"
                 android:layout_width="wrap_content"

@@ -138,25 +138,26 @@
         android:background="@drawable/search_bar_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guideline_top_searchbar"> <EditText
-        android:id="@+id/search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:hint="Pesquisar produto"
-        android:imeOptions="actionSearch"
-        android:paddingStart="48dp"
-        android:paddingEnd="16dp"
-        android:singleLine="true"
-        android:textColor="@android:color/black"
-        android:textColorHint="#A0A0A0"
-        android:textCursorDrawable="@drawable/black_cursor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/guideline_top_searchbar">
+        <EditText
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:hint="Pesquisar produto"
+            android:imeOptions="actionSearch"
+            android:paddingStart="48dp"
+            android:paddingEnd="16dp"
+            android:singleLine="true"
+            android:textColor="@android:color/black"
+            android:textColorHint="#A0A0A0"
+            android:textCursorDrawable="@drawable/black_cursor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
             android:id="@+id/search_icon"
@@ -182,7 +183,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_bar_container" />
 
-    <!-- Botão Corrigido: Agora usa 0dp (match constraints) com margens laterais de 40dp para preencher a largura de forma padronizada. -->
+    <ProgressBar
+        android:id="@+id/progress_bar_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:indeterminateTint="#EE7026"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_bar_container" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_escolherTabelas"
         android:layout_width="0dp"

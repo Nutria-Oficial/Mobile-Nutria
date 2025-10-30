@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,6 +46,9 @@ public class ComparacaoFragment extends Fragment {
     private TextView textViewSelecionarProduto2;
     private View iconeTabela;
     private View btnEscolherTabelas;
+
+    // NOVO: Referência para a ProgressBar
+    private ProgressBar progressBarLoading;
 
     private RecyclerView recyclerViewProdutos;
     private ComparacaoAdapter comparacaoAdapter;
@@ -85,11 +89,15 @@ public class ComparacaoFragment extends Fragment {
         // Referências dos elementos de UI
         demonstracaoItem1 = view.findViewById(R.id.View_demonstracaoItem_1);
         textViewSelecionarProduto1 = view.findViewById(R.id.textViewSelecionarProduto1);
+        // botaoTesteTransicao = view.findViewById(R.id.botaoTesteTransicao); // Este botão não está no XML
         demonstracaoItemSelecionado = view.findViewById(R.id.View_demonstracaoItem_selecionado);
         nomeProdutoSelecionado = view.findViewById(R.id.textViewNomeProdutoSelecionado);
         textViewSelecionarProduto2 = view.findViewById(R.id.textViewSelecionarProduto2);
         iconeTabela = view.findViewById(R.id.imageViewIconeTabela);
         btnEscolherTabelas = view.findViewById(R.id.btn_escolherTabelas);
+
+        // NOVO: Referência para a ProgressBar
+        progressBarLoading = view.findViewById(R.id.progress_bar_loading);
 
         // --- Configuração da RecyclerView ---
         View listaItensIncluded = view.findViewById(R.id.listaItens);
@@ -106,6 +114,9 @@ public class ComparacaoFragment extends Fragment {
         // ------------------------------------
 
         // --- Uso da função iniciandoServidor (A Boa Prática) ---
+        // Exibe a ProgressBar antes de qualquer chamada de rede
+        progressBarLoading.setVisibility(View.VISIBLE);
+
         // Chama o servidor para acordá-lo e, em seguida, busca os produtos.
         apiManager.iniciarServidor(requireActivity(), () -> buscarProdutoDoUsuario(idUsuario));
         // -------------------------------------------------------
@@ -156,6 +167,8 @@ public class ComparacaoFragment extends Fragment {
     }
 
     private void buscarProdutoDoUsuario(Integer idUsuario) {
+        // A ProgressBar já está visível aqui, pois foi definida em onViewCreated antes da chamada da API.
+
         produtoApi.buscarProdutosComMaisDeUmaTabela(idUsuario).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<GetProdutoDTO>> call, @NonNull retrofit2.Response<List<GetProdutoDTO>> response) {
@@ -221,12 +234,22 @@ public class ComparacaoFragment extends Fragment {
                     Log.e("API", "Erro na resposta da API: " + response.code());
                     tratarListaVaziaOuErro();
                 }
+
+                // --- SOLUÇÃO APLICADA: OCULTA A PROGRESSBAR APÓS O RETORNO DA API ---
+                if (progressBarLoading != null) {
+                    progressBarLoading.setVisibility(View.GONE);
+                }
+                // --------------------------------------------------------------------
             }
 
             @Override
             public void onFailure(@NonNull Call<List<GetProdutoDTO>> call, @NonNull Throwable t) {
                 Log.e("API:", "Falha na requisição: " + t.getMessage());
                 if (getActivity() != null) {
+                    // CRÍTICO: Oculta a ProgressBar na falha
+                    if (progressBarLoading != null) {
+                        progressBarLoading.setVisibility(View.GONE);
+                    }
                     getActivity().runOnUiThread(ComparacaoFragment.this::tratarListaVaziaOuErro);
                 }
             }
@@ -246,6 +269,7 @@ public class ComparacaoFragment extends Fragment {
         if (botaoTesteTransicao != null) {
             botaoTesteTransicao.setVisibility(View.VISIBLE);
         }
+        // IMPORTANTE: A progressbar deve ser GONE, mas isso já é tratado em onResponse/onFailure
     }
 
     @Override
@@ -268,6 +292,10 @@ public class ComparacaoFragment extends Fragment {
         iconeTabela.setVisibility(View.GONE);
         btnEscolherTabelas.setVisibility(View.GONE);
         textViewSelecionarProduto2.setVisibility(View.GONE);
+
+        // --- MUDANÇA: REMOVIDA A OCULTAÇÃO DA PROGRESSBAR DAQUI ---
+        // Agora ela é gerenciada exclusivamente pelos callbacks da API (onResponse/onFailure).
+        // -----------------------------------------------------------
 
         // Reseta os IDs e o produto removido
         produtoSelecionadoId = null;
