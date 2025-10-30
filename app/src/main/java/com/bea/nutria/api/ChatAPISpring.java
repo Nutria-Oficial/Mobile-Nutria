@@ -20,6 +20,6 @@ public interface ChatAPISpring {
     @GET("chat/{id}")
     Call<List<String>> listarChat(@Path("id") Integer id);
 
-    @DELETE("chat/{id}")
+    @DELETE("chat/limparChat/{id}")
     Call<Void> limparChat(@Path("id") Integer id);
 }

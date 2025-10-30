@@ -8,7 +8,7 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
-        android:layout_width="410dp"
+        android:layout_width="0dp"
         android:layout_height="168dp"
         app:cardBackgroundColor="@android:color/transparent"
         app:cardCornerRadius="0dp"
@@ -53,8 +53,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewChat"
-        android:layout_width="412dp"
-        android:layout_height="480dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clipToPadding="false"
         android:padding="16dp"
         android:visibility="gone"
@@ -67,7 +67,7 @@
 
     <LinearLayout
         android:id="@+id/layoutInput"
-        android:layout_width="386dp"
+        android:layout_width="0dp"
         android:layout_height="70dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
@@ -112,15 +112,17 @@
 
     <ImageView
         android:id="@+id/imgNutriaChat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="130dp"
-        android:layout_marginEnd="19dp"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="-55dp"
         android:src="@drawable/img_chat_tria"
         android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/layoutInput"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
         android:id="@+id/progressBar"

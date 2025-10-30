@@ -60,10 +60,11 @@ public class ChatFragment extends Fragment {
         if(idUser == 0){
             mostrarTelaVazia();
         }else{
+            binding.progressBar.setVisibility(View.VISIBLE);
             inicializarChat();
             setupRecyclerView();
             setupListeners();
-            carregarChatDoServidor();
+            carregarChat();
         }
 
         return binding.getRoot();
@@ -92,11 +93,13 @@ public class ChatFragment extends Fragment {
         binding.imgLixeira.setOnClickListener(v -> mostrarDialogConfirmacao());
     }
 
-    private void carregarChatDoServidor() {
+    private void carregarChat() {
+        binding.progressBar.setVisibility(View.VISIBLE);
         apiManagerSpring.iniciarServidor(requireActivity(), () -> {
             chatAPISpring.listarChat(idUser).enqueue(new Callback<List<String>>() {
                 @Override
                 public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                    binding.progressBar.setVisibility(View.GONE);
                     if (response.isSuccessful() && response.body() != null) {
                         List<String> chatInteiro = response.body();
 
@@ -107,8 +110,7 @@ public class ChatFragment extends Fragment {
 
                             binding.recyclerViewChat.setVisibility(View.VISIBLE);
                             binding.imgLixeira.setVisibility(View.VISIBLE);
-                            binding.imgBalao.setVisibility(View.GONE);
-                            binding.imgTria.setVisibility(View.GONE);
+                            binding.imgNutriaChat.setVisibility(View.GONE);
                         } else {
                             mostrarTelaVazia();
                         }
@@ -119,6 +121,7 @@ public class ChatFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<List<String>> call, Throwable throwable) {
+                    binding.progressBar.setVisibility(View.GONE);
                     mostrarTelaVazia();
                     Toast.makeText(getContext(), "Erro ao carregar chat", Toast.LENGTH_SHORT).show();
                 }
@@ -144,8 +147,7 @@ public class ChatFragment extends Fragment {
 
         binding.recyclerViewChat.setVisibility(View.VISIBLE);
         binding.imgLixeira.setVisibility(View.VISIBLE);
-        binding.imgBalao.setVisibility(View.GONE);
-        binding.imgTria.setVisibility(View.GONE);
+        binding.imgNutriaChat.setVisibility(View.GONE);
 
         ChatRequest chatRequest = new ChatRequest();
         chatRequest.setPergunta(mensagem);
@@ -202,10 +204,13 @@ public class ChatFragment extends Fragment {
             chatAPISpring.limparChat(idUser).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
+                    binding.imgLixeira.setEnabled(true);
+
                     if (response.isSuccessful()) {
                         chatAtual.clear();
                         chatAdapter.clearMessages();
                         mostrarTelaVazia();
+                        carregarChat();
                     }
                     else {
                         Toast.makeText(getContext(), "Erro ao limpar chat", Toast.LENGTH_SHORT).show();
@@ -213,9 +218,11 @@ public class ChatFragment extends Fragment {
                 }
                 @Override
                 public void onFailure(Call<Void> call, Throwable throwable) {
+
                     if (finalTentativas < 2) { // Tenta no máximo 3 vezes
                         limparChat(finalTentativas + 1);
                     } else {
+                        binding.imgLixeira.setEnabled(true);
                         // após 3 tentativas, mostra erro
                         Toast.makeText(getContext(), "Não foi possível limpar o chat", Toast.LENGTH_SHORT).show();
                     }
@@ -228,8 +235,7 @@ public class ChatFragment extends Fragment {
     private void mostrarTelaVazia() {
         binding.recyclerViewChat.setVisibility(View.GONE);
         binding.imgLixeira.setVisibility(View.GONE);
-        binding.imgBalao.setVisibility(View.VISIBLE);
-        binding.imgTria.setVisibility(View.VISIBLE);
+        binding.imgNutriaChat.setVisibility(View.VISIBLE);
     }
 
     private void mostrarDialogConfirmacao() {
@@ -249,7 +255,8 @@ public class ChatFragment extends Fragment {
 
         btnFechar.setOnClickListener(v -> dialog.dismiss());
         btnExcluir.setOnClickListener(v -> {
-            limparChat(tentativas);
+            binding.imgLixeira.setEnabled(false);
+            limparChat(0);
             dialog.dismiss();
         });
 
