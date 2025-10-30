@@ -14,7 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.constraintlayout.widget.ConstraintLayout; // Necessário para referenciar os detalhes
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bea.nutria.R;
 import com.bea.nutria.api.TabelaAPI;
@@ -151,7 +151,6 @@ public class ComparacaoParte3Fragment extends Fragment {
         binding.voltar.setOnClickListener(v -> requireActivity().onBackPressed());
 
         // 3. Configura o botão de inversão (imageView2)
-        // OBS: Você precisa ter um ID 'imageView2' no seu XML (não estava no snippet, mas mantido da versão anterior)
         if (binding.imageView2 != null) {
             binding.imageView2.setOnClickListener(v -> handleFlip());
         } else {
@@ -450,6 +449,8 @@ public class ComparacaoParte3Fragment extends Fragment {
 
     /**
      * NOVO: Preenche os detalhes expandidos (nome e valor) para os dois produtos.
+     * * ALTERADO: Extrai o valor do mapa porcaoPorTabela usando os nomes dinâmicos da tabela
+     * (tabelaNome1 e tabelaNome2) para resolver o bug do "Teste2" fixo.
      */
     private void displayNutrientDetails(String nutrientName) {
         if (originalComparisonData == null || binding == null || getView() == null) return;
@@ -460,17 +461,44 @@ public class ComparacaoParte3Fragment extends Fragment {
                 .findFirst()
                 .orElse(null);
 
-        if (item == null) {
-            Log.e(TAG, "Detalhes do nutriente não encontrados para: " + nutrientName);
+        if (item == null || item.getPorcaoPorTabela() == null) {
+            Log.e(TAG, "Detalhes do nutriente ou mapa de porção não encontrados para: " + nutrientName);
             return;
         }
 
-        // 2. Determinar a ordem dos produtos (P1 vs P2)
-        String nomeP1 = isFlipped ? tabelaNome2 : tabelaNome1;
-        Double valorP1 = isFlipped ? item.getValorTabela2() : item.getValorTabela1();
+        // --- INÍCIO DA ALTERAÇÃO CRÍTICA PARA EXTRAÇÃO DINÂMICA ---
+        // Dados originais: Extrai os valores do mapa usando os nomes reais das tabelas (tabelaNome1 e tabelaNome2)
+        Map<String, Double> porcaoMap = item.getPorcaoPorTabela();
+        Double valorTabela1 = porcaoMap.get(tabelaNome1);
+        Double valorTabela2 = porcaoMap.get(tabelaNome2);
 
-        String nomeP2 = isFlipped ? tabelaNome1 : tabelaNome2;
-        Double valorP2 = isFlipped ? item.getValorTabela1() : item.getValorTabela2();
+        // --- FIM DA ALTERAÇÃO CRÍTICA PARA EXTRAÇÃO DINÂMICA ---
+
+
+        // 2. Determinar a ordem dos produtos (P1 vs P2)
+        String nomeP1;
+        Double valorP1;
+        String nomeP2;
+        Double valorP2;
+
+        if (isFlipped) {
+            // Se invertido: P1 (esquerda) exibe dados da Tabela 2, P2 (direita) exibe dados da Tabela 1
+            nomeP1 = tabelaNome2;
+            valorP1 = valorTabela2;
+            nomeP2 = tabelaNome1;
+            valorP2 = valorTabela1;
+        } else {
+            // Ordem normal: P1 (esquerda) exibe dados da Tabela 1, P2 (direita) exibe dados da Tabela 2
+            nomeP1 = tabelaNome1;
+            valorP1 = valorTabela1;
+            nomeP2 = tabelaNome2;
+            valorP2 = valorTabela2;
+        }
+
+        // Log de Debug
+        Log.d(TAG, String.format(Locale.getDefault(), "Nutriente: %s | Flipped: %b | P1 (%s): %s | P2 (%s): %s",
+                nutrientName, isFlipped, nomeP1, valorP1, nomeP2, valorP2));
+
 
         // 3. Obter os IDs dos TextViews do ConstraintLayout de detalhes
         Integer nameP1Id = detailNameP1Map.get(nutrientName);
@@ -492,9 +520,12 @@ public class ComparacaoParte3Fragment extends Fragment {
         TextView tvValueP2 = rootView.findViewById(valueP2Id);
 
         if (tvNameP1 != null) tvNameP1.setText(nomeP1);
+        // Usa a formatação que trata null como 0
         if (tvValueP1 != null) tvValueP1.setText(formatNutrientValueDetails(nutrientName, valorP1));
 
+        // ATRIBUIÇÃO PARA O PRODUTO 2 (Que estava falhando com null/ "-")
         if (tvNameP2 != null) tvNameP2.setText(nomeP2);
+        // Usa a formatação que trata null como 0
         if (tvValueP2 != null) tvValueP2.setText(formatNutrientValueDetails(nutrientName, valorP2));
     }
 
@@ -584,15 +615,21 @@ public class ComparacaoParte3Fragment extends Fragment {
     /**
      * NOVO: Formata o valor do nutriente (Double) para uma String com formatação decimal
      * e a unidade correta. Versão usada para a exibição dos VALORES INDIVIDUAIS (sem sinal +/-).
+     *
+     * CORRIGIDO: Se o valor for null, retorna "0" com a unidade em vez de "-".
      */
     private String formatNutrientValueDetails(String nutrientName, Double value) {
-        if (value == null) return "-";
 
         // 1. Extrair a unidade (o que está entre parênteses)
         Matcher matcher = UNIT_PATTERN.matcher(nutrientName);
         String unit = "";
         if (matcher.find()) {
             unit = " " + matcher.group(1); // Ex: " g" ou " kcal"
+        }
+
+        // CORREÇÃO: Se o valor for null (ausente na API), retorna "0" com a unidade.
+        if (value == null) {
+            return "0" + unit;
         }
 
         // 2. Definir o formato decimal
@@ -609,7 +646,7 @@ public class ComparacaoParte3Fragment extends Fragment {
             formatString = "%.2f"; // Duas casas decimais
         }
 
-        // 3. Formatar o valor numérico (usando valor absoluto, pois é um valor individual)
+        // 3. Formatar o valor numérico (usando valor absoluto)
         String formattedValue = String.format(Locale.getDefault(), formatString, Math.abs(value));
 
         // 4. Concatenar o valor formatado com a unidade

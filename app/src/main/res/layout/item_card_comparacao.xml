@@ -27,16 +27,17 @@
 
         <View
             android:id="@+id/view_linha"
-            android:layout_width="300dp"
+            android:layout_width="340dp"
             android:layout_height="3dp"
             android:layout_marginTop="40dp"
+            android:layout_marginBottom="-3dp"
             android:background="#EEEDF7"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.738"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem4"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.882" />
 
         <TextView
             android:id="@+id/textViewTitulo"
@@ -74,10 +75,9 @@
             android:layout_height="45dp"
             app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem4"
             app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem4"
-            app:layout_constraintHorizontal_bias="0.083"
+            app:layout_constraintHorizontal_bias="0.166"
             app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem4"
             app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem4"
-            app:layout_constraintVertical_bias="0.6"
             app:srcCompat="@drawable/xlsx" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

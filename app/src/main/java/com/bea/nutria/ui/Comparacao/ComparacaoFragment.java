@@ -41,7 +41,7 @@ public class ComparacaoFragment extends Fragment {
     private Button botaoTesteTransicao;
     private View demonstracaoItemSelecionado;
     private TextView nomeProdutoSelecionado;
-    private View demonstracaoItem2;
+
     private TextView textViewSelecionarProduto2;
     private View iconeTabela;
     private View btnEscolherTabelas;
@@ -53,6 +53,9 @@ public class ComparacaoFragment extends Fragment {
 
     // Variável para armazenar o ID do produto selecionado
     private Integer produtoSelecionadoId = null;
+
+    // NOVO: Armazena o objeto do produto que foi removido para poder reinserir na lista
+    private GetProdutoDTO produtoRemovidoAnteriormente = null;
 
     private ProdutoAPI produtoApi;
     private ConexaoAPI apiManager;
@@ -84,7 +87,6 @@ public class ComparacaoFragment extends Fragment {
         textViewSelecionarProduto1 = view.findViewById(R.id.textViewSelecionarProduto1);
         demonstracaoItemSelecionado = view.findViewById(R.id.View_demonstracaoItem_selecionado);
         nomeProdutoSelecionado = view.findViewById(R.id.textViewNomeProdutoSelecionado);
-        demonstracaoItem2 = view.findViewById(R.id.view_demonstracaoItem2);
         textViewSelecionarProduto2 = view.findViewById(R.id.textViewSelecionarProduto2);
         iconeTabela = view.findViewById(R.id.imageViewIconeTabela);
         btnEscolherTabelas = view.findViewById(R.id.btn_escolherTabelas);
@@ -171,13 +173,23 @@ public class ComparacaoFragment extends Fragment {
                         comparacaoAdapter.setOnItemClickListener(produto -> {
                             Log.d("Comparacao", "Produto selecionado: " + produto.getNome());
 
-                            // NOVO: 1. REMOVE O ITEM DA LISTA E ATUALIZA A RECYCLER VIEW
                             if (comparacaoAdapter != null) {
-                                // O Adapter remove o item da sua lista interna e notifica a UI
+
+                                // 1. Se já havia um produto removido (o item anterior selecionado),
+                                // reinserimos ele na lista de exibição do Adapter.
+                                if (produtoRemovidoAnteriormente != null) {
+                                    comparacaoAdapter.addItem(produtoRemovidoAnteriormente);
+                                    produtoRemovidoAnteriormente = null; // Limpa o estado
+                                }
+
+                                // 2. Remove o novo item selecionado da lista de exibição.
                                 comparacaoAdapter.removeItem(produto);
+
+                                // 3. Armazena o novo item removido para ser reinserido na próxima troca.
+                                produtoRemovidoAnteriormente = produto;
                             }
 
-                            // MODIFICAÇÃO: Armazena o ID do produto selecionado
+                            // MODIFICAÇÃO: Armazena o ID do produto selecionado (novo ou trocado)
                             produtoSelecionadoId = produto.getId();
 
                             // Transição visual: Quando um item é SELECIONADO, ocultamos a área de seleção
@@ -189,6 +201,7 @@ public class ComparacaoFragment extends Fragment {
                             nomeProdutoSelecionado.setVisibility(View.VISIBLE);
                             iconeTabela.setVisibility(View.VISIBLE);
                             btnEscolherTabelas.setVisibility(View.VISIBLE);
+
                             textViewSelecionarProduto2.setVisibility(View.VISIBLE);
 
                             nomeProdutoSelecionado.setText(produto.getNome());
@@ -238,6 +251,8 @@ public class ComparacaoFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        // A busca é feita em onViewCreated, mas o resetEstado garante que a UI
+        // volte ao estado inicial quando o usuário retorna a este Fragment.
         resetEstado();
     }
 
@@ -252,17 +267,21 @@ public class ComparacaoFragment extends Fragment {
         nomeProdutoSelecionado.setVisibility(View.GONE);
         iconeTabela.setVisibility(View.GONE);
         btnEscolherTabelas.setVisibility(View.GONE);
-        demonstracaoItem2.setVisibility(View.GONE);
         textViewSelecionarProduto2.setVisibility(View.GONE);
 
-        // NOVO: Reseta o ID selecionado
+        // Reseta os IDs e o produto removido
         produtoSelecionadoId = null;
 
-        // Se houver adapter e dados, a lista deve ser atualizada para exibir os itens restantes.
-        // Se a lógica de comparação exigir que o item volte ao reset, a lista deve ser recarregada.
-        // Por enquanto, apenas ocultamos a RecyclerView.
+        // NOVO: Se houver um produto removido, ele deve ser adicionado de volta à lista
+        // (Isso é crucial se o Adapter já tiver sido inicializado)
+        if (comparacaoAdapter != null && produtoRemovidoAnteriormente != null) {
+            comparacaoAdapter.addItem(produtoRemovidoAnteriormente);
+        }
+        produtoRemovidoAnteriormente = null;
+
+        // Garante que a RecyclerView esteja visível se houver um Adapter
         if (recyclerViewProdutos != null) {
-            recyclerViewProdutos.setVisibility(View.GONE);
+            recyclerViewProdutos.setVisibility(View.VISIBLE);
         }
 
         nomeProdutoSelecionado.setText("");

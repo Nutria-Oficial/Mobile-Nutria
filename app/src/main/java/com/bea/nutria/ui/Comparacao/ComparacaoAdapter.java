@@ -78,7 +78,20 @@ public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.Pr
     }
 
     /**
-     * NOVO: Método para remover um item e notificar a RecyclerView.
+     * NOVO: Método para adicionar um item de volta à lista e notificar a RecyclerView.
+     * O item é adicionado ao final da lista.
+     * @param produto O produto a ser adicionado.
+     */
+    public void addItem(GetProdutoDTO produto) {
+        if (!listaProdutosExibida.contains(produto)) {
+            listaProdutosExibida.add(produto);
+            // Notifica o adapter para animar a inserção no final
+            notifyItemInserted(listaProdutosExibida.size() - 1);
+        }
+    }
+
+    /**
+     * Método para remover um item e notificar a RecyclerView.
      * @param produto O produto a ser removido.
      */
     public void removeItem(GetProdutoDTO produto) {
@@ -91,7 +104,7 @@ public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.Pr
     }
 
     /**
-     * NOVO: Permite que o Fragment acesse a lista de produtos atualizada.
+     * Permite que o Fragment acesse a lista de produtos atualizada.
      */
     public List<GetProdutoDTO> getListaProdutosExibida() {
         return listaProdutosExibida;

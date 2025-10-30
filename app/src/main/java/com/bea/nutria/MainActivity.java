@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                                 .circleCrop()
                                 .into(perfil);
                     }
-                } else {
+                }  else {
                     Glide.with(MainActivity.this).load(R.drawable.foto_padrao).circleCrop().into(perfil);
                 }
             }

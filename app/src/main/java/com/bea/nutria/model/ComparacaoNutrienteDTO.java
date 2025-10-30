@@ -10,14 +10,13 @@ import java.util.Map;
  */
 public class ComparacaoNutrienteDTO {
 
-    // Chaves esperadas no Map porcaoPorTabela
-    private static final String KEY_TABELA_1 = "Teste1";
-    private static final String KEY_TABELA_2 = "Teste2";
+    // Chaves esperadas no Map porcaoPorTabela (Estas chaves fixas não são mais usadas
+    // na lógica do Fragmento, que agora usa os nomes dinâmicos da tabela).
 
     @SerializedName("nutriente")
     private String nomeNutriente;
 
-    // Map armazena os valores de porção para as duas tabelas, usando as chaves "Teste1" e "Teste2"
+    // Map armazena os valores de porção para as duas tabelas
     @SerializedName("porcaoPorTabela")
     private Map<String, Double> porcaoPorTabela;
 
@@ -50,17 +49,15 @@ public class ComparacaoNutrienteDTO {
 
     /**
      * Método utilitário para obter o valor do nutriente da Tabela 1 (Produto 1).
+     * (Mantido por compatibilidade, mas o Fragmento agora usa getPorcaoPorTabela() diretamente)
      * @return O valor Double correspondente à chave "Teste1", ou null se não existir.
      */
-    public Double getValorTabela1() {
-        return porcaoPorTabela != null ? porcaoPorTabela.get(KEY_TABELA_1) : null;
-    }
+
 
     /**
      * Método utilitário para obter o valor do nutriente da Tabela 2 (Produto 2).
+     * (Mantido por compatibilidade, mas o Fragmento agora usa getPorcaoPorTabela() diretamente)
      * @return O valor Double correspondente à chave "Teste2", ou null se não existir.
      */
-    public Double getValorTabela2() {
-        return porcaoPorTabela != null ? porcaoPorTabela.get(KEY_TABELA_2) : null;
-    }
+
 }
