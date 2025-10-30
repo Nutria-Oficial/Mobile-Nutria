@@ -24,6 +24,11 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
     private List<IngredienteResponse> ingredientesSelecionados;
     private OnIngredienteChangeListener listener;
 
+    public void adicionarIngrediente(IngredienteResponse ingredienteCriado) {
+        lista.add(ingredienteCriado);
+        notifyDataSetChanged();
+    }
+
     public interface OnIngredienteChangeListener {
         void onIngredienteAdicionado(IngredienteResponse ingrediente);
         void onIngredienteRemovido(IngredienteResponse ingrediente);
@@ -114,6 +119,22 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
 
     public void atualizarLista(List<IngredienteResponse> novaLista) {
         this.lista = novaLista != null ? novaLista : new ArrayList<>();
+
+        // selecionados primeiro vão ficar em cima
+        List<IngredienteResponse> listaOrdenada = new ArrayList<>();
+        List<IngredienteResponse> naoSelecionados = new ArrayList<>();
+
+        for (IngredienteResponse ing : this.lista) {
+            if (estaNaListaSelecionados(ing)) {
+                listaOrdenada.add(ing);
+            } else {
+                naoSelecionados.add(ing);
+            }
+        }
+
+        listaOrdenada.addAll(naoSelecionados);
+        this.lista = listaOrdenada;
+
         notifyDataSetChanged();
     }
 

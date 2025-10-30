@@ -4,127 +4,124 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.bea.nutria.R;
+import com.bea.nutria.api.IngredienteAPI;
+import com.bea.nutria.api.conexaoApi.ConexaoAPI;
+import com.bea.nutria.databinding.FragmentNovoIngredienteBinding;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class NovoIngredienteFragment extends Fragment {
-    //fazer binding depois, bem mais facil e limpo
-    private TextInputLayout layoutNome, layoutCaloria, layoutCarboidrato;
-    private TextInputLayout layoutAcucar, layoutProteina, layoutGordurasTotais;
-    private TextInputLayout layoutGordurasSaturadas, layoutSodio, layoutFibra;
 
-    private TextInputEditText editNome, editCaloria, editCarboidrato;
-    private TextInputEditText editAcucar, editProteina, editGordurasTotais;
-    private TextInputEditText editGordurasSaturadas, editSodio, editFibra;
+    private FragmentNovoIngredienteBinding binding;
+    private ConexaoAPI apiManager;
+    private IngredienteAPI ingredienteAPI;
+    private IngredienteAdapter adapter;
+    private static final String url = "https://api-spring-mongodb.onrender.com";
 
-    private Button btnAdicionar;
 
     public NovoIngredienteFragment() {
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_novo_ingrediente, container, false);
+        binding = FragmentNovoIngredienteBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
-        inicializarCampos(view);
         configurarValidacao();
         configurarBotao();
+
+        apiManager = new ConexaoAPI(url);
+        ingredienteAPI = apiManager.getApi(IngredienteAPI.class);
 
         return view;
     }
 
-    private void inicializarCampos(View view) {
-        layoutNome = view.findViewById(R.id.layoutNomeIngrediente);
-        layoutCaloria = view.findViewById(R.id.layoutCaloria);
-        layoutCarboidrato = view.findViewById(R.id.layoutCarboidrato);
-        layoutAcucar = view.findViewById(R.id.layoutAcucar);
-        layoutProteina = view.findViewById(R.id.layoutProteina);
-        layoutGordurasTotais = view.findViewById(R.id.layoutGordurasTotais);
-        layoutGordurasSaturadas = view.findViewById(R.id.layoutGordurasSaturadas);
-        layoutSodio = view.findViewById(R.id.layoutSodio);
-        layoutFibra = view.findViewById(R.id.layoutFibra);
+    private void criarIngrediente(IngredienteRequest ingrediente) {
+        ingredienteAPI.criarIngrediente(ingrediente).enqueue(new Callback<IngredienteResponse>() {
+            @Override
+            public void onResponse(Call<IngredienteResponse> call, Response<IngredienteResponse> response) {
+                if (getActivity() == null) return;
 
-        editNome = view.findViewById(R.id.editNomeIngrediente);
-        editCaloria = view.findViewById(R.id.editCaloria);
-        editCarboidrato = view.findViewById(R.id.editCarboidrato);
-        editAcucar = view.findViewById(R.id.editAcucar);
-        editProteina = view.findViewById(R.id.editProteina);
-        editGordurasTotais = view.findViewById(R.id.editGordurasTotais);
-        editGordurasSaturadas = view.findViewById(R.id.editGordurasSaturadas);
-        editSodio = view.findViewById(R.id.editSodio);
-        editFibra = view.findViewById(R.id.editFibra);
+                if (response.isSuccessful() && response.body() != null) {
+                    IngredienteResponse ingredienteCriado = response.body();
 
-        btnAdicionar = view.findViewById(R.id.btnAdicionarIngrediente);
+                    IngredienteSharedViewModel sharedViewModel =
+                            new ViewModelProvider(requireActivity()).get(IngredienteSharedViewModel.class);
+
+                    // adicionar aos selecionados
+                    List<IngredienteResponse> selecionados = sharedViewModel.getIngredientesSelecionados().getValue();
+                    if (selecionados == null) {
+                        selecionados = new ArrayList<>();
+                    }
+                    selecionados.add(ingredienteCriado);
+                    sharedViewModel.setIngredientesSelecionados(selecionados);
+
+                    // notificar que foi criado novo ingrediente
+                    sharedViewModel.setNovoIngredienteAdicionado(ingredienteCriado);
+
+                    Toast.makeText(getContext(),
+                            "✓ " + ingredienteCriado.getNomeIngrediente() + " adicionado!",
+                            Toast.LENGTH_SHORT).show();
+
+                    limparCampos();
+                } else {
+                    Toast.makeText(getContext(),
+                            "Erro ao adicionar ingrediente",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<IngredienteResponse> call, Throwable throwable) {
+                if (getActivity() != null) {
+                    Toast.makeText(getContext(),
+                            "Falha na conexão",
+                            Toast.LENGTH_SHORT).show();
+                    throwable.printStackTrace();
+                }
+            }
+        });
     }
 
     private void configurarValidacao() {
-        // limpa erro quando o usuário começa a digitar
-        editNome.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                validarCampoObrigatorio(layoutNome, editNome);
-            }
-        });
+        configurarValidacaoCampo(binding.layoutNomeIngrediente, binding.editNomeIngrediente);
+        configurarValidacaoCampo(binding.layoutCaloria, binding.editCaloria);
+        configurarValidacaoCampo(binding.layoutCarboidrato, binding.editCarboidrato);
+        configurarValidacaoCampo(binding.layoutAcucar, binding.editAcucar);
+        configurarValidacaoCampo(binding.layoutProteina, binding.editProteina);
+        configurarValidacaoCampo(binding.layoutGordurasTotais, binding.editGordurasTotais);
+        configurarValidacaoCampo(binding.layoutGordurasSaturadas, binding.editGordurasSaturadas);
+        configurarValidacaoCampo(binding.layoutSodio, binding.editSodio);
+        configurarValidacaoCampo(binding.layoutFibra, binding.editFibra);
+    }
 
-        editCaloria.setOnFocusChangeListener((v, hasFocus) -> {
+    private void configurarValidacaoCampo(TextInputLayout layout, TextInputEditText edit) {
+        edit.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
-                validarCampoObrigatorio(layoutCaloria, editCaloria);
-            }
-        });
-
-        editCarboidrato.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                validarCampoObrigatorio(layoutCarboidrato, editCarboidrato);
-            }
-        });
-
-        editAcucar.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                validarCampoObrigatorio(layoutAcucar, editAcucar);
-            }
-        });
-
-        editProteina.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                validarCampoObrigatorio(layoutProteina, editProteina);
-            }
-        });
-
-        editGordurasTotais.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                validarCampoObrigatorio(layoutGordurasTotais, editGordurasTotais);
-            }
-        });
-
-        editGordurasSaturadas.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                validarCampoObrigatorio(layoutGordurasSaturadas, editGordurasSaturadas);
-            }
-        });
-
-        editSodio.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                validarCampoObrigatorio(layoutSodio, editSodio);
-            }
-        });
-
-        editFibra.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                validarCampoObrigatorio(layoutFibra, editFibra);
+                validarCampoObrigatorio(layout, edit);
             }
         });
     }
 
     private boolean validarCampoObrigatorio(TextInputLayout layout, TextInputEditText edit) {
-        String texto = edit.getText().toString().trim();
+        String texto = edit.getText() != null ? edit.getText().toString().trim() : "";
 
         if (texto.isEmpty()) {
             layout.setError("Campo obrigatório");
@@ -138,7 +135,7 @@ public class NovoIngredienteFragment extends Fragment {
     }
 
     private void configurarBotao() {
-        btnAdicionar.setOnClickListener(v -> {
+        binding.btnAdicionarIngrediente.setOnClickListener(v -> {
             if (validarTodosCamposObrigatorios()) {
                 adicionarIngrediente();
             } else {
@@ -149,37 +146,90 @@ public class NovoIngredienteFragment extends Fragment {
         });
     }
 
-    private boolean validarTodosCamposObrigatorios() {
-        boolean nomeValido = validarCampoObrigatorio(layoutNome, editNome);
-        boolean caloriaValida = validarCampoObrigatorio(layoutCaloria, editCaloria);
-        boolean carboidratoValido = validarCampoObrigatorio(layoutCarboidrato, editCarboidrato);
-        boolean acucarValido = validarCampoObrigatorio(layoutAcucar, editAcucar);
-        boolean proteinaValida = validarCampoObrigatorio(layoutProteina, editProteina);
-        boolean gordurasTotaisValida = validarCampoObrigatorio(layoutGordurasTotais, editGordurasTotais);
-        boolean gordurasSaturadasValida = validarCampoObrigatorio(layoutGordurasSaturadas, editGordurasSaturadas);
-        boolean sodioValido = validarCampoObrigatorio(layoutSodio, editSodio);
-        boolean fibraValida = validarCampoObrigatorio(layoutFibra, editFibra);
+    private void adicionarIngrediente() {
+        IngredienteRequest ingrediente = new IngredienteRequest();
 
-        return nomeValido && caloriaValida && carboidratoValido && acucarValido &&
-                proteinaValida && gordurasTotaisValida && gordurasSaturadasValida &&
-                sodioValido && fibraValida;
+        ingrediente.setNomeIngrediente(getText(binding.editNomeIngrediente));
+        ingrediente.setCaloria(getDouble(binding.editCaloria));
+        ingrediente.setCarboidrato(getDouble(binding.editCarboidrato));
+        ingrediente.setAcucar(getDouble(binding.editAcucar));
+        ingrediente.setProteina(getDouble(binding.editProteina));
+        ingrediente.setGorduraTotal(getDouble(binding.editGordurasTotais));
+        ingrediente.setGorduraSaturada(getDouble(binding.editGordurasSaturadas));
+        ingrediente.setSodio(getDouble(binding.editSodio));
+        ingrediente.setFibra(getDouble(binding.editFibra));
+        ingrediente.setAgua(getDouble(binding.editAgua));
+        ingrediente.setGorduraMonoinsaturada(getDouble(binding.editGordurasMono));
+        ingrediente.setGorduraPoliinsaturada(getDouble(binding.editGordurasPoli));
+        ingrediente.setColesterol(getDouble(binding.editColesterol));
+        ingrediente.setAlcool(getDouble(binding.editAlcool));
+        ingrediente.setVitaminaB6(getDouble(binding.editVitaminaB6));
+        ingrediente.setVitaminaB12(getDouble(binding.editVitaminaB12));
+        ingrediente.setVitaminaC(getDouble(binding.editVitaminaC));
+        ingrediente.setVitaminaD(getDouble(binding.editVitaminaD));
+        ingrediente.setVitaminaE(getDouble(binding.editVitaminaE));
+        ingrediente.setVitaminaK(getDouble(binding.editVitaminaK));
+        ingrediente.setTeobromina(getDouble(binding.editTeobromina));
+        ingrediente.setCafeina(getDouble(binding.editCafeina));
+        ingrediente.setColina(getDouble(binding.editColina));
+        ingrediente.setCalcio(getDouble(binding.editCalcio));
+        ingrediente.setFosforo(getDouble(binding.editFosforo));
+        ingrediente.setMagnesio(getDouble(binding.editMagnesio));
+        ingrediente.setPotassio(getDouble(binding.editPotassio));
+        ingrediente.setFerro(getDouble(binding.editFerro));
+        ingrediente.setZinco(getDouble(binding.editZinco));
+        ingrediente.setCobre(getDouble(binding.editCobre));
+        ingrediente.setSelenio(getDouble(binding.editSelenio));
+        ingrediente.setRetinol(getDouble(binding.editRetinol));
+        ingrediente.setTiamina(getDouble(binding.editTiamina));
+        ingrediente.setRiboflavina(getDouble(binding.editRiboflavina));
+        ingrediente.setNiacina(getDouble(binding.editNiacina));
+        ingrediente.setFolato(getDouble(binding.editFolato));
+
+        apiManager.iniciarServidor(requireActivity(), () -> criarIngrediente(ingrediente));
     }
 
-    private void adicionarIngrediente() {
-        Toast.makeText(getContext(), "Ingrediente adicionado com sucesso!", Toast.LENGTH_SHORT).show();
+    private String getText(TextInputEditText edit) {
+        return edit.getText() != null ? edit.getText().toString().trim() : "";
+    }
 
-         limparCampos();
+    private double getDouble(TextInputEditText edit) {
+        String texto = getText(edit);
+        if (texto.isEmpty()) return 0.0;
+        try {
+            return Double.parseDouble(texto);
+        } catch (Exception e) {
+            return 0.0;
+        }
+    }
+
+    private boolean validarTodosCamposObrigatorios() {
+        return validarCampoObrigatorio(binding.layoutNomeIngrediente, binding.editNomeIngrediente)
+                && validarCampoObrigatorio(binding.layoutCaloria, binding.editCaloria)
+                && validarCampoObrigatorio(binding.layoutCarboidrato, binding.editCarboidrato)
+                && validarCampoObrigatorio(binding.layoutAcucar, binding.editAcucar)
+                && validarCampoObrigatorio(binding.layoutProteina, binding.editProteina)
+                && validarCampoObrigatorio(binding.layoutGordurasTotais, binding.editGordurasTotais)
+                && validarCampoObrigatorio(binding.layoutGordurasSaturadas, binding.editGordurasSaturadas)
+                && validarCampoObrigatorio(binding.layoutSodio, binding.editSodio)
+                && validarCampoObrigatorio(binding.layoutFibra, binding.editFibra);
     }
 
     private void limparCampos() {
-        editNome.setText("");
-        editCaloria.setText("");
-        editCarboidrato.setText("");
-        editAcucar.setText("");
-        editProteina.setText("");
-        editGordurasTotais.setText("");
-        editGordurasSaturadas.setText("");
-        editSodio.setText("");
-        editFibra.setText("");
+        binding.editNomeIngrediente.setText("");
+        binding.editCaloria.setText("");
+        binding.editCarboidrato.setText("");
+        binding.editAcucar.setText("");
+        binding.editProteina.setText("");
+        binding.editGordurasTotais.setText("");
+        binding.editGordurasSaturadas.setText("");
+        binding.editSodio.setText("");
+        binding.editFibra.setText("");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null; // evitar memory leak
     }
 }

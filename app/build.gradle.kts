@@ -64,8 +64,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.activity.ktx)
     implementation(libs.cardview)
-    implementation(libs.viewpager2)
-    implementation(libs.recyclerview)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

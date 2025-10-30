@@ -247,6 +247,10 @@ public class PerfilActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG
                     ).show();
                 }
+                getSharedPreferences("nutria_prefs", MODE_PRIVATE)
+                        .edit()
+                        .putInt("usuario_id", usuarioLogado.getId() != null ? usuarioLogado.getId() : -1)
+                        .apply();
             }
 
             @Override
