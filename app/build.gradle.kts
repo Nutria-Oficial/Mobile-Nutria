@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.activity)
     implementation(libs.activity.ktx)
+    implementation(libs.cardview)
 
 
     testImplementation(libs.junit)

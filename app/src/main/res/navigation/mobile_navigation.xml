@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/navigation_nutria"
-        android:name="com.bea.nutria.ui.NutrIA.NutrIAFragment"
+        android:name="com.bea.nutria.ui.Chat.ChatFragment"
         android:label="NutrIA"
         tools:layout="@layout/fragment_nutria" />
 
