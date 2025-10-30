@@ -48,20 +48,10 @@
             android:layout_height="wrap_content"
             android:paddingBottom="100dp"
             android:layout_marginTop="30dp"
-            android:background="@drawable/fundo_arredondado"
+            android:background="@drawable/fundo_arredondado_topo"
             android:backgroundTint="#FFFFFF">
 
             <!-- ... [Conteúdo do Produto 1 e Produto 2 (omitido por brevidade)] ... -->
-
-            <ProgressBar
-                android:id="@+id/progress_bar_loading3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminateTint="#EE7026"
-                android:visibility="visible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/header_item" />
 
             <TextView
                 android:id="@+id/textViewTitulo2"
@@ -83,7 +73,7 @@
                 android:id="@+id/view_demonstracaoItem3"
                 android:layout_width="63dp"
                 android:layout_height="73dp"
-                android:layout_marginStart="40dp"
+                android:layout_marginStart="50dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/quadrado_arredondado"
                 app:circularflow_defaultRadius="10dp"
@@ -107,7 +97,7 @@
 
             <View
                 android:id="@+id/view_linha2"
-                android:layout_width="270dp"
+                android:layout_width="240dp"
                 android:layout_height="3dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="20dp"
@@ -135,7 +125,7 @@
                 android:id="@+id/view_demonstracaoItem"
                 android:layout_width="63dp"
                 android:layout_height="73dp"
-                android:layout_marginStart="40dp"
+                android:layout_marginStart="50dp"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/quadrado_arredondado"
                 app:circularflow_defaultRadius="10dp"
@@ -157,11 +147,11 @@
 
             <View
                 android:id="@+id/view_linha4"
-                android:layout_width="270dp"
+                android:layout_width="240dp"
                 android:layout_height="3dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginEnd="20dp"
                 android:background="#EEEDF7"
-                app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view_demonstracaoItem" />
 
             <View
@@ -1067,16 +1057,30 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/conteudo_expansivel_tabela1" />
+
             <ImageView
                 android:id="@+id/imageView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
                 app:layout_constraintEnd_toStartOf="@+id/textView"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/conteudo_expansivel_tabela1"
                 app:srcCompat="@drawable/seta_abertura_detalhes" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar_loading3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTint="#EE7026"
+        android:visibility="visible"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

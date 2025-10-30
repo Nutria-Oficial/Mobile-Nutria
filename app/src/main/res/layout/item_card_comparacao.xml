@@ -10,7 +10,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="65dp">
+        android:layout_height="70dp">
 
         <View
             android:id="@+id/view_demonstracaoItem4"
@@ -55,20 +55,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.444" />
 
-        <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="45dp"
-            android:layout_height="39dp"
-            android:layout_marginEnd="16dp"
-            android:backgroundTint="#FFFFFF"
-            android:rotation="-90"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/textViewTitulo"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/seta" />
-
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="49dp"
@@ -78,6 +64,7 @@
             app:layout_constraintHorizontal_bias="0.166"
             app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem4"
             app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem4"
+            app:layout_constraintVertical_bias="0.6"
             app:srcCompat="@drawable/xlsx" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

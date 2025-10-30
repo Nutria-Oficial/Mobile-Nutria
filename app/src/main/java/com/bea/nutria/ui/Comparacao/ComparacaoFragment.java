@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -32,6 +34,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ComparacaoFragment extends Fragment {
 
@@ -47,7 +50,10 @@ public class ComparacaoFragment extends Fragment {
     private View iconeTabela;
     private View btnEscolherTabelas;
 
-    // NOVO: Referência para a ProgressBar
+    // Referência para a barra de pesquisa
+    private EditText searchBar;
+
+    // Referência para a ProgressBar
     private ProgressBar progressBarLoading;
 
     private RecyclerView recyclerViewProdutos;
@@ -58,7 +64,7 @@ public class ComparacaoFragment extends Fragment {
     // Variável para armazenar o ID do produto selecionado
     private Integer produtoSelecionadoId = null;
 
-    // NOVO: Armazena o objeto do produto que foi removido para poder reinserir na lista
+    // Armazena o objeto do produto que foi removido para poder reinserir na lista
     private GetProdutoDTO produtoRemovidoAnteriormente = null;
 
     private ProdutoAPI produtoApi;
@@ -81,23 +87,25 @@ public class ComparacaoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // --- Inicialização do Gerenciador de API ---
-        apiManager = new ConexaoAPI(url); // Inicializa o Manager
-
+        apiManager = new ConexaoAPI(url);
         produtoApi = apiManager.getApi(ProdutoAPI.class);
         // ------------------------------------------
 
         // Referências dos elementos de UI
         demonstracaoItem1 = view.findViewById(R.id.View_demonstracaoItem_1);
         textViewSelecionarProduto1 = view.findViewById(R.id.textViewSelecionarProduto1);
-        // botaoTesteTransicao = view.findViewById(R.id.botaoTesteTransicao); // Este botão não está no XML
+        // botaoTesteTransicao = view.findViewById(R.id.botaoTesteTransicao);
         demonstracaoItemSelecionado = view.findViewById(R.id.View_demonstracaoItem_selecionado);
         nomeProdutoSelecionado = view.findViewById(R.id.textViewNomeProdutoSelecionado);
         textViewSelecionarProduto2 = view.findViewById(R.id.textViewSelecionarProduto2);
         iconeTabela = view.findViewById(R.id.imageViewIconeTabela);
         btnEscolherTabelas = view.findViewById(R.id.btn_escolherTabelas);
 
-        // NOVO: Referência para a ProgressBar
+        // Referência para a ProgressBar
         progressBarLoading = view.findViewById(R.id.progress_bar_loading);
+
+        // Referência para a barra de pesquisa
+        searchBar = view.findViewById(R.id.search_bar);
 
         // --- Configuração da RecyclerView ---
         View listaItensIncluded = view.findViewById(R.id.listaItens);
@@ -114,15 +122,14 @@ public class ComparacaoFragment extends Fragment {
         // ------------------------------------
 
         // --- Uso da função iniciandoServidor (A Boa Prática) ---
-        // Exibe a ProgressBar antes de qualquer chamada de rede
         progressBarLoading.setVisibility(View.VISIBLE);
-
-        // Chama o servidor para acordá-lo e, em seguida, busca os produtos.
         apiManager.iniciarServidor(requireActivity(), () -> buscarProdutoDoUsuario(idUsuario));
         // -------------------------------------------------------
 
+        // Configurar o listener da barra de pesquisa
+        setupSearchFunctionality();
 
-        // Fecha o teclado ao tocar fora (código mantido)
+        // Fecha o teclado ao tocar fora da EditText
         view.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 View currentFocus = requireActivity().getCurrentFocus();
@@ -131,11 +138,7 @@ public class ComparacaoFragment extends Fragment {
                     currentFocus.getGlobalVisibleRect(outRect);
                     if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                         currentFocus.clearFocus();
-                        InputMethodManager imm = (InputMethodManager) requireActivity()
-                                .getSystemService(Context.INPUT_METHOD_SERVICE);
-                        if (imm != null) {
-                            imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
-                        }
+                        hideKeyboard(); // Usa o novo método auxiliar
                     }
                 }
             }
@@ -145,13 +148,10 @@ public class ComparacaoFragment extends Fragment {
         // Abre ComparacaoParte2Fragment
         if (btnEscolherTabelas != null) {
             btnEscolherTabelas.setOnClickListener(v -> {
-
-                // MODIFICAÇÃO: Verifica se um produto foi selecionado e passa o ID
                 if (produtoSelecionadoId != null) {
                     FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-                    // Cria o Fragment passando o ID como argumento
                     ComparacaoParte2Fragment nextFragment =
                             ComparacaoParte2Fragment.newInstance(produtoSelecionadoId);
 
@@ -166,12 +166,33 @@ public class ComparacaoFragment extends Fragment {
         }
     }
 
-    private void buscarProdutoDoUsuario(Integer idUsuario) {
-        // A ProgressBar já está visível aqui, pois foi definida em onViewCreated antes da chamada da API.
+    /**
+     * Configura o TextWatcher para a funcionalidade de pesquisa/filtragem.
+     */
+    private void setupSearchFunctionality() {
+        if (searchBar != null) {
+            searchBar.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
-        produtoApi.buscarProdutosComMaisDeUmaTabela(idUsuario).enqueue(new Callback<>() {
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    if (comparacaoAdapter != null) {
+                        comparacaoAdapter.filter(charSequence.toString());
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {}
+            });
+        }
+    }
+
+
+    private void buscarProdutoDoUsuario(Integer idUsuario) {
+        produtoApi.buscarProdutosComMaisDeUmaTabela(idUsuario).enqueue(new Callback<List<GetProdutoDTO>>() {
             @Override
-            public void onResponse(@NonNull Call<List<GetProdutoDTO>> call, @NonNull retrofit2.Response<List<GetProdutoDTO>> response) {
+            public void onResponse(@NonNull Call<List<GetProdutoDTO>> call, @NonNull Response<List<GetProdutoDTO>> response) {
                 if (getActivity() == null || binding == null) return;
 
                 if (response.isSuccessful() && response.body() != null) {
@@ -186,29 +207,26 @@ public class ComparacaoFragment extends Fragment {
                         comparacaoAdapter.setOnItemClickListener(produto -> {
                             Log.d("Comparacao", "Produto selecionado: " + produto.getNome());
 
+                            // AÇÃO REQUERIDA: FECHAR O TECLADO AO CLICAR NO ITEM
+                            hideKeyboard();
+                            // ------------------------------------
+
                             if (comparacaoAdapter != null) {
 
-                                // 1. Se já havia um produto removido (o item anterior selecionado),
-                                // reinserimos ele na lista de exibição do Adapter.
                                 if (produtoRemovidoAnteriormente != null) {
                                     comparacaoAdapter.addItem(produtoRemovidoAnteriormente);
-                                    produtoRemovidoAnteriormente = null; // Limpa o estado
+                                    produtoRemovidoAnteriormente = null;
                                 }
 
-                                // 2. Remove o novo item selecionado da lista de exibição.
                                 comparacaoAdapter.removeItem(produto);
-
-                                // 3. Armazena o novo item removido para ser reinserido na próxima troca.
                                 produtoRemovidoAnteriormente = produto;
                             }
 
-                            // MODIFICAÇÃO: Armazena o ID do produto selecionado (novo ou trocado)
                             produtoSelecionadoId = produto.getId();
 
-                            // Transição visual: Quando um item é SELECIONADO, ocultamos a área de seleção
-                            // inicial (demonstracaoItem1) e mostramos a área de item selecionado.
+                            // Transição visual
                             textViewSelecionarProduto1.setVisibility(View.GONE);
-                            demonstracaoItem1.setVisibility(View.GONE); // Oculta o item inicial
+                            demonstracaoItem1.setVisibility(View.GONE);
 
                             demonstracaoItemSelecionado.setVisibility(View.VISIBLE);
                             nomeProdutoSelecionado.setVisibility(View.VISIBLE);
@@ -222,8 +240,6 @@ public class ComparacaoFragment extends Fragment {
                         });
 
                         recyclerViewProdutos.setAdapter(comparacaoAdapter);
-
-                        // 4. Mostrar a lista.
                         recyclerViewProdutos.setVisibility(View.VISIBLE);
 
                     } else {
@@ -235,18 +251,17 @@ public class ComparacaoFragment extends Fragment {
                     tratarListaVaziaOuErro();
                 }
 
-                // --- SOLUÇÃO APLICADA: OCULTA A PROGRESSBAR APÓS O RETORNO DA API ---
+                // Oculta a ProgressBar
                 if (progressBarLoading != null) {
                     progressBarLoading.setVisibility(View.GONE);
                 }
-                // --------------------------------------------------------------------
             }
 
             @Override
             public void onFailure(@NonNull Call<List<GetProdutoDTO>> call, @NonNull Throwable t) {
                 Log.e("API:", "Falha na requisição: " + t.getMessage());
                 if (getActivity() != null) {
-                    // CRÍTICO: Oculta a ProgressBar na falha
+                    // Oculta a ProgressBar na falha
                     if (progressBarLoading != null) {
                         progressBarLoading.setVisibility(View.GONE);
                     }
@@ -269,14 +284,25 @@ public class ComparacaoFragment extends Fragment {
         if (botaoTesteTransicao != null) {
             botaoTesteTransicao.setVisibility(View.VISIBLE);
         }
-        // IMPORTANTE: A progressbar deve ser GONE, mas isso já é tratado em onResponse/onFailure
+    }
+
+    /**
+     * NOVO MÉTODO: Esconde o teclado virtual
+     */
+    private void hideKeyboard() {
+        View currentFocus = requireActivity().getCurrentFocus();
+        if (currentFocus != null) {
+            InputMethodManager imm = (InputMethodManager) requireActivity()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+            }
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // A busca é feita em onViewCreated, mas o resetEstado garante que a UI
-        // volte ao estado inicial quando o usuário retorna a este Fragment.
         resetEstado();
     }
 
@@ -293,21 +319,14 @@ public class ComparacaoFragment extends Fragment {
         btnEscolherTabelas.setVisibility(View.GONE);
         textViewSelecionarProduto2.setVisibility(View.GONE);
 
-        // --- MUDANÇA: REMOVIDA A OCULTAÇÃO DA PROGRESSBAR DAQUI ---
-        // Agora ela é gerenciada exclusivamente pelos callbacks da API (onResponse/onFailure).
-        // -----------------------------------------------------------
-
         // Reseta os IDs e o produto removido
         produtoSelecionadoId = null;
 
-        // NOVO: Se houver um produto removido, ele deve ser adicionado de volta à lista
-        // (Isso é crucial se o Adapter já tiver sido inicializado)
         if (comparacaoAdapter != null && produtoRemovidoAnteriormente != null) {
             comparacaoAdapter.addItem(produtoRemovidoAnteriormente);
         }
         produtoRemovidoAnteriormente = null;
 
-        // Garante que a RecyclerView esteja visível se houver um Adapter
         if (recyclerViewProdutos != null) {
             recyclerViewProdutos.setVisibility(View.VISIBLE);
         }
@@ -315,20 +334,12 @@ public class ComparacaoFragment extends Fragment {
         nomeProdutoSelecionado.setText("");
 
         // Limpa a SearchBar
-        if (binding != null && binding.searchBar != null) {
-            binding.searchBar.setText("");
+        if (searchBar != null) {
+            searchBar.setText("");
         }
 
         // Esconde o teclado
-        View currentFocus = requireActivity().getCurrentFocus();
-        if (currentFocus != null) {
-            currentFocus.clearFocus();
-            InputMethodManager imm = (InputMethodManager) requireActivity()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null) {
-                imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
-            }
-        }
+        hideKeyboard();
     }
 
     @Override

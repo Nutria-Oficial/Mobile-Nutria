@@ -16,7 +16,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_item"
         android:layout_width="0dp"
-        android:layout_height="83dp"
+        android:layout_height="73dp"
+        android:background="@drawable/fundo_arredondado_cinza"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -25,7 +26,8 @@
             android:id="@+id/view2"
             android:layout_width="match_parent"
             android:layout_height="72dp"
-            android:background="#EEEDF7"
+            android:background="@drawable/fundo_arredondado_cinza"
+            app:circularflow_defaultRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -34,7 +36,7 @@
             android:layout_width="0dp"
             android:layout_height="68dp"
             android:layout_marginHorizontal="5dp"
-            android:background="#FFFFFF"
+            android:background="@drawable/fundo_arredondado_cinza"
             android:backgroundTint="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

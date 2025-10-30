@@ -34,10 +34,10 @@
 
     <View
         android:id="@+id/view"
-        android:layout_width="413dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="30dp"
-        android:background="@drawable/fundo_arredondado"
+        android:background="@drawable/fundo_arredondado_topo"
         android:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -78,24 +78,22 @@
 
     <TextView
         android:id="@+id/textViewSelecionarProduto3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_width="311dp"
+        android:layout_height="66dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="24dp"
         android:fontFamily="@font/montserrat_medium"
         android:gravity="center_horizontal"
         android:text="Escolha duas tabelas do produto"
-        android:textSize="22sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.521"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_item"
         android:layout_width="351dp"
-        android:layout_height="83dp"
+        android:layout_height="80dp"
         android:layout_marginTop="10dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
@@ -105,17 +103,19 @@
         <View
             android:id="@+id/view2"
             android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:background="#EEEDF7"
+            android:layout_height="74dp"
+            android:background="@drawable/fundo_arredondado_cinza"
+            android:backgroundTint="#EEEDF7"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:id="@+id/view_fundo_branco_item1"
             android:layout_width="345dp"
-            android:layout_height="68dp"
+            android:layout_height="73dp"
             android:layout_marginHorizontal="5dp"
-            android:background="#FFFFFF"
+            android:background="@drawable/fundo_arredondado_cinza"
+            android:backgroundTint="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -202,6 +202,7 @@
             android:id="@+id/cardBlocoTabela1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/fundo_arredondado_cinza"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -539,7 +540,8 @@
             android:id="@+id/view6"
             android:layout_width="match_parent"
             android:layout_height="72dp"
-            android:background="#EEEDF7"
+            android:background="@drawable/fundo_arredondado_cinza"
+            android:backgroundTint="#EEEDF7"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -548,7 +550,7 @@
             android:layout_width="345dp"
             android:layout_height="68dp"
             android:layout_marginHorizontal="5dp"
-            android:background="#FFFFFF"
+            android:background="@drawable/fundo_arredondado_cinza"
             android:backgroundTint="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
