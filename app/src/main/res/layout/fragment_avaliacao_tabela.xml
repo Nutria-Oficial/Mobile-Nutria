@@ -96,17 +96,85 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <TableLayout
-                        android:id="@+id/tableLayout"
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardConteudo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
-                        android:layout_marginBottom="18dp"
-                        android:shrinkColumns="*"
-                        android:stretchColumns="*" />
+                        android:layout_marginTop="25dp"
+                        android:visibility="gone"
+                        app:cardUseCompatPadding="false"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/button">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="12dp">
+
+                            <TextView
+                                android:id="@+id/tvTabelaTitulo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/montserrat_semibold"
+                                android:text="Tabela Nutricional"
+                                android:textColor="#0B0B0B"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/tvPorcaoEmbalagemColuna"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:layout_marginTop="4dp"
+                                android:text="Porção por embalagem:"
+                                android:textColor="#5A5A5A"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tvTabelaTitulo" />
+
+                            <TextView
+                                android:id="@+id/tvPorcaoColuna"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:layout_marginTop="2dp"
+                                android:text="Porção"
+                                android:textColor="#5A5A5A"
+                                android:textSize="14sp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/tvPorcaoEmbalagemColuna" />
+
+                            <View
+                                android:id="@+id/dividerHeader"
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_marginTop="50dp"
+                                android:background="#000000"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/tvTabelaTitulo" />
+
+                            <TableLayout
+                                android:id="@+id/tableLayout"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:shrinkColumns="*"
+                                android:stretchColumns="*"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/dividerHeader" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
 
                     <TextView
-                        android:id="@+id/textView8"
+                        android:id="@+id/avaliacaoComentarios"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="18dp"

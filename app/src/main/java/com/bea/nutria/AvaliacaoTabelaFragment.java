@@ -2,17 +2,22 @@ package com.bea.nutria;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
+import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,13 +27,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bea.nutria.api.TabelaAPI;
+import com.bea.nutria.api.conexaoApi.ConexaoAPI;
 import com.bea.nutria.databinding.FragmentAvaliacaoTabelaBinding;
 import com.bea.nutria.model.GetNutrienteDTO;
 import com.bea.nutria.model.GetTabelaDTO;
 import com.bea.nutria.model.GetTabelaEAvaliacaoDTO;
 import com.bea.nutria.ui.Tabela.TabelaFragment;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,33 +61,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AvaliacaoTabelaFragment extends Fragment {
 
     private FragmentAvaliacaoTabelaBinding binding;
-    private OkHttpClient client;
-    private Retrofit retrofit;
-    private String credenciais = Credentials.basic("nutria", "nutria123");
+    private ConexaoAPI conexaoAPI;
     private TabelaAPI api;
-    private long ultimoWakeMs = 0L;
-
+    private Double porcaoEmbalagemAtual;
     private ArrayList<String[]> tabelaDados = new ArrayList<>();
-    private static final long JANELA_WAKE_MS = 60_000;
-
-//    public AvaliacaoTabelaFragment() {
-//        // Required empty public constructor
-//    }
-//
-//    /**
-//     * Use this factory method to create a new instance of
-//     * this fragment using the provided parameters.
-//     *
-//     * @param param1 Parameter 1.
-//     * @param param2 Parameter 2.
-//     * @return A new instance of fragment AvaliacaoTabelaFragment.
-//     */
-//    // TODO: Rename and change types and number of parameters
-//    public static AvaliacaoTabelaFragment newInstance(String param1, String param2) {
-//        AvaliacaoTabelaFragment fragment = new AvaliacaoTabelaFragment();
-//
-//        return fragment;
-//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,32 +77,8 @@ public class AvaliacaoTabelaFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentAvaliacaoTabelaBinding.inflate(inflater, container, false);
 
-        credenciais = Credentials.basic("nutria", "nutria123");
-        client = new OkHttpClient.Builder()
-                .connectTimeout(25, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
-                .pingInterval(30, TimeUnit.SECONDS)
-                .addNetworkInterceptor(chain -> {
-                    Request original = chain.request();
-                    Request req = original.newBuilder()
-                            .header("Authorization", credenciais)
-                            .header("Accept", "application/json")
-                            .method(original.method(), original.body())
-                            .build();
-                    return chain.proceed(req);
-                })
-                .build();
-
-
-        retrofit = new Retrofit.Builder()
-                .baseUrl("https://api-spring-mongodb.onrender.com")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        api = retrofit.create(TabelaAPI.class);
+        conexaoAPI = new ConexaoAPI("https://api-spring-mongodb.onrender.com");
+        api = conexaoAPI.getApi(TabelaAPI.class);
 
         return binding.getRoot();
     }
@@ -127,7 +89,8 @@ public class AvaliacaoTabelaFragment extends Fragment {
 
         assert getArguments() != null;
         Integer idTabela = getArguments().getInt("idTabela");
-        iniciandoServidor(() -> buscarTabelaAvaliacao(idTabela));
+        porcaoEmbalagemAtual = getArguments().getDouble("porcaoEmbalagem");
+        conexaoAPI.iniciandoServidor(AvaliacaoTabelaFragment.this,() -> buscarTabelaAvaliacao(idTabela));
 
         binding.btnVisualizar.setOnClickListener(v -> {
             Bundle result = new Bundle();
@@ -153,9 +116,10 @@ public class AvaliacaoTabelaFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     GetTabelaEAvaliacaoDTO tabelaEncontrada = response.body();
                     preencherDadosTabela(tabelaEncontrada);
+                    binding.avaliacaoComentarios.setText(tabelaEncontrada.getAvaliacao().getComentarios());
 
                     mostrarCarregando(false);
-                    binding.tableLayout.setVisibility(View.VISIBLE);
+                    binding.cardConteudo.setVisibility(View.VISIBLE);
                     mudarCorAvaliacao(tabelaEncontrada.getAvaliacao().getClassificacao());
 
                 } else {
@@ -176,75 +140,105 @@ public class AvaliacaoTabelaFragment extends Fragment {
             }
         });
     }
-    private void iniciandoServidor(Runnable proximoPasso) {
-        long agora = System.currentTimeMillis();
-        if (agora - ultimoWakeMs < JANELA_WAKE_MS) {
-            if (proximoPasso != null) proximoPasso.run();
-            return;
-        }
-        new Thread(() -> {
-            boolean ok = false;
-            for (int tent = 1; tent <= 3 && !ok; tent++) {
-                try {
-                    Request req = new Request.Builder()
-                            .url("https://api-spring-mongodb.onrender.com")
-                            .header("Authorization", credenciais)
-                            .build();
-                    try (Response resp = client.newCall(req).execute()) {
-                        ok = (resp != null && resp.isSuccessful());
-                    }
-                } catch (Exception ignore) {
-                }
-            }
-            ultimoWakeMs = System.currentTimeMillis();
-            if (isAdded()){
-                requireActivity().runOnUiThread(() -> {
-                    if (proximoPasso != null) proximoPasso.run();
-                });
-            }
-        }).start();
-    }
+
+//    private void preencherDadosTabela(GetTabelaEAvaliacaoDTO tabela) {
+//        tabelaDados.clear();
+//        binding.tableLayout.removeAllViews();
+//
+//        TableRow nomeTabela = new TableRow(getContext());
+//        TextView nome = new TextView(getContext());
+//        nomeTabela.addView(nome);
+//        binding.tableLayout.addView(nomeTabela);
+//        adicionarValoresTabelaDados(binding.tableLayout.getChildAt(0));
+//
+//        TableRow nomeColuna = new TableRow(getContext());
+//        TextView coluna1 = new TextView(getContext());
+//        TextView coluna2 = new TextView(getContext());
+//        TextView coluna3 = new TextView(getContext());
+//
+//        coluna1.setText(tabela.getNomeTabela());
+//        coluna2.setText("Poção " + tabela.getPorcao()+"g");
+//        coluna3.setText("%VD*");
+//
+//        nomeColuna.addView(coluna1);
+//        nomeColuna.addView(coluna2);
+//        nomeColuna.addView(coluna3);
+//        binding.tableLayout.addView(nomeColuna);
+//        adicionarValoresTabelaDados(binding.tableLayout.getChildAt(1));
+//
+//        for (GetNutrienteDTO nutrienteDados : tabela.getNutrientes()){
+//            TableRow nutrientesInformacao = new TableRow(getContext());
+//            TextView nutriente = new TextView(getContext());
+//            TextView porcao = new TextView(getContext());
+//            TextView vd = new TextView(getContext());
+//
+//            nutriente.setText(nutrienteDados.getNutriente());
+//            porcao.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getPorcao()));
+//            vd.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getValorDiario())+"%");
+//
+//            nutrientesInformacao.addView(nutriente);
+//            nutrientesInformacao.addView(porcao);
+//            nutrientesInformacao.addView(vd);
+//            binding.tableLayout.addView(nutrientesInformacao);
+//            adicionarValoresTabelaDados(binding.tableLayout.getChildAt(1));
+//
+//        }
+//
+//    }
     private void preencherDadosTabela(GetTabelaEAvaliacaoDTO tabela) {
         tabelaDados.clear();
         binding.tableLayout.removeAllViews();
 
-        TableRow nomeTabela = new TableRow(getContext());
-        TextView nome = new TextView(getContext());
-        nomeTabela.addView(nome);
-        binding.tableLayout.addView(nomeTabela);
-        adicionarValoresTabelaDados(binding.tableLayout.getChildAt(0));
+        binding.tvTabelaTitulo.setText(tabela.getNomeTabela());
+        binding.tvPorcaoColuna.setText(String.valueOf(tabela.getPorcao()));
+        binding.tvPorcaoEmbalagemColuna.setText(String.valueOf(porcaoEmbalagemAtual));
+
+
+        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
 
         TableRow nomeColuna = new TableRow(getContext());
+        nomeColuna.setPadding(padding, padding, padding, padding);
+
         TextView coluna1 = new TextView(getContext());
         TextView coluna2 = new TextView(getContext());
         TextView coluna3 = new TextView(getContext());
 
-        coluna1.setText(tabela.getNomeTabela());
-        coluna2.setText("Poção " + tabela.getPorcao()+"g");
+        coluna1.setText("Nutriente");
+        modificarTextStyleColuna(1,coluna1);
+        coluna2.setText("Valor");
+        modificarTextStyleColuna(2,coluna2);
         coluna3.setText("%VD*");
+        modificarTextStyleValores(3,coluna3);
 
         nomeColuna.addView(coluna1);
         nomeColuna.addView(coluna2);
         nomeColuna.addView(coluna3);
         binding.tableLayout.addView(nomeColuna);
-        adicionarValoresTabelaDados(binding.tableLayout.getChildAt(1));
+        adicionarValoresTabelaDados(binding.tableLayout.getChildAt(0));
 
         for (GetNutrienteDTO nutrienteDados : tabela.getNutrientes()){
             TableRow nutrientesInformacao = new TableRow(getContext());
             TextView nutriente = new TextView(getContext());
-            TextView porcao = new TextView(getContext());
+            TextView porcaoNutriente = new TextView(getContext());
             TextView vd = new TextView(getContext());
 
             nutriente.setText(nutrienteDados.getNutriente());
-            porcao.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getPorcao()));
-            vd.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getValorDiario())+"%");
+            modificarTextStyleValores(1,nutriente);
+            porcaoNutriente.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getPorcao()));
+            modificarTextStyleValores(2,porcaoNutriente);
+            if (nutrienteDados.getValorDiario() == null){
+                vd.setText("NaN");
+            }
+            else {
+                vd.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f%%", nutrienteDados.getValorDiario()));
+            }
+            modificarTextStyleValores(3,vd);
 
             nutrientesInformacao.addView(nutriente);
-            nutrientesInformacao.addView(porcao);
+            nutrientesInformacao.addView(porcaoNutriente);
             nutrientesInformacao.addView(vd);
             binding.tableLayout.addView(nutrientesInformacao);
             adicionarValoresTabelaDados(binding.tableLayout.getChildAt(1));
-
         }
 
     }
@@ -268,6 +262,69 @@ public class AvaliacaoTabelaFragment extends Fragment {
             valores[i] = valor.getText().toString();
         }
         tabelaDados.add(valores);
+    }
+    private String normalizeAvaliacao(JSONObject obj) {
+        if (obj == null) return "";
+        String t = obj.optString("texto", null);
+        if (t != null && !t.trim().isEmpty()) {
+            return normalizeAvaliacao(t);
+        }
+        String best = "";
+        int bestLen = 0;
+        for (Iterator<String> it = obj.keys(); it.hasNext();) {
+            String k = it.next();
+            if ("classificacao".equalsIgnoreCase(k) || "pontuacao".equalsIgnoreCase(k)) continue;
+            Object v = obj.opt(k);
+            if (v instanceof String) {
+                String sv = ((String) v).trim();
+                if (sv.length() > bestLen) {
+                    best = sv;
+                    bestLen = sv.length();
+                }
+            }
+        }
+        return normalizeAvaliacao(best);
+    }
+    private String normalizeAvaliacao(String raw) {
+        if (raw == null) return "";
+        String s = raw.trim();
+        if ((s.startsWith("\"") && s.endsWith("\"")) || (s.startsWith("'") && s.endsWith("'"))) {
+            s = s.substring(1, s.length() - 1);
+        }
+        s = s.replace("\\n", "\n");
+        if ("null".equalsIgnoreCase(s)) return "";
+        return s;
+    }
+    private void modificarTextStyleColuna(int coluna,TextView textView){
+        if(coluna == 1){
+            textView.setEllipsize(TextUtils.TruncateAt.END);
+        }
+        else {
+            textView.setGravity(Gravity.END);
+        }
+        Typeface typeface = ResourcesCompat.getFont(requireContext(), R.font.montserrat_semibold);
+        textView.setTypeface(typeface);
+        textView.setMaxLines(1);
+        textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        TableRow.LayoutParams textParams = new TableRow.LayoutParams(
+                0,
+                TableRow.LayoutParams.WRAP_CONTENT,1f
+        );
+        textView.setLayoutParams(textParams);
+    }
+    private void modificarTextStyleValores(int coluna, TextView textView){
+        if(coluna == 1){
+            textView.setEllipsize(TextUtils.TruncateAt.END);
+        }
+        else {
+            textView.setGravity(Gravity.END);
+        }
+        textView.setMaxLines(1);
+        TableRow.LayoutParams textParams = new TableRow.LayoutParams(
+                0,
+                TableRow.LayoutParams.WRAP_CONTENT,1f
+        );
+        textView.setLayoutParams(textParams);
     }
     private void mudarCorAvaliacao(Character letter) {
         switch (letter){
