@@ -33,7 +33,17 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/TextView_tituloTelaComparacao"
-        app:layout_constraintVertical_bias="0.983" />
+        app:layout_constraintVertical_bias="0.0" />
+
+    <View
+        android:id="@+id/view_linha3"
+        android:layout_width="230dp"
+        android:layout_height="3dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginBottom="22dp"
+        android:background="#EEEDF7"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_top_searchbar"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_top_searchbar"
@@ -187,12 +197,12 @@
         android:id="@+id/progress_bar_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:indeterminateTint="#EE7026"
         android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_bar_container" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_escolherTabelas"
@@ -200,7 +210,7 @@
         android:layout_height="48dp"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="50dp"
         android:fontFamily="@font/montserrat_semibold"
         android:text="Escolher tabelas"
         android:textAllCaps="false"

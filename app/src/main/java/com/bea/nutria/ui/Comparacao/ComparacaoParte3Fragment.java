@@ -579,7 +579,7 @@ public class ComparacaoParte3Fragment extends Fragment {
         String nomeTabela1 = flipped ? tabelaNome2 : tabelaNome1;
         String nomeTabela2 = flipped ? tabelaNome1 : tabelaNome2;
         if (tvDiffTitle != null) {
-            tvDiffTitle.setText(String.format(Locale.getDefault(), "Diferença Nutricional (%s - %s)", nomeTabela1, nomeTabela2));
+            tvDiffTitle.setText(String.format(Locale.getDefault(), "Diferença Nutricional \n %s - %s", nomeTabela1, nomeTabela2));
         }
 
 

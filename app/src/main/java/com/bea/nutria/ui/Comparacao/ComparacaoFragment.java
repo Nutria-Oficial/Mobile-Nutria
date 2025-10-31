@@ -149,6 +149,15 @@ public class ComparacaoFragment extends Fragment {
         if (btnEscolherTabelas != null) {
             btnEscolherTabelas.setOnClickListener(v -> {
                 if (produtoSelecionadoId != null) {
+
+                    // AÇÃO CORRIGIDA: Força a barra de pesquisa a perder o foco
+                    // e esconde o teclado antes da transição.
+                    if (searchBar != null) {
+                        searchBar.clearFocus();
+                    }
+                    hideKeyboard();
+                    // --------------------------------------------------------
+
                     FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -287,7 +296,7 @@ public class ComparacaoFragment extends Fragment {
     }
 
     /**
-     * NOVO MÉTODO: Esconde o teclado virtual
+     * Esconde o teclado virtual
      */
     private void hideKeyboard() {
         View currentFocus = requireActivity().getCurrentFocus();

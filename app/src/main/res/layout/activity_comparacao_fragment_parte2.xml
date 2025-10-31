@@ -52,15 +52,16 @@
         android:layout_height="wrap_content"
         android:indeterminateTint="#EE7026"
         android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_item" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_comparar"
         android:layout_width="330dp"
         android:layout_height="48dp"
-        android:layout_marginBottom="90dp"
+        android:layout_marginBottom="50dp"
         android:fontFamily="@font/montserrat_semibold"
         android:onClick="openFragmentComparacaoPart2"
         android:text="Comparar"
@@ -98,7 +99,10 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSelecionarProduto3">
+        app:layout_constraintTop_toBottomOf="@+id/textViewSelecionarProduto3"
+        android:clickable="false"
+        android:focusable="false"
+        android:descendantFocusability="blocksDescendants">
 
         <View
             android:id="@+id/view2"
@@ -121,6 +125,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageButton
+            android:id="@+id/imageButtonSeta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/seta"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/view_fundo_branco_item1"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
         <ImageView
             android:id="@+id/icon_selecionado1"
             android:layout_width="24dp"
@@ -129,7 +146,7 @@
             android:src="@drawable/ic_selecionado"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/view_fundo_branco_item1"
+            app:layout_constraintEnd_toStartOf="@id/imageButtonSeta"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
 
@@ -171,7 +188,6 @@
             tools:ignore="ContentDescription" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/conteudo_expansivel_tabela1"
         android:layout_width="match_parent"
@@ -207,7 +223,7 @@
                 android:padding="12dp">
 
                 <TextView
-                    android:id="@+id/tvTabelaTitulo1"
+                    android:id="@+id/tvTabelaTitulo12"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -522,7 +538,10 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/conteudo_expansivel_tabela1">
+        app:layout_constraintTop_toBottomOf="@+id/conteudo_expansivel_tabela1"
+        android:clickable="false"
+        android:focusable="false"
+        android:descendantFocusability="blocksDescendants">
 
         <View
             android:id="@+id/view6"
@@ -545,6 +564,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageButton
+            android:id="@+id/imageButtonSeta2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/seta"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/view7"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
         <ImageView
             android:id="@+id/icon_selecionado2"
             android:layout_width="24dp"
@@ -553,7 +585,7 @@
             android:src="@drawable/ic_selecionado"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/view7"
+            app:layout_constraintEnd_toStartOf="@id/imageButtonSeta2"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
 
@@ -595,7 +627,6 @@
             tools:ignore="ContentDescription" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/conteudo_expansivel_tabela2"
         android:layout_width="match_parent"

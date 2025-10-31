@@ -1,15 +1,17 @@
 package com.bea.nutria.ui.Comparacao;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar; // NOVO: Importação da ProgressBar
+import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -53,8 +55,8 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     // Elementos de UI
     private TextView subtitulo;
     private View listaItensPrincipalContainer;
-    private ConstraintLayout headerItem1;
-    private ConstraintLayout headerItem0;
+    private ConstraintLayout headerItem0; // Header Tabela 1
+    private ConstraintLayout headerItem1; // Header Tabela 2
     private TextView nomeTabela1;
     private TextView nomeTabela2;
     private MaterialButton botaoComparar;
@@ -114,6 +116,13 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // --------------------- CORREÇÃO DE FOCO 1 -------------------------
+        // Bloqueia o foco inicial na View raiz para evitar que um componente EditText
+        // (mesmo que oculto ou em uma RecyclerView) abra o teclado.
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        // ------------------------------------------------------------------
+
         // --- 1. Inicialização da API ---
         ConexaoAPI apiManager = new ConexaoAPI(url);
         tabelaApi = apiManager.getApi(TabelaAPI.class);
@@ -141,7 +150,6 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
             nomeTabela1 = headerItem0.findViewById(R.id.textViewTitulo);
             seta1 = headerItem0.findViewById(R.id.imageButtonSeta);
             iconSelecionado1 = headerItem0.findViewById(R.id.icon_selecionado1); // NOVO
-            headerItem0.setOnClickListener(v -> toggleHeaderExpansion(1));
         }
 
         // Inicialização dos elementos da Tabela 2 (Header 1)
@@ -158,9 +166,28 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
             }
 
             iconSelecionado2 = headerItem1.findViewById(R.id.icon_selecionado2); // NOVO
-
-            headerItem1.setOnClickListener(v -> toggleHeaderExpansion(2));
         }
+
+        // --------------------- CORREÇÃO DE FOCO 2 -------------------------
+        // Adiciona um listener a cada header selecionado para fechar o teclado,
+        // caso o clique "fantasma" seja acionado.
+
+        if (headerItem0 != null) {
+            headerItem0.setOnClickListener(v -> {
+                hideKeyboard();
+                // Opcional: Chame a lógica de expansão se ela for desejada no clique do header:
+                // toggleHeaderExpansion(1);
+            });
+        }
+
+        if (headerItem1 != null) {
+            headerItem1.setOnClickListener(v -> {
+                hideKeyboard();
+                // Opcional: Chame a lógica de expansão se ela for desejada no clique do header:
+                // toggleHeaderExpansion(2);
+            });
+        }
+        // ------------------------------------------------------------------
 
         // --- 3. Configuração da RecyclerView ---
         if (listaItensPrincipalContainer != null) {
@@ -251,6 +278,8 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
 
     /**
      * Alterna o estado de expansão de uma das tabelas selecionadas no cabeçalho.
+     * OBS: Este método não é chamado ao clicar no header principal,
+     * mas é mantido caso outro componente o acione.
      */
     private void toggleHeaderExpansion(int tableIndex) {
         ImageButton seta;
@@ -365,6 +394,9 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         boolean itemRemovidoDaListaVisivel = false;
         GetTabelaDTO tabelaParaReAdicionar = null;
 
+        // FECHAMENTO DE TECLADO AO INTERAGIR COM A LISTA (medida preventiva)
+        hideKeyboard();
+
         // VERIFICAÇÃO DE ID (CRUCIAL): Garante que a tabela tenha um ID para comparação
         if (tabela.getTabelaId() == null) {
             Toast.makeText(getContext(), "Erro: Tabela sem ID.", Toast.LENGTH_LONG).show();
@@ -409,19 +441,25 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         }
 
         // 4. Executa a ação na lista visível (Adapter)
-
-        if (tabelaParaReAdicionar != null) {
-            // Se deselecionamos, re-adiciona o item à lista visível
-            if (tabelaAdapter != null) {
+        if (tabelaAdapter != null) {
+            if (tabelaParaReAdicionar != null) {
+                // Se deselecionamos, re-adiciona o item à lista visível
                 tabelaAdapter.addItem(tabelaParaReAdicionar);
-            }
-        } else if (itemRemovidoDaListaVisivel) {
-            // Se selecionamos um novo item, remove ele da lista visível
-            if (tabelaAdapter != null) {
+            } else if (itemRemovidoDaListaVisivel) {
+                // Se selecionamos um novo item, remove ele da lista visível
                 // A posição é o índice atual do item na lista visível antes de ser removido
                 tabelaAdapter.removeItem(position);
             }
+
+            // ATENÇÃO: CHAMADAS DE ATUALIZAÇÃO E SCROLL
+            tabelaAdapter.notifyDataSetChanged();
+
+            // *** CORREÇÃO: Força a RecyclerView a rolar para o topo (posição 0) ***
+            if (recyclerViewTabelas != null) {
+                recyclerViewTabelas.scrollToPosition(0);
+            }
         }
+
 
         // 5. Atualiza a UI para refletir a nova seleção/deseleção, incluindo a visibilidade do ícone
         atualizarUISelecao();
@@ -489,5 +527,20 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         outState.putBoolean(KEY_TEXT_MUDADO, subtitulo != null && subtitulo.getText().toString().contains("comparar"));
         outState.putBoolean(KEY_ITEMS_VISIVEL, headerItem0 != null && headerItem0.getVisibility() == View.VISIBLE);
         outState.putBoolean(KEY_BUTTON_VISIVEL, botaoComparar != null && botaoComparar.getVisibility() == View.VISIBLE);
+    }
+
+    /**
+     * Método auxiliar para esconder o teclado virtual.
+     */
+    private void hideKeyboard() {
+        if (getActivity() != null) {
+            View currentFocus = getActivity().getCurrentFocus();
+            if (currentFocus != null) {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+                }
+            }
+        }
     }
 }
