@@ -24,7 +24,7 @@
                 android:id="@+id/textView10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="140dp"
+                android:layout_marginRight="300dp"
                 android:layout_weight="1"
                 android:fontFamily="@font/montserrat_semibold"
                 android:text="Legenda de Cores"
@@ -87,7 +87,7 @@
 
             <ImageView
                 android:id="@+id/legendaB"
-                android:layout_width="85dp"
+                android:layout_width="65dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
@@ -125,7 +125,7 @@
 
             <ImageView
                 android:id="@+id/legendaC"
-                android:layout_width="108dp"
+                android:layout_width="186dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
@@ -155,7 +155,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:gravity="center"
@@ -163,7 +163,7 @@
 
             <ImageView
                 android:id="@+id/legendaD"
-                android:layout_width="44dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
@@ -201,7 +201,7 @@
 
             <ImageView
                 android:id="@+id/legendaE"
-                android:layout_width="82dp"
+                android:layout_width="64dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
@@ -229,6 +229,7 @@
                 android:text="Pior qualidade nutricional, consumo deve ser limitado."
                 android:textColor="#333333" />
         </LinearLayout>
+
         <TextView
             android:id="@+id/textView8"
             android:layout_width="wrap_content"
@@ -238,4 +239,5 @@
             android:text="*Legenda de acordo com o nutri-score"
             android:textColor="#333333" />
     </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>
