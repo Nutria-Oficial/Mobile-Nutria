@@ -1,5 +1,6 @@
 package com.bea.nutria.api;
 
+import com.bea.nutria.ui.Ingrediente.Ingrediente;
 import com.bea.nutria.ui.Ingrediente.IngredienteRequest;
 import com.bea.nutria.ui.Ingrediente.IngredienteResponse;
 
@@ -15,7 +16,7 @@ public interface IngredienteAPI {
     Call<List<IngredienteResponse>> getAllIngredientes();
 
     @GET("ingredientes/{id}")
-    Call<IngredienteResponse> getIngredienteById(@Path("id") Integer id);
+    Call<Ingrediente> getIngredienteById(@Path("id") Integer id);
 
     @POST("ingredientes")
     Call<IngredienteResponse> criarIngrediente(@Body IngredienteRequest ingrediente);
