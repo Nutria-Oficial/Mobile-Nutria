@@ -119,7 +119,7 @@ public class ComparacaoFragment extends Fragment {
         } else {
             Log.e("ComparacaoFragment", "Erro: listaItens (include) não encontrado.");
         }
-        // ------------------------------------
+        // -----------------------------------
 
         // --- Uso da função iniciandoServidor (A Boa Prática) ---
         progressBarLoading.setVisibility(View.VISIBLE);
