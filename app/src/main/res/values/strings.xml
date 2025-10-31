@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Nutria</string>
     <string name="title_home">Home</string>
@@ -5,5 +6,6 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_comparacao">Comparação</string>
     <string name="title_barra_pesquisa">Buscar por Item</string>
-
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

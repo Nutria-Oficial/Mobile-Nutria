@@ -2,12 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permissões -->
+    <!-- Permissões de Internet e Mídia -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
+
+    <!-- Permissões para Alarms e Notificações -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -20,12 +27,7 @@
         android:theme="@style/Theme.Nutria"
         tools:targetApi="31">
 
-        <!-- Tela de comparação -->
-        <activity
-            android:name=".ui.Comparacao.ComparacaoParte2Fragment"
-            android:exported="false" />
-
-        <!-- Tela de perfil -->
+        <!-- Tela de Perfil -->
         <activity
             android:name=".ui.Perfil.PerfilActivity"
             android:exported="false" />
@@ -34,6 +36,18 @@
         <activity
             android:name=".ui.Login.LoginActivity"
             android:exported="true"
+            android:label="@string/app_name" />
+
+        <!-- Tela de Cadastro -->
+        <activity
+            android:name=".ui.Cadastro.CadastroActivity"
+            android:exported="false"
+            android:label="@string/app_name" />
+
+        <!-- Tela de foto de perfil -->
+        <activity
+            android:name=".ui.FotoPerfil.FotoPerfilActivity"
+            android:exported="false"
             android:label="@string/app_name" />
 
         <!-- SplashScreen (tela inicial ao abrir o app) -->
@@ -54,21 +68,24 @@
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustPan|stateHidden" />
 
-        <!-- Tela de cadastro -->
-        <activity
-            android:name=".ui.Cadastro.CadastroActivity"
-            android:exported="false"
-            android:label="@string/app_name" />
+        <!-- Receivers para Notificações -->
+        <receiver
+            android:name=".notification.NotificationReceiver"
+            android:exported="false" />
 
-        <!-- Tela de foto de perfil -->
-        <activity
-            android:name=".ui.FotoPerfil.FotoPerfilActivity"
-            android:exported="false"
-            android:label="@string/app_name" />
+        <receiver
+            android:name=".notification.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <!-- Meta-dados de fontes -->
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
     </application>
 </manifest>
