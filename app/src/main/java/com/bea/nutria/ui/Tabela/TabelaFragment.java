@@ -1,5 +1,6 @@
 package com.bea.nutria.ui.Tabela;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,10 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,25 +29,20 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.bea.nutria.AvaliacaoTabelaFragment;
 import com.bea.nutria.R;
 import com.bea.nutria.api.TabelaAPI;
 import com.bea.nutria.api.conexaoApi.ConexaoAPI;
-import com.bea.nutria.R;
 import com.bea.nutria.databinding.FragmentTabelaBinding;
 import com.bea.nutria.model.GetNutrienteDTO;
 import com.bea.nutria.model.GetTabelaDTO;
-import com.bea.nutria.model.ItemIngrediente;
-import com.bea.nutria.ui.Ingrediente.IngredienteResponse;
-import com.bea.nutria.ui.Ingrediente.QuantidadeViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,15 +50,10 @@ import java.util.Locale;
 import java.util.Map;
 
 
-import okhttp3.Credentials;
-import okhttp3.OkHttpClient;
-
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
-import com.bea.nutria.ui.Ingrediente.IngredienteSharedViewModel;
 
-import java.util.ArrayList;
+import com.bea.nutria.ui.Ingrediente.IngredienteSharedViewModel;
 
 public class TabelaFragment extends Fragment {
 
@@ -74,12 +62,11 @@ public class TabelaFragment extends Fragment {
     private int porcaoEmbalagemAtual= 0;
     private String tipoMedida = "";
     private Integer idTabela = 0;
-    private List<ItemIngrediente> ingredienteList = new ArrayList<>();
     private TabelaAPI api;
     private ConexaoAPI conexaoAPI;
     private TabelaAdapter adapter;
     private IngredienteSharedViewModel sharedViewModel;
-    private QuantidadeViewModel quantidadeViewModel;
+    private TabelaViewModel tabelaViewModel;
 
 
     @Override
@@ -98,7 +85,7 @@ public class TabelaFragment extends Fragment {
 
         // Inicializar ViewModel
         sharedViewModel = new ViewModelProvider(requireActivity()).get(IngredienteSharedViewModel.class);
-        quantidadeViewModel = new ViewModelProvider(requireActivity()).get(QuantidadeViewModel.class);
+        tabelaViewModel = new ViewModelProvider(requireActivity()).get(TabelaViewModel.class);
         setupRecyclerView();
         observarIngredientes();
 
@@ -144,10 +131,14 @@ public class TabelaFragment extends Fragment {
                 }
             }
         });
-        binding.porcaoEmbalagem.addTextChangedListener(new TextWatcher() {
+        binding.valor.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable editable) {
-
+                try {
+                    porcaoEmbalagemAtual = Integer.parseInt(editable.toString());
+                }catch (NumberFormatException exception){
+                    porcaoEmbalagemAtual = 0;
+                }
             }
 
             @Override
@@ -157,11 +148,6 @@ public class TabelaFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                try {
-                    porcaoEmbalagemAtual = Integer.parseInt(charSequence.toString());
-                }catch (NumberFormatException exception){
-                    porcaoEmbalagemAtual = 0;
-                }
             }
         });
 
@@ -303,9 +289,9 @@ public class TabelaFragment extends Fragment {
         idTabela = tabela.getTabelaId();
         binding.tableLayout.removeAllViews();
 
-        binding.tvTabelaTitulo.setText(tabela.getNomeTabela());
-        binding.tvPorcaoColuna.setText(String.valueOf(getPorcaoAtual()));
-        binding.tvPorcaoEmbalagemColuna.setText(String.valueOf(getPorcaoEmbalagemAtual()));
+        binding.tvTabelaTitulo.setText(corrigirTextoCodificado(tabela.getNomeTabela()));
+        binding.tvPorcaoColuna.setText(String.format("%s%s", binding.tvPorcaoColuna.getText(), getPorcaoAtual()));
+        binding.tvPorcaoEmbalagemColuna.setText(String.format("%s%s", binding.tvPorcaoEmbalagemColuna.getText(), getPorcaoEmbalagemAtual()));
 
         int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
 
@@ -321,15 +307,25 @@ public class TabelaFragment extends Fragment {
         coluna2.setText("Valor");
         modificarTextStyleColuna(2,coluna2);
         coluna3.setText("%VD*");
-        modificarTextStyleValores(3,coluna3);
+        modificarTextStyleColuna(3,coluna3);
 
         nomeColuna.addView(coluna1);
         nomeColuna.addView(coluna2);
         nomeColuna.addView(coluna3);
         binding.tableLayout.addView(nomeColuna);
 
+        View linha = new View(requireContext());
+        TableLayout.LayoutParams params = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,1);
+
+        linha.setLayoutParams(params);
+        linha.setBackgroundColor(Color.parseColor("#E0E0E0"));
+
+        binding.tableLayout.addView(linha);
+
         for (GetNutrienteDTO nutrienteDados : tabela.getNutrientes()){
             TableRow nutrientesInformacao = new TableRow(getContext());
+            nutrientesInformacao.setPadding(padding, padding, padding, padding);
+
             TextView nutriente = new TextView(getContext());
             TextView porcaoNutriente = new TextView(getContext());
             TextView vd = new TextView(getContext());
@@ -351,8 +347,31 @@ public class TabelaFragment extends Fragment {
             nutrientesInformacao.addView(vd);
             binding.tableLayout.addView(nutrientesInformacao);
 
+            binding.tableLayout.addView(linha);
+
         }
 
+    }
+    private String corrigirTextoCodificado(String texto) {
+        try {
+            String corrigido = texto.replaceAll("\\\\\\\\x", "\\x");
+
+            byte[] bytes = new byte[corrigido.length() / 4];
+            int index = 0;
+
+            for (int i = 0; i < corrigido.length(); i++) {
+                if (corrigido.charAt(i) == '\\' && corrigido.charAt(i + 1) == 'x') {
+                    String hex = corrigido.substring(i + 2, i + 4);
+                    bytes[index++] = (byte) Integer.parseInt(hex, 16);
+                    i += 3;
+                }
+            }
+
+            return new String(bytes, 0, index, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return texto;
+        }
     }
     private void modificarTextStyleColuna(int coluna,TextView textView){
         if(coluna == 1){
@@ -414,7 +433,7 @@ public class TabelaFragment extends Fragment {
         return nomeProdutoValido && nomeTabelaValido && checkBoxSelecionado && !binding.porcao.getText().equals("0") && !binding.porcaoEmbalagem.getText().equals("0") && (adapter.getItemCount() > 0);
     }    
     private void setupRecyclerView() {
-        adapter = new TabelaAdapter(getContext(), new ArrayList<>(), quantidadeViewModel);
+        adapter = new TabelaAdapter(getContext(), new ArrayList<>(), tabelaViewModel);
 
         // atualizar ViewModel quando remover
         adapter.setOnItemRemovedListener((ingrediente, newCount) -> {
@@ -448,18 +467,6 @@ public class TabelaFragment extends Fragment {
             }
             ingredientes.add(ingrediente);
         }
-//        //ingredientes mockados
-//
-//        Map<String, Number> ingrediente1 = new HashMap<>();
-//        ingrediente1.put("nCdIngrediente", 1);
-//        ingrediente1.put("iQuantidade", 200.0);
-//
-//        Map<String, Number> ingrediente2 = new HashMap<>();
-//        ingrediente2.put("nCdIngrediente", 2);
-//        ingrediente2.put("iQuantidade", 150.5);
-//
-//        ingredientes.add(ingrediente1);
-//        ingredientes.add(ingrediente2);
 
         novaTabela.put("nomeProduto", binding.nomeProdutoLayout.getEditText().getText().toString());
         novaTabela.put("nomeTabela", binding.nomeTabelaLayout.getEditText().getText().toString());

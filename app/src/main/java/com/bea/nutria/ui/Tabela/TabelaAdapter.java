@@ -6,19 +6,15 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bea.nutria.R;
 import com.bea.nutria.ui.Ingrediente.IngredienteResponse;
-import com.bea.nutria.ui.Ingrediente.QuantidadeViewModel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,16 +26,16 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaAdapter.ViewHolder
     private final List<IngredienteResponse> listaIngredientes;
     private Map<String, Double> quantidades;
     private OnItemRemovedListener listener;
-    private final QuantidadeViewModel quantidadeViewModel;
+    private final TabelaViewModel tabelaViewModel;
 
     public interface OnItemRemovedListener {
         void onItemRemoved(IngredienteResponse ingrediente, int newCount);
     }
 
-    public TabelaAdapter(Context context, List<IngredienteResponse> lista, QuantidadeViewModel quantidadeViewModel) {
+    public TabelaAdapter(Context context, List<IngredienteResponse> lista, TabelaViewModel tabelaViewModel) {
         this.context = context;
         this.listaIngredientes = lista;
-        this.quantidadeViewModel = quantidadeViewModel;
+        this.tabelaViewModel = tabelaViewModel;
         this.quantidades = new HashMap<>();
 
         for (IngredienteResponse ing : lista) {
@@ -70,7 +66,7 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaAdapter.ViewHolder
 
         holder.nomeIngrediente.setText(ingrediente.getNomeIngrediente());
 
-        String valorAtual = quantidadeViewModel.getQuantidade(Integer.parseInt(id));
+        String valorAtual = tabelaViewModel.getQuantidade(Integer.parseInt(id));
 
         if (valorAtual == null || valorAtual.isEmpty()){
             valorAtual = "100.0";
@@ -93,10 +89,10 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaAdapter.ViewHolder
                     }
                     double quantidade = Double.parseDouble(texto);
                     quantidades.put(id, quantidade);
-                    quantidadeViewModel.setQuantidade(Integer.parseInt(id), String.valueOf(quantidade));
+                    tabelaViewModel.setQuantidade(Integer.parseInt(id), String.valueOf(quantidade));
                 }catch (NumberFormatException numberFormatException){
                     quantidades.put(id, 0.0);
-                    quantidadeViewModel.setQuantidade(Integer.parseInt(id), String.valueOf(0.0));
+                    tabelaViewModel.setQuantidade(Integer.parseInt(id), String.valueOf(0.0));
                 }
 
             }
@@ -124,7 +120,7 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaAdapter.ViewHolder
                 String valor = holder.porcao.getText().toString().replace(",", ".");
                 if (valor.isEmpty()) valor = "0";
 
-                quantidadeViewModel.setQuantidade(Integer.parseInt(id),valor);
+                tabelaViewModel.setQuantidade(Integer.parseInt(id),valor);
                 quantidades.put(id, Double.parseDouble(valor));
                 holder.txtQuantidade.setText(valor);
 
@@ -139,7 +135,7 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaAdapter.ViewHolder
                 IngredienteResponse ingredienteRemovido = listaIngredientes.get(posicaoAtual);
                 listaIngredientes.remove(posicaoAtual);
                 quantidades.remove(id);
-                quantidadeViewModel.removerQuantidade(Integer.parseInt(id));
+                tabelaViewModel.removerQuantidade(Integer.parseInt(id));
                 notifyItemRemoved(posicaoAtual);
                 notifyItemRangeChanged(posicaoAtual, listaIngredientes.size());
 

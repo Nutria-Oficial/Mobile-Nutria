@@ -1,4 +1,4 @@
-package com.bea.nutria.ui.Ingrediente;
+package com.bea.nutria.ui.Tabela;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -7,8 +7,13 @@ import androidx.lifecycle.ViewModel;
 import java.util.HashMap;
 import java.util.Map;
 
-public class QuantidadeViewModel extends ViewModel {
+public class TabelaViewModel extends ViewModel {
     private final MutableLiveData<Map<Integer, String>> quantidadesLivedata = new MutableLiveData<>(new HashMap<>());
+    private final MutableLiveData<String> unidadeMedidaLiveData = new MutableLiveData<>("");
+    private final MutableLiveData<String> nomeProdutoLiveData = new MutableLiveData<>("");
+    private final MutableLiveData<String> nomeTabelaLiveData = new MutableLiveData<>("");
+    private final MutableLiveData<Integer> porcaoEmbalagemLiveData = new MutableLiveData<>(0);
+    private final MutableLiveData<Double> porcaoLiveData = new MutableLiveData<>(0.0);
 
     public LiveData<Map<Integer, String>> getQuantidades() {
         return quantidadesLivedata;
@@ -20,6 +25,22 @@ public class QuantidadeViewModel extends ViewModel {
 
         mapAtual.put(ingredienteId,valor);
         quantidadesLivedata.setValue(mapAtual);
+    }
+    public void setUnidadeMedida(String unidadeMedida){
+        unidadeMedidaLiveData.setValue(unidadeMedida);
+    }
+    public void setNomeProduto(String nomeProduto){
+        nomeProdutoLiveData.setValue(nomeProduto);
+    }
+    public void setNomeTabela(String nomeTabela){
+        nomeTabelaLiveData.setValue(nomeTabela);
+    }
+
+    public void setPorcao(Double porcao){
+        porcaoLiveData.setValue(porcao);
+    }
+    public void setPorcaoEmbalagem(Integer porcaoEmbalagem){
+        porcaoEmbalagemLiveData.setValue(porcaoEmbalagem);
     }
     public String getQuantidade(int ingredienteId){
         Map<Integer, String> mapAtual = quantidadesLivedata.getValue();
