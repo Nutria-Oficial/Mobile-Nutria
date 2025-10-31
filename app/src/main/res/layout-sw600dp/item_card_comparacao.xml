@@ -27,7 +27,7 @@
 
     <View
         android:id="@+id/view_linha"
-        android:layout_width="340dp"
+        android:layout_width="460dp"
         android:layout_height="3dp"
         android:layout_marginTop="40dp"
         android:layout_marginBottom="-3dp"
