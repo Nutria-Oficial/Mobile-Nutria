@@ -17,58 +17,78 @@ import java.util.Locale;
 
 public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.ViewHolder> {
 
-    private List<String> nomes; //lista exibida
-    private List<String> nomeOriginal; //cópia da lista completa (sem filtro)
+    // >>> Assinatura por POSIÇÃO <<<
+    public interface OnItemClickListener { void onItemClick(int position); }
 
-    public HistoricoAdapter(List<String> nomes) {
-        this.nomes = new ArrayList<>(nomes);
-        this.nomeOriginal = new ArrayList<>(nomes);
+    private final OnItemClickListener listener;
+    private final List<String> nomes = new ArrayList<>();
+    private final List<String> nomesOriginais = new ArrayList<>();
+    // A lista real de produtos fica no Fragment; aqui exibimos só os nomes.
+    // O Fragment já sabe usar 'position' para pegar o ProdutoItem correspondente.
+
+    public HistoricoAdapter(List<String> nomesIniciais, OnItemClickListener listener) {
+        if (nomesIniciais != null) {
+            nomes.addAll(nomesIniciais);
+            nomesOriginais.addAll(nomesIniciais);
+        }
+        this.listener = listener;
     }
 
-    @NonNull
-    @Override
+    // Mantive o submit com nomes + produtos como você já usa no Fragment.
+    public void submit(List<String> novosNomes, List<HistoricoFragment.ProdutoItem> novosProdutos) {
+        nomes.clear();
+        nomesOriginais.clear();
+
+        if (novosNomes != null) {
+            nomes.addAll(novosNomes);
+            nomesOriginais.addAll(novosNomes);
+        }
+        notifyDataSetChanged();
+    }
+
+    @NonNull @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_historico, parent, false);
-        return new ViewHolder(v);
+        return new ViewHolder(v, listener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String nome = nomes.get(position);
-        holder.txtNome.setText(nome);
+        holder.txtNome.setText(nomes.get(position));
         holder.img.setImageResource(R.drawable.imagem_item_historico);
     }
 
-    @Override
-    public int getItemCount() {
-        return nomes.size();
-    }
+    @Override public int getItemCount() { return nomes.size(); }
 
     public void filtro(String query) {
         String q = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
         nomes.clear();
 
         if (q.isEmpty()) {
-            nomes.addAll(nomeOriginal); // sem busca fica na lista original
+            nomes.addAll(nomesOriginais);
         } else {
-            for (String s : nomeOriginal) {
-                if (s.toLowerCase(Locale.ROOT).contains(q)) {
-                    nomes.add(s);
-                }
+            for (String s : nomesOriginais) {
+                if (s.toLowerCase(Locale.ROOT).contains(q)) nomes.add(s);
             }
         }
         notifyDataSetChanged();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtNome;
         ImageView img;
-
-        ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
             txtNome = itemView.findViewById(R.id.nomeProdutoHistorico);
             img = itemView.findViewById(R.id.imgProdutoHistorico);
+            itemView.setOnClickListener(v -> {
+                int pos = getAdapterPosition();
+                if (listener != null && pos != RecyclerView.NO_POSITION) {
+                    // >>> Clique por posição <<<
+                    listener.onItemClick(pos);
+                }
+            });
         }
     }
 }
