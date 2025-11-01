@@ -543,4 +543,10 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
             }
         }
     }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
 }

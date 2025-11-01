@@ -77,6 +77,9 @@ public class HistoricoFragment extends Fragment implements HistoricoAdapter.OnIt
         binding.editPesquisar.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // **VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException**
+                if (binding == null) return;
+
                 if (adapter != null) {
                     adapter.filtro(s == null ? "" : s.toString());
                     toggleEmpty();
@@ -140,6 +143,9 @@ public class HistoricoFragment extends Fragment implements HistoricoAdapter.OnIt
                 final int resolvedId = id;
                 prefs().edit().putInt("usuario_id", resolvedId).apply();
                 mainHandler.post(() -> {
+                    // **VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException**
+                    if (binding == null) return;
+
                     usuarioId = resolvedId;
                     carregarProdutosUsuario(usuarioId);
                 });
@@ -206,6 +212,9 @@ public class HistoricoFragment extends Fragment implements HistoricoAdapter.OnIt
     }
 
     private void aplicarLista(List<ProdutoItem> lista) {
+        // **VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException**
+        if (binding == null) return;
+
         produtos.clear();
         if (lista != null) produtos.addAll(lista);
         List<String> nomes = new ArrayList<>();
@@ -215,6 +224,9 @@ public class HistoricoFragment extends Fragment implements HistoricoAdapter.OnIt
     }
 
     private void toggleEmpty() {
+        // **VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException**
+        if (binding == null) return;
+
         boolean vazio = adapter == null || adapter.getItemCount() == 0;
         binding.rvHistorico.setVisibility(vazio ? View.GONE : View.VISIBLE);
         binding.triaSemHistorico.setVisibility(vazio ? View.VISIBLE : View.GONE);
@@ -235,7 +247,10 @@ public class HistoricoFragment extends Fragment implements HistoricoAdapter.OnIt
 
     @Override
     public void onItemClick(int position) {
-        if (position < 0 || position >= produtos.size()) return;
+        // **VERIFICAÇÃO DE SEGURANÇA: Embora o NullPointerException seja menos provável aqui,
+        // a navegação deve ser interrompida se o Fragmento não estiver mais ativo.**
+        if (binding == null || position < 0 || position >= produtos.size()) return;
+
         ProdutoItem produto = produtos.get(position);
         Bundle args = new Bundle();
         args.putString("idProduto", produto.id);
@@ -247,6 +262,7 @@ public class HistoricoFragment extends Fragment implements HistoricoAdapter.OnIt
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // Garante que o binding seja nullificado para evitar vazamento de memória e o NullPointerException
         binding = null;
     }
 
