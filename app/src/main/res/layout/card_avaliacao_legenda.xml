@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
-    app:cardCornerRadius="20dp">
+    app:cardCornerRadius="30dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -229,6 +229,7 @@
                 android:text="Pior qualidade nutricional, consumo deve ser limitado."
                 android:textColor="#333333" />
         </LinearLayout>
+
         <TextView
             android:id="@+id/textView8"
             android:layout_width="wrap_content"

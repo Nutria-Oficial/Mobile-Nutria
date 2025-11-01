@@ -180,7 +180,16 @@
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </com.google.android.material.card.MaterialCardView>
 
-
+                    <TextView
+                        android:id="@+id/txtAvalicao"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:layout_marginBottom="18dp"
+                        android:fontFamily="@font/montserrat_semibold"
+                        android:text="Avaliações e sugestões"
+                        android:textColor="#757575"
+                        android:textSize="16sp"/>
                     <TextView
                         android:id="@+id/avaliacaoComentarios"
                         android:layout_width="wrap_content"
@@ -214,7 +223,8 @@
     <LinearLayout
         android:id="@+id/layoutCarregando"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="596dp"
+        android:layout_gravity="bottom"
         android:background="#80FFFFFF"
         android:gravity="center"
         android:orientation="vertical"
@@ -224,7 +234,9 @@
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:indeterminateTint="#EE7026"
+            android:indeterminateTintMode="src_in" />
 
         <TextView
             android:id="@+id/textView7"
