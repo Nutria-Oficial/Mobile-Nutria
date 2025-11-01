@@ -59,6 +59,9 @@ public class ComparacaoFragment extends Fragment {
     private RecyclerView recyclerViewProdutos;
     private ComparacaoAdapter comparacaoAdapter;
 
+    private static final String TAG = "ComparacaoP1Fragment";
+
+    private View view10Externo = null;
     private Integer idUsuario = 1;
 
     // Variável para armazenar o ID do produto selecionado
@@ -79,12 +82,20 @@ public class ComparacaoFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentComparacaoBinding.inflate(inflater, container, false);
         return binding.getRoot();
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        view10Externo = view.findViewById(R.id.view10);
+
+        if (view10Externo != null) {
+            view10Externo.setVisibility(View.GONE);
+            Log.d(TAG, "onStart: View10 OCULTADA.");
+        }
 
         // --- Inicialização do Gerenciador de API ---
         apiManager = new ConexaoAPI(url);
@@ -355,5 +366,11 @@ public class ComparacaoFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+
+        if (view10Externo != null) {
+            view10Externo.setVisibility(View.VISIBLE);
+            Log.d(TAG, "onStop: View10 VISÍVEL novamente.");
+        }
     }
+
 }

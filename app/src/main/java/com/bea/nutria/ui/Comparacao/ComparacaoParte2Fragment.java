@@ -49,6 +49,8 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     // API e RecyclerView
     private TabelaAPI tabelaApi;
     private ProdutoAPI produtoApi;
+
+    // VARIÁVEIS DE VIEW (SERÃO ANULADAS EM onDestroyView)
     private RecyclerView recyclerViewTabelas;
     private TabelaAdapter tabelaAdapter;
 
@@ -61,7 +63,7 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     private TextView nomeTabela2;
     private MaterialButton botaoComparar;
 
-    // NOVO: Referência para a ProgressBar
+    // Referência para a ProgressBar
     private ProgressBar progressBarLoading;
 
     // Elementos de expansão para as tabelas selecionadas
@@ -70,9 +72,10 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     private ConstraintLayout conteudoExpansivel1;
     private ConstraintLayout conteudoExpansivel2;
 
-    // NOVO: Ícones de seleção para os headers
+    // Ícones de seleção para os headers
     private ImageView iconSelecionado1;
     private ImageView iconSelecionado2;
+    // FIM DAS VARIÁVEIS DE VIEW
 
     // Variáveis de estado para a expansão
     private boolean isTabela1Expanded = false;
@@ -85,7 +88,11 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     // URL da API
     private static final String url = "https://api-spring-mongodb.onrender.com/";
 
+    // ID do contêiner principal (o NavHostFragment)
     private static final int FRAGMENT_CONTAINER_ID = R.id.nav_host_fragment_activity_main;
+
+    // Referência para a View10 externa para controle de visibilidade
+    private View view10Externo = null;
 
     /**
      * MÉTODO FACTORY: Cria uma nova instância do fragment e empacota o ID do produto.
@@ -116,9 +123,12 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Busca a View10 na Activity (contêiner pai)
+        if (requireActivity() != null) {
+            view10Externo = requireActivity().findViewById(R.id.view10);
+        }
+
         // --------------------- CORREÇÃO DE FOCO 1 -------------------------
-        // Bloqueia o foco inicial na View raiz para evitar que um componente EditText
-        // (mesmo que oculto ou em uma RecyclerView) abra o teclado.
         view.setFocusableInTouchMode(true);
         view.requestFocus();
         // ------------------------------------------------------------------
@@ -149,7 +159,7 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         if (headerItem0 != null) {
             nomeTabela1 = headerItem0.findViewById(R.id.textViewTitulo);
             seta1 = headerItem0.findViewById(R.id.imageButtonSeta);
-            iconSelecionado1 = headerItem0.findViewById(R.id.icon_selecionado1); // NOVO
+            iconSelecionado1 = headerItem0.findViewById(R.id.icon_selecionado1);
         }
 
         // Inicialização dos elementos da Tabela 2 (Header 1)
@@ -162,20 +172,16 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
                 seta2 = headerItem1.findViewById(seta2Id);
             } else {
                 Log.e(TAG, "ID 'imageButtonSeta2' não encontrado. Verifique se o XML foi atualizado.");
-                seta2 = headerItem1.findViewById(R.id.imageButtonSeta);
+                seta2 = headerItem1.findViewById(R.id.imageButtonSeta); // Fallback
             }
 
-            iconSelecionado2 = headerItem1.findViewById(R.id.icon_selecionado2); // NOVO
+            iconSelecionado2 = headerItem1.findViewById(R.id.icon_selecionado2);
         }
 
         // --------------------- CORREÇÃO DE FOCO 2 -------------------------
-        // Adiciona um listener a cada header selecionado para fechar o teclado,
-        // caso o clique "fantasma" seja acionado.
-
         if (headerItem0 != null) {
             headerItem0.setOnClickListener(v -> {
                 hideKeyboard();
-                // Opcional: Chame a lógica de expansão se ela for desejada no clique do header:
                 // toggleHeaderExpansion(1);
             });
         }
@@ -183,7 +189,6 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         if (headerItem1 != null) {
             headerItem1.setOnClickListener(v -> {
                 hideKeyboard();
-                // Opcional: Chame a lógica de expansão se ela for desejada no clique do header:
                 // toggleHeaderExpansion(2);
             });
         }
@@ -202,20 +207,16 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         // --- 4. Inicialização da API e Lógica de Busca ---
         if (produtoId != null && produtoId != -1) {
 
-            // NOVO: Exibe a ProgressBar antes de qualquer chamada de rede
             if (progressBarLoading != null) {
                 progressBarLoading.setVisibility(View.VISIBLE);
             }
-            // Oculta a lista enquanto carrega
             if (listaItensPrincipalContainer != null) {
                 listaItensPrincipalContainer.setVisibility(View.GONE);
             }
 
-            // Inicia o servidor e, em seguida, busca TODAS as tabelas do produto
             apiManager.iniciarServidor(requireActivity(), () -> buscarTodasTabelasDoProduto(produtoId));
         } else {
             Toast.makeText(getContext(), "Erro: ID do produto inválido.", Toast.LENGTH_LONG).show();
-            // NOVO: Oculta a ProgressBar em caso de erro imediato
             if (progressBarLoading != null) {
                 progressBarLoading.setVisibility(View.GONE);
             }
@@ -235,8 +236,6 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
             if (buttonVisivel) {
                 if (botaoComparar != null) botaoComparar.setVisibility(View.VISIBLE);
             }
-            // NOVO: Garante que a ProgressBar esteja oculta após a restauração do estado,
-            // presumindo que o carregamento já ocorreu.
             if (progressBarLoading != null) {
                 progressBarLoading.setVisibility(View.GONE);
             }
@@ -248,27 +247,21 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         if (botaoComparar != null) {
             botaoComparar.setOnClickListener(v -> {
                 if (tabelaSelecionada1 != null && tabelaSelecionada2 != null) {
-                    // *** LÓGICA ATUALIZADA PARA INICIAR ComparacaoParte3Fragment ***
 
-                    // Cria uma nova instância do fragmento de destino, passando os IDs E OS NOMES
                     Fragment nextFragment = ComparacaoParte3Fragment.newInstance(
                             tabelaSelecionada1.getTabelaId(),
                             tabelaSelecionada2.getTabelaId(),
-                            // NOVO: Passando os nomes
                             tabelaSelecionada1.getNomeTabela(),
                             tabelaSelecionada2.getNomeTabela()
                     );
 
-                    // Usa o FragmentManager para iniciar a transação
                     FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-                    // Substitui o fragmento atual pelo novo.
                     fragmentTransaction.replace(FRAGMENT_CONTAINER_ID, nextFragment);
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
 
-                    // Removido o Intent, pois estamos navegando entre Fragments, não Activities
                 } else {
                     Toast.makeText(getContext(), "Selecione duas tabelas para comparar.", Toast.LENGTH_SHORT).show();
                 }
@@ -277,9 +270,65 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     }
 
     /**
+     * MÉTODOS DO CICLO DE VIDA (COM CORREÇÃO DA VIEW10)
+     */
+
+    // NOVO MÉTODO: Chamado quando o Fragmento está visível
+    @Override
+    public void onStart() {
+        super.onStart();
+        // AÇÃO DE OCULTAR: Fragmento B fica visível
+        if (view10Externo != null) {
+            view10Externo.setVisibility(View.GONE);
+            Log.d(TAG, "onStart: View10 OCULTADA.");
+        }
+    }
+
+    // NOVO MÉTODO: Chamado quando o Fragmento não está mais visível (ex: mudança de aba)
+    @Override
+    public void onStop() {
+        super.onStop();
+        // AÇÃO DE RESTAURAR: Fragmento B sai da tela (ao mudar de aba)
+        if (view10Externo != null) {
+            view10Externo.setVisibility(View.VISIBLE);
+            Log.d(TAG, "onStop: View10 VISÍVEL novamente.");
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        // AÇÃO DE LIMPEZA: A visibilidade da View10 foi tratada no onStop().
+        // Aqui, apenas anulamos a referência para evitar memory leaks.
+        if (view10Externo != null) {
+            view10Externo = null;
+        }
+
+        // ***************************************************************
+        // Anula todas as referências de View internas para garantir a limpeza de memória.
+        // ***************************************************************
+        recyclerViewTabelas = null;
+        tabelaAdapter = null;
+        subtitulo = null;
+        listaItensPrincipalContainer = null;
+        headerItem0 = null;
+        headerItem1 = null;
+        nomeTabela1 = null;
+        nomeTabela2 = null;
+        botaoComparar = null;
+        progressBarLoading = null;
+        seta1 = null;
+        seta2 = null;
+        conteudoExpansivel1 = null;
+        conteudoExpansivel2 = null;
+        iconSelecionado1 = null;
+        iconSelecionado2 = null;
+    }
+
+
+    /**
      * Alterna o estado de expansão de uma das tabelas selecionadas no cabeçalho.
-     * OBS: Este método não é chamado ao clicar no header principal,
-     * mas é mantido caso outro componente o acione.
      */
     private void toggleHeaderExpansion(int tableIndex) {
         ImageButton seta;
@@ -306,7 +355,6 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
             conteudo.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
         }
 
-        // Rotação animada da seta
         if (seta != null) {
             seta.animate().rotation(isExpanded ? 180f : 0f).setDuration(200).start();
         }
@@ -319,7 +367,6 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     private void buscarTodasTabelasDoProduto(Integer produtoId) {
         if (produtoApi == null) {
             Log.e(TAG, "ProdutoAPI não inicializada.");
-            // Oculta a ProgressBar
             if (progressBarLoading != null) {
                 progressBarLoading.setVisibility(View.GONE);
             }
@@ -344,7 +391,6 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
                     if (listaItensPrincipalContainer != null) listaItensPrincipalContainer.setVisibility(View.GONE);
                 }
 
-                // NOVO: Oculta a ProgressBar após o processamento (sucesso ou erro)
                 if (progressBarLoading != null) {
                     progressBarLoading.setVisibility(View.GONE);
                 }
@@ -356,7 +402,6 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
                 Toast.makeText(getContext(), "Falha ao conectar-se à API para buscar tabelas.", Toast.LENGTH_LONG).show();
                 if (listaItensPrincipalContainer != null) listaItensPrincipalContainer.setVisibility(View.GONE);
 
-                // NOVO: Oculta a ProgressBar na falha
                 if (progressBarLoading != null) {
                     progressBarLoading.setVisibility(View.GONE);
                 }
@@ -368,16 +413,14 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
      * Configura o Adapter com a lista de resultados.
      */
     private void setupAdapter(List<GetTabelaDTO> listaTabelas) {
-        if (!isAdded() || getContext() == null) return;
+        if (!isAdded() || getContext() == null || recyclerViewTabelas == null) return;
 
         tabelaAdapter = new TabelaAdapter(listaTabelas);
-        // O fragmento implementa a interface OnTabelaClickListener
         tabelaAdapter.setOnTabelaClickListener(ComparacaoParte2Fragment.this);
-        if (recyclerViewTabelas != null) {
-            recyclerViewTabelas.setAdapter(tabelaAdapter);
-            // Garante que a lista seja exibida após o carregamento
-            recyclerViewTabelas.setVisibility(View.VISIBLE);
-        }
+
+        recyclerViewTabelas.setAdapter(tabelaAdapter);
+        recyclerViewTabelas.setVisibility(View.VISIBLE);
+
         if (listaItensPrincipalContainer != null) {
             listaItensPrincipalContainer.setVisibility(View.VISIBLE);
         }
@@ -387,17 +430,12 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     // Implementação da interface TabelaAdapter.OnTabelaClickListener
     @Override
     public void onEscolherTabelaClick(GetTabelaDTO tabela, int position) {
-        // CORREÇÃO DE LÓGICA: Usar uma variável para armazenar a tabela que foi deselecionada,
-        // garantindo que a adição/remoção na lista visível (Adapter) seja feita corretamente.
 
-        // 1. Variáveis de estado
         boolean itemRemovidoDaListaVisivel = false;
         GetTabelaDTO tabelaParaReAdicionar = null;
 
-        // FECHAMENTO DE TECLADO AO INTERAGIR COM A LISTA (medida preventiva)
         hideKeyboard();
 
-        // VERIFICAÇÃO DE ID (CRUCIAL): Garante que a tabela tenha um ID para comparação
         if (tabela.getTabelaId() == null) {
             Toast.makeText(getContext(), "Erro: Tabela sem ID.", Toast.LENGTH_LONG).show();
             return;
@@ -429,7 +467,7 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
             tabelaSelecionada1 = tabela;
             itemRemovidoDaListaVisivel = true; // Marca para remover da lista visível
 
-            // D. Seleciona no Slot 2 (Este é o ponto que estava falhando na sua lógica anterior)
+            // D. Seleciona no Slot 2
         } else if (tabelaSelecionada2 == null) {
             tabelaSelecionada2 = tabela;
             itemRemovidoDaListaVisivel = true; // Marca para remover da lista visível
@@ -437,31 +475,25 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
             // E. Máximo atingido
         } else {
             Toast.makeText(getContext(), "Máximo de duas tabelas selecionadas.", Toast.LENGTH_LONG).show();
-            return; // Não faz nada se já houver duas selecionadas
+            return;
         }
 
         // 4. Executa a ação na lista visível (Adapter)
         if (tabelaAdapter != null) {
             if (tabelaParaReAdicionar != null) {
-                // Se deselecionamos, re-adiciona o item à lista visível
                 tabelaAdapter.addItem(tabelaParaReAdicionar);
             } else if (itemRemovidoDaListaVisivel) {
-                // Se selecionamos um novo item, remove ele da lista visível
-                // A posição é o índice atual do item na lista visível antes de ser removido
                 tabelaAdapter.removeItem(position);
             }
 
-            // ATENÇÃO: CHAMADAS DE ATUALIZAÇÃO E SCROLL
             tabelaAdapter.notifyDataSetChanged();
 
-            // *** CORREÇÃO: Força a RecyclerView a rolar para o topo (posição 0) ***
             if (recyclerViewTabelas != null) {
                 recyclerViewTabelas.scrollToPosition(0);
             }
         }
 
-
-        // 5. Atualiza a UI para refletir a nova seleção/deseleção, incluindo a visibilidade do ícone
+        // 5. Atualiza a UI para refletir a nova seleção/deseleção
         atualizarUISelecao();
     }
 
@@ -480,19 +512,19 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         // --- Tabela 1 ---
         if (tabelaSelecionada1 != null) {
             if (nomeTabela1 != null) nomeTabela1.setText(tabelaSelecionada1.getNomeTabela());
-            if (iconSelecionado1 != null) iconSelecionado1.setVisibility(View.VISIBLE); // EXIBE O ÍCONE
+            if (iconSelecionado1 != null) iconSelecionado1.setVisibility(View.VISIBLE);
         } else {
-            if (nomeTabela1 != null) nomeTabela1.setText(""); // Limpa se for nulo
-            if (iconSelecionado1 != null) iconSelecionado1.setVisibility(View.GONE); // OCULTA O ÍCONE
+            if (nomeTabela1 != null) nomeTabela1.setText("");
+            if (iconSelecionado1 != null) iconSelecionado1.setVisibility(View.GONE);
         }
 
         // --- Tabela 2 ---
         if (tabelaSelecionada2 != null) {
             if (nomeTabela2 != null) nomeTabela2.setText(tabelaSelecionada2.getNomeTabela());
-            if (iconSelecionado2 != null) iconSelecionado2.setVisibility(View.VISIBLE); // EXIBE O ÍCONE
+            if (iconSelecionado2 != null) iconSelecionado2.setVisibility(View.VISIBLE);
         } else {
-            if (nomeTabela2 != null) nomeTabela2.setText(""); // Limpa se for nulo
-            if (iconSelecionado2 != null) iconSelecionado2.setVisibility(View.GONE); // OCULTA O ÍCONE
+            if (nomeTabela2 != null) nomeTabela2.setText("");
+            if (iconSelecionado2 != null) iconSelecionado2.setVisibility(View.GONE);
         }
 
         // --- Lógica de Visibilidade Geral ---
@@ -544,9 +576,4 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         }
     }
 
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
 }
