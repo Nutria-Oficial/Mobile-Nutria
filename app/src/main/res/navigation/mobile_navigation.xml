@@ -35,13 +35,16 @@
     <fragment
         android:id="@+id/navigation_tabela"
         android:name="com.bea.nutria.ui.Tabela.TabelaFragment"
-        android:label="Tabela" >
+        android:label="Tabela">
 
         <action
             android:id="@+id/action_tabela_to_ingrediente"
             app:destination="@id/navigation_ingrediente" />
-    </fragment>
 
+        <action
+            android:id="@+id/action_ingrediente_to_tabela"
+            app:destination="@id/navigation_tabela" />
+    </fragment>
     <fragment
         android:id="@+id/tabelaProdutoFragment"
         android:name="com.bea.nutria.ui.Historico.TabelaProdutoFragment"
