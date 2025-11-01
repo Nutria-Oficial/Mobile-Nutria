@@ -61,7 +61,7 @@ public class ComparacaoFragment extends Fragment {
 
     private static final String TAG = "ComparacaoP1Fragment";
 
-    private View view10Externo = null;
+
     private Integer idUsuario = 1;
 
     // Variável para armazenar o ID do produto selecionado
@@ -90,12 +90,6 @@ public class ComparacaoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view10Externo = view.findViewById(R.id.view10);
-
-        if (view10Externo != null) {
-            view10Externo.setVisibility(View.GONE);
-            Log.d(TAG, "onStart: View10 OCULTADA.");
-        }
 
         // --- Inicialização do Gerenciador de API ---
         apiManager = new ConexaoAPI(url);
@@ -174,6 +168,7 @@ public class ComparacaoFragment extends Fragment {
 
                     ComparacaoParte2Fragment nextFragment =
                             ComparacaoParte2Fragment.newInstance(produtoSelecionadoId);
+
 
                     fragmentTransaction.replace(FRAGMENT_CONTAINER_ID, nextFragment);
                     fragmentTransaction.addToBackStack(null);
@@ -365,12 +360,8 @@ public class ComparacaoFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
 
-        if (view10Externo != null) {
-            view10Externo.setVisibility(View.VISIBLE);
-            Log.d(TAG, "onStop: View10 VISÍVEL novamente.");
-        }
     }
+
 
 }

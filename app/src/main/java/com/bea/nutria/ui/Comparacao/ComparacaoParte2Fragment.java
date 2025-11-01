@@ -91,8 +91,6 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     // ID do contêiner principal (o NavHostFragment)
     private static final int FRAGMENT_CONTAINER_ID = R.id.nav_host_fragment_activity_main;
 
-    // Referência para a View10 externa para controle de visibilidade
-    private View view10Externo = null;
 
     /**
      * MÉTODO FACTORY: Cria uma nova instância do fragment e empacota o ID do produto.
@@ -122,11 +120,6 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        // Busca a View10 na Activity (contêiner pai)
-        if (requireActivity() != null) {
-            view10Externo = requireActivity().findViewById(R.id.view10);
-        }
 
         // --------------------- CORREÇÃO DE FOCO 1 -------------------------
         view.setFocusableInTouchMode(true);
@@ -269,42 +262,24 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
         }
     }
 
-    /**
-     * MÉTODOS DO CICLO DE VIDA (COM CORREÇÃO DA VIEW10)
-     */
 
     // NOVO MÉTODO: Chamado quando o Fragmento está visível
     @Override
     public void onStart() {
         super.onStart();
-        // AÇÃO DE OCULTAR: Fragmento B fica visível
-        if (view10Externo != null) {
-            view10Externo.setVisibility(View.GONE);
-            Log.d(TAG, "onStart: View10 OCULTADA.");
-        }
+
     }
 
     // NOVO MÉTODO: Chamado quando o Fragmento não está mais visível (ex: mudança de aba)
     @Override
     public void onStop() {
         super.onStop();
-        // AÇÃO DE RESTAURAR: Fragmento B sai da tela (ao mudar de aba)
-        if (view10Externo != null) {
-            view10Externo.setVisibility(View.VISIBLE);
-            Log.d(TAG, "onStop: View10 VISÍVEL novamente.");
-        }
+
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        // AÇÃO DE LIMPEZA: A visibilidade da View10 foi tratada no onStop().
-        // Aqui, apenas anulamos a referência para evitar memory leaks.
-        if (view10Externo != null) {
-            view10Externo = null;
-        }
-
         // ***************************************************************
         // Anula todas as referências de View internas para garantir a limpeza de memória.
         // ***************************************************************
