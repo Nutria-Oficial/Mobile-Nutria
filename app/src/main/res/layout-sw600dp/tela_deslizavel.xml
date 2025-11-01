@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_gravity="bottom"
-    android:padding="8dp">
+    android:layout_gravity="bottom">
+
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="796dp"
+        android:layout_height="600dp"
         android:layout_gravity="bottom"
         android:orientation="vertical"
         app:shapeAppearanceOverlay="@style/CardTopRounded">
@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/fechar_exportar" />
+                app:srcCompat="@drawable/exportar_fechar" />
         </LinearLayout>
 
         <LinearLayout
@@ -47,14 +47,14 @@
                     android:fontFamily="@font/montserrat_semibold"
                     android:gravity="center"
                     android:text="Tabela"
-                    android:textColor="#08A578"
+                    android:textColor="#21B558"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <View
                     android:layout_width="80dp"
                     android:layout_height="1dp"
-                    android:background="#08A578" />
+                    android:background="#21B558" />
             </LinearLayout>
         </LinearLayout>
 
@@ -199,7 +199,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="70dp"
-                android:backgroundTint="#08A578"
+                android:backgroundTint="#21B558"
                 android:fontFamily="@font/montserrat_semibold"
                 android:text="Exportar"
                 android:textAllCaps="false"
@@ -208,4 +208,4 @@
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
-    </FrameLayout>
+</FrameLayout>
