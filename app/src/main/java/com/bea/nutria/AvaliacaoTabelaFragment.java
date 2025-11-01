@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +37,7 @@ import com.bea.nutria.ui.Tabela.TabelaFragment;
 
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -77,7 +79,7 @@ public class AvaliacaoTabelaFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentAvaliacaoTabelaBinding.inflate(inflater, container, false);
 
-        conexaoAPI = new ConexaoAPI("https://api-spring-mongodb.onrender.com");
+        conexaoAPI = new ConexaoAPI("http://98.82.4.211:8081");
         api = conexaoAPI.getApi(TabelaAPI.class);
 
         return binding.getRoot();
@@ -95,6 +97,9 @@ public class AvaliacaoTabelaFragment extends Fragment {
         binding.btnVisualizar.setOnClickListener(v -> {
             Bundle result = new Bundle();
             result.putSerializable("tabela", tabelaDados);
+            result.putString("tabelaNome", binding.tvTabelaTitulo.getText().toString());
+            result.putString("tabelaPorcao", binding.tvPorcaoColuna.getText().toString());
+            result.putString("tabelaPorcaoEmbalagem", binding.tvPorcaoEmbalagemColuna.getText().toString());
 
             NavController navController = NavHostFragment.findNavController(AvaliacaoTabelaFragment.this);
             navController.navigate(R.id.action_navigation_avaliacao_tabela_to_navigation_visualizar, result);
@@ -109,7 +114,6 @@ public class AvaliacaoTabelaFragment extends Fragment {
     }
 
     private void buscarTabelaAvaliacao(Integer tabelaId) {
-        mostrarCarregando(true);
         api.buscarTabelaComAvaliacao(tabelaId).enqueue(new Callback<GetTabelaEAvaliacaoDTO>() {
             @Override
             public void onResponse(Call<GetTabelaEAvaliacaoDTO> call, retrofit2.Response<GetTabelaEAvaliacaoDTO> response) {
@@ -141,57 +145,13 @@ public class AvaliacaoTabelaFragment extends Fragment {
         });
     }
 
-//    private void preencherDadosTabela(GetTabelaEAvaliacaoDTO tabela) {
-//        tabelaDados.clear();
-//        binding.tableLayout.removeAllViews();
-//
-//        TableRow nomeTabela = new TableRow(getContext());
-//        TextView nome = new TextView(getContext());
-//        nomeTabela.addView(nome);
-//        binding.tableLayout.addView(nomeTabela);
-//        adicionarValoresTabelaDados(binding.tableLayout.getChildAt(0));
-//
-//        TableRow nomeColuna = new TableRow(getContext());
-//        TextView coluna1 = new TextView(getContext());
-//        TextView coluna2 = new TextView(getContext());
-//        TextView coluna3 = new TextView(getContext());
-//
-//        coluna1.setText(tabela.getNomeTabela());
-//        coluna2.setText("Poção " + tabela.getPorcao()+"g");
-//        coluna3.setText("%VD*");
-//
-//        nomeColuna.addView(coluna1);
-//        nomeColuna.addView(coluna2);
-//        nomeColuna.addView(coluna3);
-//        binding.tableLayout.addView(nomeColuna);
-//        adicionarValoresTabelaDados(binding.tableLayout.getChildAt(1));
-//
-//        for (GetNutrienteDTO nutrienteDados : tabela.getNutrientes()){
-//            TableRow nutrientesInformacao = new TableRow(getContext());
-//            TextView nutriente = new TextView(getContext());
-//            TextView porcao = new TextView(getContext());
-//            TextView vd = new TextView(getContext());
-//
-//            nutriente.setText(nutrienteDados.getNutriente());
-//            porcao.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getPorcao()));
-//            vd.setText(String.format(Locale.forLanguageTag("pt-BR"),"%.2f", nutrienteDados.getValorDiario())+"%");
-//
-//            nutrientesInformacao.addView(nutriente);
-//            nutrientesInformacao.addView(porcao);
-//            nutrientesInformacao.addView(vd);
-//            binding.tableLayout.addView(nutrientesInformacao);
-//            adicionarValoresTabelaDados(binding.tableLayout.getChildAt(1));
-//
-//        }
-//
-//    }
     private void preencherDadosTabela(GetTabelaEAvaliacaoDTO tabela) {
         tabelaDados.clear();
         binding.tableLayout.removeAllViews();
 
-        binding.tvTabelaTitulo.setText(tabela.getNomeTabela());
-        binding.tvPorcaoColuna.setText(String.valueOf(tabela.getPorcao()));
-        binding.tvPorcaoEmbalagemColuna.setText(String.valueOf(porcaoEmbalagemAtual));
+        binding.tvTabelaTitulo.setText(corrigirTextoCodificado(tabela.getNomeTabela()));
+        binding.tvPorcaoColuna.setText(String.format("%s%s", binding.tvPorcaoColuna.getText(), tabela.getPorcao()));
+        binding.tvPorcaoEmbalagemColuna.setText(String.format("%s%s", binding.tvPorcaoEmbalagemColuna.getText(), porcaoEmbalagemAtual));
 
 
         int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
@@ -208,7 +168,7 @@ public class AvaliacaoTabelaFragment extends Fragment {
         coluna2.setText("Valor");
         modificarTextStyleColuna(2,coluna2);
         coluna3.setText("%VD*");
-        modificarTextStyleValores(3,coluna3);
+        modificarTextStyleColuna(3,coluna3);
 
         nomeColuna.addView(coluna1);
         nomeColuna.addView(coluna2);
@@ -216,8 +176,18 @@ public class AvaliacaoTabelaFragment extends Fragment {
         binding.tableLayout.addView(nomeColuna);
         adicionarValoresTabelaDados(binding.tableLayout.getChildAt(0));
 
+        View linha = new View(requireContext());
+        TableLayout.LayoutParams params = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,1);
+
+        linha.setLayoutParams(params);
+        linha.setBackgroundColor(Color.parseColor("#E0E0E0"));
+
+        binding.tableLayout.addView(linha);
+
         for (GetNutrienteDTO nutrienteDados : tabela.getNutrientes()){
             TableRow nutrientesInformacao = new TableRow(getContext());
+            nutrientesInformacao.setPadding(padding, padding, padding, padding);
+
             TextView nutriente = new TextView(getContext());
             TextView porcaoNutriente = new TextView(getContext());
             TextView vd = new TextView(getContext());
@@ -239,62 +209,71 @@ public class AvaliacaoTabelaFragment extends Fragment {
             nutrientesInformacao.addView(vd);
             binding.tableLayout.addView(nutrientesInformacao);
             adicionarValoresTabelaDados(binding.tableLayout.getChildAt(1));
+
+            View novaLinha = new View(requireContext());
+            TableLayout.LayoutParams novoParams = new TableLayout.LayoutParams(
+                    TableLayout.LayoutParams.MATCH_PARENT, 1
+            );
+            novaLinha.setLayoutParams(novoParams);
+            novaLinha.setBackgroundColor(Color.parseColor("#E0E0E0"));
+            binding.tableLayout.addView(novaLinha);
+
         }
 
     }
+    private String corrigirTextoCodificado(String texto) {
+        try {
+            StringBuilder resultado = new StringBuilder();
+
+            for (int i = 0; i < texto.length(); i++) {
+                if (texto.charAt(i) == '\\' && i + 3 < texto.length() && texto.charAt(i + 1) == 'x') {
+                    String hex = texto.substring(i + 2, i + 4);
+
+                    try {
+                        int valor = Integer.parseInt(hex, 16);
+                        resultado.append((char) valor);
+                        i += 3;
+                    } catch (NumberFormatException e) {
+                        resultado.append(texto.charAt(i));
+                    }
+                } else {
+                    resultado.append(texto.charAt(i));
+                }
+            }
+
+            return resultado.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return texto;
+        }
+    }
     private void mostrarCarregando(boolean carregando) {
-        if (carregando) {
-            binding.layoutCarregando.setVisibility(View.VISIBLE);
-            binding.layoutInformacoes.setVisibility(View.GONE);
-        } else {
+        if (!carregando) {
             binding.layoutCarregando.setVisibility(View.GONE);
-            binding.layoutInformacoes.setVisibility(View.VISIBLE);
+            binding.scrollView.setVisibility(View.VISIBLE);
         }
     }
 
     private void adicionarValoresTabelaDados(View linhaTabela){
+        if (!(linhaTabela instanceof TableRow)){
+            return;
+        }
         TableRow linha = (TableRow) linhaTabela;
 
         String[] valores = new String[linha.getChildCount()];
 
         for (int i = 0; i < linha.getChildCount(); i++) {
-            TextView valor = (TextView) linha.getChildAt(i);
-            valores[i] = valor.getText().toString();
+            View child = linha.getChildAt(i);
+            if (child instanceof  TextView){
+                valores[i] = ((TextView) child).getText().toString();
+            }
+            else {
+                valores[i] = "";
+            }
         }
         tabelaDados.add(valores);
     }
-    private String normalizeAvaliacao(JSONObject obj) {
-        if (obj == null) return "";
-        String t = obj.optString("texto", null);
-        if (t != null && !t.trim().isEmpty()) {
-            return normalizeAvaliacao(t);
-        }
-        String best = "";
-        int bestLen = 0;
-        for (Iterator<String> it = obj.keys(); it.hasNext();) {
-            String k = it.next();
-            if ("classificacao".equalsIgnoreCase(k) || "pontuacao".equalsIgnoreCase(k)) continue;
-            Object v = obj.opt(k);
-            if (v instanceof String) {
-                String sv = ((String) v).trim();
-                if (sv.length() > bestLen) {
-                    best = sv;
-                    bestLen = sv.length();
-                }
-            }
-        }
-        return normalizeAvaliacao(best);
-    }
-    private String normalizeAvaliacao(String raw) {
-        if (raw == null) return "";
-        String s = raw.trim();
-        if ((s.startsWith("\"") && s.endsWith("\"")) || (s.startsWith("'") && s.endsWith("'"))) {
-            s = s.substring(1, s.length() - 1);
-        }
-        s = s.replace("\\n", "\n");
-        if ("null".equalsIgnoreCase(s)) return "";
-        return s;
-    }
+
     private void modificarTextStyleColuna(int coluna,TextView textView){
         if(coluna == 1){
             textView.setEllipsize(TextUtils.TruncateAt.END);
