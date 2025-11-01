@@ -200,7 +200,6 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
         public void bind(IngredienteResponse ingrediente, int position) {
             txtNomeIngrediente.setText(ingrediente.getNomeIngrediente());
 
-            // configurar botão adicionar/remover
             boolean estaSelecionado = estaNaListaSelecionados(ingrediente);
             configurarBotao(btAddIngrediente, estaSelecionado);
 
@@ -329,7 +328,6 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
             nomeColuna.addView(coluna2);
             tableLayout.addView(nomeColuna);
 
-            // linha divisória
             adicionarDivisor();
 
             // adicionar nutrientes principais
@@ -393,7 +391,6 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
                         String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getAgua()));
             }
 
-            // minerais
             if (ingrediente.getCalcio() > 0) {
                 adicionarLinhaNutriente("Cálcio",
                         String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getCalcio()));
@@ -434,7 +431,6 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
                         String.format(Locale.forLanguageTag("pt-BR"), "%.2f mcg", ingrediente.getSelenio()));
             }
 
-            // vitaminas
             if (ingrediente.getVitaminaC() > 0) {
                 adicionarLinhaNutriente("Vitamina C",
                         String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getVitaminaC()));
@@ -495,7 +491,6 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
                         String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getColina()));
             }
 
-            // outros compostos
             if (ingrediente.getCafeina() > 0) {
                 adicionarLinhaNutriente("Cafeína",
                         String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getCafeina()));

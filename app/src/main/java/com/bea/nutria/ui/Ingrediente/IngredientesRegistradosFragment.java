@@ -44,13 +44,12 @@ public class IngredientesRegistradosFragment extends Fragment {
     private RecyclerView recyclerViewIngredientes;
     private IngredienteSharedViewModel sharedViewModel;
 
-    // componentes de paginação
     private ImageView btnPaginaAnterior;
     private ImageView btnProximaPagina;
     private TextView tvNumeroPagina;
     private ProgressBar progressBar;
 
-    private int paginaAtual = 0; // API começa em 1
+    private int paginaAtual = 0;
     private boolean isCarregando = false;
     private boolean estaBuscandoPorNome = false;
     private boolean primeiraCarregamento = true;
@@ -71,7 +70,6 @@ public class IngredientesRegistradosFragment extends Fragment {
         apiManager = new ConexaoAPI(url);
         ingredienteApi = apiManager.getApi(IngredienteAPI.class);
 
-        // inicializar componentes
         editPesquisar = view.findViewById(R.id.editPesquisar);
         iconeBuscar = view.findViewById(R.id.iconeBuscar);
         recyclerViewIngredientes = view.findViewById(R.id.recyclerViewIngredientes);
@@ -87,7 +85,6 @@ public class IngredientesRegistradosFragment extends Fragment {
         // atualizar número da página
         atualizarNumeroPagina();
 
-        // observar ingredientes selecionados
         sharedViewModel.getIngredientesSelecionados().observe(getViewLifecycleOwner(), selecionados -> {
             if (selecionados != null) {
                 adapter.restaurarSelecao(selecionados);
@@ -98,7 +95,6 @@ public class IngredientesRegistradosFragment extends Fragment {
             }
         });
 
-        // observar novos ingredientes adicionados (registrados)
         sharedViewModel.getNovoIngredienteAdicionado().observe(getViewLifecycleOwner(), novoIngrediente -> {
             if (novoIngrediente != null) {
                 // Adiciona aos selecionados
@@ -163,7 +159,6 @@ public class IngredientesRegistradosFragment extends Fragment {
             }
         });
 
-        // botões de paginação
         btnPaginaAnterior.setOnClickListener(v -> {
             if (paginaAtual >= 1 && !isCarregando && !estaBuscandoPorNome) {
                 paginaAtual--;
@@ -183,7 +178,6 @@ public class IngredientesRegistradosFragment extends Fragment {
         // iniciar servidor e carregar primeira página
         apiManager.iniciarServidor(requireActivity(), () -> carregarPagina(paginaAtual));
 
-        // busca conforme digita
         editPesquisar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

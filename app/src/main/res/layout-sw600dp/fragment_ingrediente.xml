@@ -37,13 +37,12 @@
             app:layout_constraintHorizontal_bias="0.047"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_top"
+        android:background="@android:color/white"
         android:orientation="horizontal"
         android:paddingTop="20dp"
         android:paddingBottom="0dp">
@@ -72,14 +71,21 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white">
+        android:background="@android:color/white"
+        android:paddingBottom="0dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="#E0E0E0" />
 
         <ImageView
             android:id="@+id/imageView2"
-            android:layout_width="154dp"
-            android:layout_height="19dp"
-            android:layout_marginStart="30dp"
-            android:src="@drawable/linha" />
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_gravity="start"
+            android:src="@drawable/linha"
+            android:scaleType="fitXY" />
     </FrameLayout>
 
     <androidx.viewpager2.widget.ViewPager2
