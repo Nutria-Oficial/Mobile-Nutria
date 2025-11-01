@@ -14,9 +14,34 @@ public class TabelaViewModel extends ViewModel {
     private final MutableLiveData<String> nomeTabelaLiveData = new MutableLiveData<>("");
     private final MutableLiveData<Integer> porcaoEmbalagemLiveData = new MutableLiveData<>(0);
     private final MutableLiveData<Double> porcaoLiveData = new MutableLiveData<>(0.0);
+    private final MutableLiveData<Boolean> temDadosSalvosLiveData = new MutableLiveData<>(false);
 
     public LiveData<Map<Integer, String>> getQuantidades() {
         return quantidadesLivedata;
+    }
+
+    public MutableLiveData<String> getUnidadeMedidaLiveData() {
+        return unidadeMedidaLiveData;
+    }
+
+    public MutableLiveData<String> getNomeProdutoLiveData() {
+        return nomeProdutoLiveData;
+    }
+
+    public MutableLiveData<String> getNomeTabelaLiveData() {
+        return nomeTabelaLiveData;
+    }
+
+    public MutableLiveData<Integer> getPorcaoEmbalagemLiveData() {
+        return porcaoEmbalagemLiveData;
+    }
+
+    public MutableLiveData<Double> getPorcaoLiveData() {
+        return porcaoLiveData;
+    }
+
+    public LiveData<Boolean> hasDadosSalvos() {
+        return temDadosSalvosLiveData;
     }
     public void setQuantidade(int ingredienteId, String valor){
         Map<Integer, String> mapAtual = quantidadesLivedata.getValue();
@@ -41,6 +66,9 @@ public class TabelaViewModel extends ViewModel {
     }
     public void setPorcaoEmbalagem(Integer porcaoEmbalagem){
         porcaoEmbalagemLiveData.setValue(porcaoEmbalagem);
+    }
+    public void setTemDadosSalvos(boolean temDadosSalvos) {
+        temDadosSalvosLiveData.setValue(temDadosSalvos);
     }
     public String getQuantidade(int ingredienteId){
         Map<Integer, String> mapAtual = quantidadesLivedata.getValue();

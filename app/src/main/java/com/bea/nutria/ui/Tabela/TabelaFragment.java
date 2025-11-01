@@ -1,5 +1,6 @@
 package com.bea.nutria.ui.Tabela;
 
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 
 import retrofit2.Call;
@@ -80,15 +82,17 @@ public class TabelaFragment extends Fragment {
         setCheckBoxListener(binding.checkBox3);
         setCheckBoxListener(binding.checkBox4);
 
-        conexaoAPI = new ConexaoAPI("http://98.82.4.211:8081");
+        conexaoAPI = new ConexaoAPI("https://api-spring-mongodb.onrender.com");
         api = conexaoAPI.getApi(TabelaAPI.class);
 
 
         // Inicializar ViewModel
         sharedViewModel = new ViewModelProvider(requireActivity()).get(IngredienteSharedViewModel.class);
         tabelaViewModel = new ViewModelProvider(requireActivity()).get(TabelaViewModel.class);
+
         setupRecyclerView();
         observarIngredientes();
+
 
         return binding.getRoot();
     }
@@ -98,6 +102,8 @@ public class TabelaFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> WindowInsetsCompat.CONSUMED);
+
+        restaurarUltimasAtualizacoesDadosTabela();
 
         binding.porcao.setText(String.valueOf(porcaoAtual));
         binding.porcao.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -115,7 +121,6 @@ public class TabelaFragment extends Fragment {
         binding.porcao.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable editable) {
-
             }
 
             @Override
@@ -130,16 +135,13 @@ public class TabelaFragment extends Fragment {
                 }catch (NumberFormatException exception){
                     porcaoAtual = 0.0;
                 }
+                tabelaViewModel.setPorcao(porcaoAtual);
+                tabelaViewModel.setTemDadosSalvos(true);
             }
         });
         binding.valor.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable editable) {
-                try {
-                    porcaoEmbalagemAtual = Integer.parseInt(editable.toString());
-                }catch (NumberFormatException exception){
-                    porcaoEmbalagemAtual = 0;
-                }
             }
 
             @Override
@@ -149,6 +151,45 @@ public class TabelaFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                try {
+                    porcaoEmbalagemAtual = Integer.parseInt(charSequence.toString());
+                    tabelaViewModel.setPorcaoEmbalagem(porcaoEmbalagemAtual);
+                }catch (NumberFormatException exception){
+                    porcaoEmbalagemAtual = 0;
+                }
+                tabelaViewModel.setTemDadosSalvos(true);
+            }
+        });
+        binding.nomeProdutoLayout.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                tabelaViewModel.setNomeProduto(charSequence.toString());
+                tabelaViewModel.setTemDadosSalvos(true);
+            }
+        });
+        binding.nomeTabelaLayout.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                tabelaViewModel.setNomeTabela(charSequence.toString());
+                tabelaViewModel.setTemDadosSalvos(true);
             }
         });
 
@@ -184,6 +225,20 @@ public class TabelaFragment extends Fragment {
 
 
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        new android.os.Handler().postDelayed(() -> {
+            Boolean temDadosSalvos = tabelaViewModel.hasDadosSalvos().getValue();
+
+            if ((temDadosSalvos != null && temDadosSalvos) || sharedViewModel.temIngredientesSalvos()) {
+                mostrarDialogContinuarEditando();
+            }
+        }, 250);
+    }
+
     public void atualizarPorcao(double novoValor){
         porcaoAtual = novoValor;
         binding.porcao.setText(String.valueOf(porcaoAtual));
@@ -203,6 +258,8 @@ public class TabelaFragment extends Fragment {
                 if (checkBox != binding.checkBox4) binding.checkBox4.setChecked(false);
 
                 tipoMedida = checkBox.getText().toString();
+                tabelaViewModel.setUnidadeMedida(tipoMedida);
+                tabelaViewModel.setTemDadosSalvos(true);
             }
             else {
                 if (tipoMedida.equals(checkBox.getText().toString())){
@@ -213,6 +270,7 @@ public class TabelaFragment extends Fragment {
     }
     private void criarTabela(Integer usuarioLogado, Map<String,Object> tabela) {
         mostrarCarregando(true);
+        setHabilitarCampos(false);
         api.criarTabela(usuarioLogado, tabela).enqueue(new Callback<GetTabelaDTO>() {
             @Override
             public void onResponse(Call<GetTabelaDTO> call, retrofit2.Response<GetTabelaDTO> response) {
@@ -220,6 +278,7 @@ public class TabelaFragment extends Fragment {
                     GetTabelaDTO tabelaCriada = response.body();
                     preencherDadosTabela(tabelaCriada);
                     mostrarCarregando(false);
+                    setHabilitarCampos(true);
                     binding.cardConteudo.setVisibility(View.VISIBLE);
                     binding.btnNovo.setVisibility(View.VISIBLE);
                     Toast.makeText(getContext(), "Tabela adicionada com sucesso!", Toast.LENGTH_SHORT).show();
@@ -227,6 +286,7 @@ public class TabelaFragment extends Fragment {
                 } else {
                     int code = response.code();
                     mostrarCarregando(false);
+                    setHabilitarCampos(true);
                     Toast.makeText(
                             getContext(),
                             "Erro ao inserir Tabela (" + code + ")\n",
@@ -244,6 +304,7 @@ public class TabelaFragment extends Fragment {
             @Override
             public void onFailure(Call<GetTabelaDTO> call, Throwable t) {
                 mostrarCarregando(false);
+                setHabilitarCampos(true);
                 Toast.makeText(getContext(),
                         "Falha de conexão: " + (t.getMessage() == null ? "desconhecida" : t.getMessage()),
                         Toast.LENGTH_LONG).show();
@@ -254,6 +315,7 @@ public class TabelaFragment extends Fragment {
     }
     private void adicionarTabela(Integer usuarioLogado, Integer idProduto, Map<String,Object> tabela) {
         mostrarCarregando(true);
+        setHabilitarCampos(false);
         api.adicionarTabela(usuarioLogado, idProduto, tabela).enqueue(new Callback<GetTabelaDTO>() {
             @Override
             public void onResponse(Call<GetTabelaDTO> call, retrofit2.Response<GetTabelaDTO> response) {
@@ -261,6 +323,7 @@ public class TabelaFragment extends Fragment {
                     GetTabelaDTO tabelaCriada = response.body();
                     preencherDadosTabela(tabelaCriada);
                     mostrarCarregando(false);
+                    setHabilitarCampos(true);
                     binding.cardConteudo.setVisibility(View.VISIBLE);
                     binding.btnNovo.setVisibility(View.VISIBLE);
 
@@ -268,6 +331,7 @@ public class TabelaFragment extends Fragment {
                 } else {
                     int code = response.code();
                     mostrarCarregando(false);
+                    setHabilitarCampos(true);
                     Toast.makeText(
                             getContext(),
                             "Erro ao inserir Tabela (" + code + ")\n",
@@ -279,6 +343,7 @@ public class TabelaFragment extends Fragment {
             @Override
             public void onFailure(Call<GetTabelaDTO> call, Throwable t) {
                 mostrarCarregando(false);
+                setHabilitarCampos(true);
                 Toast.makeText(getContext(),
                         "Falha de conexão: " + (t.getMessage() == null ? "desconhecida" : t.getMessage()),
                         Toast.LENGTH_LONG).show();
@@ -497,7 +562,71 @@ public class TabelaFragment extends Fragment {
         Log.d("DEBUG_MAP", "tabela: " + novaTabela.toString());
         return novaTabela;
     }
+    private void restaurarUltimasAtualizacoesDadosTabela() {
+        binding.nomeProdutoLayout.getEditText().setText(
+                tabelaViewModel.getNomeProdutoLiveData().getValue() != null ? tabelaViewModel.getNomeProdutoLiveData().getValue() : "");
+        binding.nomeTabelaLayout.getEditText().setText(tabelaViewModel.getNomeTabelaLiveData().getValue() != null ? tabelaViewModel.getNomeTabelaLiveData().getValue() : "");
 
+        binding.porcao.setText(tabelaViewModel.getPorcaoLiveData().getValue() != null ? String.valueOf(tabelaViewModel.getPorcaoLiveData().getValue()) : "");
+        binding.valor.setText(tabelaViewModel.getPorcaoEmbalagemLiveData().getValue() != null ? String.valueOf(tabelaViewModel.getPorcaoEmbalagemLiveData().getValue()) : "");
+        String unidadeMedida = tabelaViewModel.getUnidadeMedidaLiveData().getValue();
+
+        if (Objects.equals(unidadeMedida, "kg")){
+            binding.checkBox.setChecked(true);
+        } else if (Objects.equals(unidadeMedida, "g")) {
+            binding.checkBox2.setChecked(true);
+        } else if (Objects.equals(unidadeMedida, "ml")) {
+            binding.checkBox3.setChecked(true);
+        } else if (Objects.equals(unidadeMedida, "l")) {
+            binding.checkBox4.setChecked(true);
+        }
+    }
+    private void setHabilitarCampos(boolean habilitarCampos){
+        binding.nomeProdutoLayout.getEditText().setEnabled(habilitarCampos);
+        binding.nomeTabelaLayout.getEditText().setEnabled(habilitarCampos);
+        binding.checkBox.setEnabled(habilitarCampos);
+        binding.checkBox.setEnabled(habilitarCampos);
+        binding.checkBox.setEnabled(habilitarCampos);
+        binding.checkBox.setEnabled(habilitarCampos);
+        binding.porcao.setEnabled(habilitarCampos);
+        binding.valor.setEnabled(habilitarCampos);
+        binding.button.setEnabled(habilitarCampos);
+    }
+    private void mostrarDialogContinuarEditando() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Continuar Editando?")
+                .setMessage("Você possui alterações salvas. Deseja continuar editando?")
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    restaurarUltimasAtualizacoesDadosTabela();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Não", (dialog, which) -> {
+                    limparDadosTabela();
+                    tabelaViewModel.setTemDadosSalvos(false);
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
+    private void limparDadosTabela() {
+        binding.nomeProdutoLayout.getEditText().setText("");
+        binding.nomeTabelaLayout.getEditText().setText("");
+        binding.checkBox.setChecked(false);
+        binding.checkBox2.setChecked(false);
+        binding.checkBox3.setChecked(false);
+        binding.checkBox4.setChecked(false);
+        binding.porcao.setText("");
+        binding.valor.setText("");
+        tabelaViewModel.setPorcao(0.0);
+        tabelaViewModel.setPorcaoEmbalagem(0);
+        tabelaViewModel.setUnidadeMedida("");
+        tabelaViewModel.setNomeTabela("");
+        tabelaViewModel.setNomeProduto("");
+        if (tabelaViewModel.getQuantidades().getValue() != null) {
+            tabelaViewModel.getQuantidades().getValue().clear();
+        }
+        sharedViewModel.limparIngredientes();
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
