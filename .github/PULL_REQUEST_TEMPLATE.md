@@ -2,7 +2,7 @@
 
 ## :memo: Descrição:
 
-#### (feature/fix/style/refactor/docs/chore/test/config/perf/security):
+#### (feature/fix/style/refactor/docs/chore/config/perf/security):
 - Indique aqui o tipo da mudança, adicione uma descrição sobre o objetivo dessa Pull Request e o que ela está modificando.
 - O que está sendo incluído:
 
@@ -34,7 +34,7 @@ Adicione vídeos ou prints para comprovar o funcionamento da nova mudança.
 
 - [ ]  A UI está consistente com o design (Figma)
 - [ ]  A navegação funciona corretamente
-- [ ]  Não há craches no log
+- [ ]  Não há crashes no log
 - [ ]  O código segue os padrões do projeto
 - [ ]  A performance não foi afetada
 

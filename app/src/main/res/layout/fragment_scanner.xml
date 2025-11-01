@@ -4,4 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.Scanner.ScannerFragment"/>
+    android:background="#F2F2F2"
+    tools:context=".ui.Scanner.ScannerFragment">
+
+</androidx.constraintlayout.widget.ConstraintLayout>
