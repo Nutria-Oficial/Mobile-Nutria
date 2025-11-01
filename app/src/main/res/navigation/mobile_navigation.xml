@@ -70,17 +70,5 @@
         <action
             android:id="@+id/action_navigation_visualizar_to_navigation_avaliacao_tabela"
             app:destination="@id/navigation_avaliacao_tabela" />
-        <action
-            android:id="@+id/action_navigation_visualizar_to_navigation_exportar"
-            app:destination="@id/navigation_exportar" />
-    </fragment>
-    <fragment
-        android:id="@+id/navigation_exportar"
-        android:name="com.bea.nutria.ExportarFragment"
-        android:label="fragment_exportar"
-        tools:layout="@layout/fragment_exportar" >
-        <action
-            android:id="@+id/action_navigation_exportar_to_navigation_visualizar"
-            app:destination="@id/navigation_visualizar" />
     </fragment>
 </navigation>
