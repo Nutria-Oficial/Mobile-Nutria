@@ -1,9 +1,7 @@
 package com.bea.nutria;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,9 +11,9 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -31,35 +29,17 @@ import com.bea.nutria.api.TabelaAPI;
 import com.bea.nutria.api.conexaoApi.ConexaoAPI;
 import com.bea.nutria.databinding.FragmentAvaliacaoTabelaBinding;
 import com.bea.nutria.model.GetNutrienteDTO;
-import com.bea.nutria.model.GetTabelaDTO;
 import com.bea.nutria.model.GetTabelaEAvaliacaoDTO;
-import com.bea.nutria.ui.Tabela.TabelaFragment;
 
-import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.Credentials;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-///**
-// * A simple {@link Fragment} subclass.
-// * Use the {@link AvaliacaoTabelaFragment#newInstance} factory method to
-// * create an instance of this fragment.
-// */
 public class AvaliacaoTabelaFragment extends Fragment {
 
     private FragmentAvaliacaoTabelaBinding binding;
@@ -79,7 +59,7 @@ public class AvaliacaoTabelaFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentAvaliacaoTabelaBinding.inflate(inflater, container, false);
 
-        conexaoAPI = new ConexaoAPI("http://98.82.4.211:8081");
+        conexaoAPI = new ConexaoAPI("https://api-spring-mongodb.onrender.com");
         api = conexaoAPI.getApi(TabelaAPI.class);
 
         return binding.getRoot();
@@ -208,7 +188,7 @@ public class AvaliacaoTabelaFragment extends Fragment {
             nutrientesInformacao.addView(porcaoNutriente);
             nutrientesInformacao.addView(vd);
             binding.tableLayout.addView(nutrientesInformacao);
-            adicionarValoresTabelaDados(binding.tableLayout.getChildAt(1));
+            adicionarValoresTabelaDados(nutrientesInformacao);
 
             View novaLinha = new View(requireContext());
             TableLayout.LayoutParams novoParams = new TableLayout.LayoutParams(
@@ -223,25 +203,35 @@ public class AvaliacaoTabelaFragment extends Fragment {
     }
     private String corrigirTextoCodificado(String texto) {
         try {
-            StringBuilder resultado = new StringBuilder();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            boolean houveCorrecao = false;
 
-            for (int i = 0; i < texto.length(); i++) {
-                if (texto.charAt(i) == '\\' && i + 3 < texto.length() && texto.charAt(i + 1) == 'x') {
+            for (int i = 0; i < texto.length();) {
+                char c = texto.charAt(i);
+
+                if (c == '\\' && i + 3 < texto.length() && texto.charAt(i + 1) == 'x') {
                     String hex = texto.substring(i + 2, i + 4);
-
                     try {
                         int valor = Integer.parseInt(hex, 16);
-                        resultado.append((char) valor);
-                        i += 3;
+                        out.write(valor);
+                        i += 4;
+                        houveCorrecao = true;
                     } catch (NumberFormatException e) {
-                        resultado.append(texto.charAt(i));
+                        out.write((byte) c);
+                        i++;
                     }
                 } else {
-                    resultado.append(texto.charAt(i));
+                    out.write((byte) c);
+                    i++;
                 }
             }
 
-            return resultado.toString();
+            if (!houveCorrecao) {
+                return texto;
+            }
+
+            return new String(out.toByteArray(), StandardCharsets.UTF_8);
+
         } catch (Exception e) {
             e.printStackTrace();
             return texto;
@@ -307,11 +297,24 @@ public class AvaliacaoTabelaFragment extends Fragment {
     }
     private void mudarCorAvaliacao(Character letter) {
         switch (letter){
-            case 'A': binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_a);
-            case 'B': binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_b);
-            case 'C': binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_c);
-            case 'D': binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_d);
-            case 'E': binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_e);
+            case 'A':
+                binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_a);
+                break;
+            case 'B':
+                binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_b);
+                break;
+            case 'C':
+                binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_c);
+                break;
+            case 'D':
+                binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_d);
+                break;
+            case 'E':
+                binding.avaliacao.setImageResource(R.drawable.ic_avaliacao_e);
+                break;
+            default:
+                Log.w("Avaliacao", "Classificação desconhecida: " + letter);
+                break;
         }
     }
     private void mostrarLegenda(){
