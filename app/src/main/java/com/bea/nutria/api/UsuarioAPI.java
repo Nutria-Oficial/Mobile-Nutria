@@ -11,6 +11,7 @@ import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
+//alteraçãoa teste
 public interface UsuarioAPI {
     //Busca o usuario pelo email
     @GET("usuarios/{email}")
