@@ -13,7 +13,7 @@ import retrofit2.http.Path;
 
 public interface IngredienteAPI {
     @GET("ingredientes")
-    Call<List<IngredienteResponse>> getAllIngredientes();
+    Call<List<IngredienteResponse>> getAllIngredientes(int pagina);
 
     @GET("ingredientes/{id}")
     Call<Ingrediente> getIngredienteById(@Path("id") Integer id);

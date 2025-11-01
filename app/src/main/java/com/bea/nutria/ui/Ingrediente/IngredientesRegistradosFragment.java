@@ -131,8 +131,8 @@ public class IngredientesRegistradosFragment extends Fragment {
         return view;
     }
 
-    private void getAllIngredientes() {
-        ingredienteApi.getAllIngredientes().enqueue(new Callback<List<IngredienteResponse>>() {
+    private void getAllIngredientes(int pagina) {
+        ingredienteApi.getAllIngredientes(pagina).enqueue(new Callback<List<IngredienteResponse>>() {
             @Override
             public void onResponse(Call<List<IngredienteResponse>> call, Response<List<IngredienteResponse>> response) {
                 if (getActivity() == null) return;
