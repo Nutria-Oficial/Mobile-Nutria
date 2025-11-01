@@ -1,161 +1,141 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:layout_marginStart="16dp"
-android:layout_marginEnd="16dp"
-android:layout_marginTop="8dp"
-android:backgroundTint="#FFFFFF"
-app:cardCornerRadius="12dp"
-app:cardElevation="0dp"
-app:cardUseCompatPadding="true"
-app:strokeColor="#DDDDDD"
-app:strokeWidth="1dp">
-
-<LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="8dp"
+    android:backgroundTint="#FFFFFF"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp"
+    app:cardUseCompatPadding="true"
+    app:strokeColor="#DDDDDD"
+    app:strokeWidth="1dp">
 
-    <!-- Header do Card -->
     <LinearLayout
-        android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="?attr/selectableItemBackground">
+        android:orientation="vertical">
 
-        <!-- Ícone de Dropdown -->
-        <ImageView
-            android:id="@+id/iconeDropdown"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="8dp"
-            android:contentDescription="Expandir tabela nutricional"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_arrow_down" />
-
-        <!-- Nome do Ingrediente -->
-        <TextView
-            android:id="@+id/txtNomeIngrediente"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Frango"
-            android:textColor="#333333"
-            android:textSize="18sp" />
-
-        <!-- Botão Adicionar -->
-        <Button
-            android:id="@+id/btAddIngrediente"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#EE7026"
-            android:text="Adicionar"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            app:cornerRadius="25dp" />
-    </LinearLayout>
-
-    <!-- Tabela Nutricional (inicialmente oculta) -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardTabelaNutricional"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:visibility="gone"
-        app:cardBackgroundColor="#F8F8F8"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
-        app:strokeColor="#EEEEEE"
-        app:strokeWidth="1dp">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <!-- Header do Card -->
+        <LinearLayout
+            android:id="@+id/layoutHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
 
-            <!-- Loading Indicator -->
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:indeterminateTint="#EE7026"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <!-- Ícone de Dropdown -->
+            <ImageView
+                android:id="@+id/iconeDropdown"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_arrow_down"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Expandir tabela nutricional" />
 
-            <!-- Container da Tabela -->
-            <LinearLayout
-                android:id="@+id/containerTabela"
+            <!-- Nome do Ingrediente -->
+            <TextView
+                android:id="@+id/txtNomeIngrediente"
+                android:layout_width="197dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:text="Frango"
+                android:textColor="#333333"
+                android:textSize="16sp" />
+
+            <!-- Botão Adicionar -->
+            <Button
+                android:id="@+id/btAddIngrediente"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#EE7026"
+                android:text="Adicionar"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="25dp" />
+        </LinearLayout>
+
+        <!-- Tabela Nutricional (inicialmente oculta) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardTabelaNutricional"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="#F8F8F8"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#EEEEEE"
+            app:strokeWidth="1dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:padding="12dp">
 
-                <TextView
-                    android:id="@+id/tvTabelaTitulo"
+                <!-- Loading Indicator -->
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:indeterminateTint="#EE7026"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Container da Tabela -->
+                <LinearLayout
+                    android:id="@+id/containerTabela"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/montserrat_semibold"
-                    android:text="Tabela Nutricional"
-                    android:textAlignment="center"
-                    android:textColor="#0B0B0B"
-                    android:textSize="16sp" />
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/tvPorcaoEmbalagemColuna"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Porção por embalagem:"
-                    android:textColor="#5A5A5A"
-                    android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/tvTabelaTitulo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_semibold"
+                        android:text="Tabela Nutricional"
+                        android:textAlignment="center"
+                        android:textColor="#0B0B0B"
+                        android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/tvPorcaoColuna"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="2dp"
-                    android:text="Porção: "
-                    android:textColor="#5A5A5A"
-                    android:textSize="12sp" />
+                    <View
+                        android:id="@+id/dividerHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="8dp"
+                        android:background="#000000" />
 
-                <View
-                    android:id="@+id/dividerHeader"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_marginTop="8dp"
-                    android:background="#000000" />
+                    <TableLayout
+                        android:id="@+id/tableLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:shrinkColumns="*"
+                        android:stretchColumns="*" />
 
-                <TableLayout
-                    android:id="@+id/tableLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:shrinkColumns="*"
-                    android:stretchColumns="*" />
+                </LinearLayout>
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-</LinearLayout>
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>
