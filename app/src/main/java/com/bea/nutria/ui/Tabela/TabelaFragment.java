@@ -41,6 +41,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -79,7 +80,7 @@ public class TabelaFragment extends Fragment {
         setCheckBoxListener(binding.checkBox3);
         setCheckBoxListener(binding.checkBox4);
 
-        conexaoAPI = new ConexaoAPI("https://api-spring-mongodb.onrender.com");
+        conexaoAPI = new ConexaoAPI("http://98.82.4.211:8081");
         api = conexaoAPI.getApi(TabelaAPI.class);
 
 
@@ -160,9 +161,9 @@ public class TabelaFragment extends Fragment {
 
                 if (getArguments() != null) {
                     Integer idProduto = getArguments().getInt("idProduto");
-                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> adicionarTabela(2, idProduto, getTabelaInformacoes(adapter.getQuantidades())));
+                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> adicionarTabela(27, idProduto, getTabelaInformacoes(adapter.getQuantidades())));
                 } else {
-                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> criarTabela(2, getTabelaInformacoes(adapter.getQuantidades())));
+                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> criarTabela(27, getTabelaInformacoes(adapter.getQuantidades())));
                 }
             }else {
                 Toast.makeText(getContext(),
@@ -347,27 +348,48 @@ public class TabelaFragment extends Fragment {
             nutrientesInformacao.addView(vd);
             binding.tableLayout.addView(nutrientesInformacao);
 
-            binding.tableLayout.addView(linha);
+            View novaLinha = new View(requireContext());
+            TableLayout.LayoutParams novoParams = new TableLayout.LayoutParams(
+                    TableLayout.LayoutParams.MATCH_PARENT, 1
+            );
+            novaLinha.setLayoutParams(novoParams);
+            novaLinha.setBackgroundColor(Color.parseColor("#E0E0E0"));
+            binding.tableLayout.addView(novaLinha);
 
         }
 
     }
     private String corrigirTextoCodificado(String texto) {
         try {
-            String corrigido = texto.replaceAll("\\\\\\\\x", "\\x");
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            boolean houveCorrecao = false;
 
-            byte[] bytes = new byte[corrigido.length() / 4];
-            int index = 0;
+            for (int i = 0; i < texto.length();) {
+                char c = texto.charAt(i);
 
-            for (int i = 0; i < corrigido.length(); i++) {
-                if (corrigido.charAt(i) == '\\' && corrigido.charAt(i + 1) == 'x') {
-                    String hex = corrigido.substring(i + 2, i + 4);
-                    bytes[index++] = (byte) Integer.parseInt(hex, 16);
-                    i += 3;
+                if (c == '\\' && i + 3 < texto.length() && texto.charAt(i + 1) == 'x') {
+                    String hex = texto.substring(i + 2, i + 4);
+                    try {
+                        int valor = Integer.parseInt(hex, 16);
+                        out.write(valor);
+                        i += 4;
+                        houveCorrecao = true;
+                    } catch (NumberFormatException e) {
+                        out.write((byte) c);
+                        i++;
+                    }
+                } else {
+                    out.write((byte) c);
+                    i++;
                 }
             }
 
-            return new String(bytes, 0, index, StandardCharsets.UTF_8);
+            if (!houveCorrecao) {
+                return texto;
+            }
+
+            return new String(out.toByteArray(), StandardCharsets.UTF_8);
+
         } catch (Exception e) {
             e.printStackTrace();
             return texto;
@@ -429,9 +451,8 @@ public class TabelaFragment extends Fragment {
         boolean nomeTabelaValido = validarCampoObrigatorio(binding.nomeTabelaLayout, binding.nomeTabelaEdit);
         boolean checkBoxSelecionado = binding.checkBox.isChecked() || binding.checkBox2.isChecked() || binding.checkBox3.isChecked() || binding.checkBox4.isChecked();
 
-        //verificar se tem ingredientes adicionados
         return nomeProdutoValido && nomeTabelaValido && checkBoxSelecionado && !binding.porcao.getText().equals("0") && !binding.porcaoEmbalagem.getText().equals("0") && (adapter.getItemCount() > 0);
-    }    
+    }
     private void setupRecyclerView() {
         adapter = new TabelaAdapter(getContext(), new ArrayList<>(), tabelaViewModel);
 
