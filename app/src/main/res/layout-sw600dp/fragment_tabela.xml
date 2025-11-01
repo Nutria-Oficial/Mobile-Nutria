@@ -394,7 +394,9 @@
                                 android:id="@+id/progressBar"
                                 style="?android:attr/progressBarStyleLarge"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:indeterminateTint="#EE7026"
+                                android:indeterminateTintMode="src_in" />
 
                             <TextView
                                 android:id="@+id/textView7"
@@ -412,9 +414,8 @@
                             android:id="@+id/cardConteudo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="32dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginEnd="32dp"
+                            android:layout_marginStart="22dp"
+                            android:layout_marginEnd="22dp"
                             android:visibility="gone"
                             app:cardUseCompatPadding="false"
                             app:layout_constraintBottom_toBottomOf="parent"

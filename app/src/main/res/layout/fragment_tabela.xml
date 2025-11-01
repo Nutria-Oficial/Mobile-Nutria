@@ -59,7 +59,7 @@
                             android:id="@+id/textView2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="32dp"
+                            android:layout_marginStart="24dp"
                             android:layout_marginTop="28dp"
                             android:fontFamily="@font/montserrat_regular"
                             android:text="Nome do Produto"
@@ -124,7 +124,7 @@
                             android:id="@+id/textView5"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="32dp"
+                            android:layout_marginStart="24dp"
                             android:layout_marginTop="12dp"
                             android:fontFamily="@font/montserrat_regular"
                             android:text="Nome da Tabela"
@@ -163,7 +163,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:layout_marginEnd="44dp"
+                            android:layout_marginEnd="32dp"
                             android:buttonTint="#B6BDC7"
                             android:text="l"
                             android:textColor="#757575"
@@ -389,7 +389,9 @@
                                 android:id="@+id/progressBar"
                                 style="?android:attr/progressBarStyleLarge"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:indeterminateTint="#EE7026"
+                                android:indeterminateTintMode="src_in" />
 
                             <TextView
                                 android:id="@+id/textView7"
@@ -409,7 +411,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="32dp"
                             android:layout_marginStart="22dp"
-                            android:layout_marginTop="10dp"
                             android:layout_marginEnd="22dp"
                             android:visibility="gone"
                             app:cardUseCompatPadding="false"
