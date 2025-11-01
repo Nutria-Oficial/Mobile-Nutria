@@ -125,7 +125,6 @@ public class TabelaProdutoFragment extends Fragment {
         nav.navigate(R.id.action_tabelaProdutoFragment_to_navigation_tabela, args);
     }
 
-    // conversa com a APiI
     private void carregarTabelasPorProduto(String id) {
         new Thread(() -> {
             HttpURLConnection conn = null;
@@ -236,7 +235,6 @@ public class TabelaProdutoFragment extends Fragment {
         }).start();
     }
 
-    // decide o texto de porção
     private String resolvePorcaoTexto(JSONObject tabela) {
         String porcaoTxt = tabela.optString("porcaoTexto", null);
         if (porcaoTxt != null && !porcaoTxt.trim().isEmpty()) return porcaoTxt;
@@ -245,7 +243,6 @@ public class TabelaProdutoFragment extends Fragment {
         return "Porção";
     }
 
-    // joga tudo na tela
     private void aplicarTabelas(@NonNull List<Tabela> tabelas,
                                 @NonNull List<String> novasAvaliacoes) {
         avaliacoes.clear();
@@ -273,13 +270,11 @@ public class TabelaProdutoFragment extends Fragment {
         }
     }
 
-    // liga/desliga o carregamento
     private void showLoading(boolean show) {
         if (loadingOverlay != null) loadingOverlay.setVisibility(show ? View.VISIBLE : View.GONE);
         if (cardConteudo != null)   cardConteudo.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
     }
 
-    // manda pro main thread
     private void postUi(Runnable r) {
         if (isAdded()) requireActivity().runOnUiThread(r);
     }
