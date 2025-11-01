@@ -190,6 +190,7 @@ public class HistoricoFragment extends Fragment implements HistoricoAdapter.OnIt
                 aplicarLista(new ArrayList<>());
             }
 
+
             @Override
             public void onFailure(@NonNull Call<Usuario> call, @NonNull Throwable t) {
                 // Garante que o fragmento ainda esteja ativo
