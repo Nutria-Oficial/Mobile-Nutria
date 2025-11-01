@@ -1,6 +1,7 @@
 package com.bea.nutria.ui.Scanner;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,23 +54,30 @@ public class ResultadoFragment extends Fragment {
             } catch (Exception ignored) {}
         }
 
+        // Log para debug
+        Log.d("ResultadoFragment", "Nome: " + nome);
+        Log.d("ResultadoFragment", "Porção: " + porcao);
+        Log.d("ResultadoFragment", "Nutrientes: " + (nutrientes != null ? nutrientes.size() : "null"));
+
         tvTitulo.setText(TextUtils.isEmpty(nome) ? "Ingrediente" : nome);
         tvPorcao.setText("Porção aproximada do ingrediente");
         tvPorcaoColuna.setText(TextUtils.isEmpty(porcao) ? "" : porcao);
 
-        int childCount = table.getChildCount();
-        if (childCount > 0) {
-            table.removeAllViews();
-            addHeader(table);
-        } else {
-            addHeader(table);
-        }
+        // Limpa a tabela completamente
+        table.removeAllViews();
 
-        for (ScannerAPI.NutrienteDTO n : nutrientes) {
-            addRow(table,
-                    safe(n.nome),
-                    safe(n.valor),
-                    safe(n.vd));
+        // Adiciona cabeçalho
+        addHeader(table);
+
+        // Adiciona linhas dos nutrientes
+        if (nutrientes != null && !nutrientes.isEmpty()) {
+            for (ScannerAPI.NutrienteDTO n : nutrientes) {
+                addRow(table, safe(n.nome), safe(n.valor), safe(n.vd));
+            }
+        } else {
+            // Se não tiver nutrientes, mostra mensagem
+            Log.e("ResultadoFragment", "Lista de nutrientes vazia!");
+            addRow(table, "Nenhum nutriente encontrado", "-", "-");
         }
 
         voltar.setOnClickListener(v1 -> requireActivity().onBackPressed());

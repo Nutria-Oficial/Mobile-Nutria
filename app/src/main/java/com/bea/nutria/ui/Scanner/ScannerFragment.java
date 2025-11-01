@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import java.text.Normalizer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,6 @@ import com.bea.nutria.api.ScannerClient;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -47,8 +47,6 @@ public class ScannerFragment extends Fragment {
     private PreviewView previewView;
     private LifecycleCameraController cameraController;
     private ImageButton btnTirarFoto;
-
-    // overlay loading (ids existem no seu fragment_scanner.xml)
     private ProgressBar progressBarEnvio;
 
     @Override
@@ -129,16 +127,11 @@ public class ScannerFragment extends Fragment {
     }
 
     private void enviarParaServidor(File foto, String nomeIngrediente) {
-        // monta multipart
         RequestBody requestFile = RequestBody.create(foto, MediaType.parse("image/jpeg"));
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", foto.getName(), requestFile);
 
-        // cria chamada Retrofit
         ScannerAPI api = ScannerClient.createService();
-
-        // dá um tempo humano para back-end respirar (timeouts do cliente ficam no OkHttp padrão)
-        Call<ScannerAPI.ScannerResultadoDTO> call =
-                api.enviarScanner(body, nomeIngrediente);
+        Call<ScannerAPI.ScannerResultadoDTO> call = api.enviarScanner(body, nomeIngrediente);
 
         call.enqueue(new Callback<ScannerAPI.ScannerResultadoDTO>() {
             @Override
@@ -148,7 +141,21 @@ public class ScannerFragment extends Fragment {
                 mostrarCarregando(false);
 
                 if (response.isSuccessful() && response.body() != null) {
-                    abrirResultadoFragment(response.body());
+                    ScannerAPI.ScannerResultadoDTO dto = response.body();
+
+                    // Log para debug
+                    Log.d("ScannerFragment", "DTO recebido:");
+                    Log.d("ScannerFragment", "Nome: " + dto.nomeIngrediente);
+                    Log.d("ScannerFragment", "Porção: " + dto.porcao);
+                    Log.d("ScannerFragment", "Nutrientes: " + (dto.nutrientes != null ? dto.nutrientes.size() : "null"));
+
+                    if (dto.nutrientes != null) {
+                        for (ScannerAPI.NutrienteDTO n : dto.nutrientes) {
+                            Log.d("ScannerFragment", "  - " + n.nome + ": " + n.valor + " (" + n.vd + ")");
+                        }
+                    }
+
+                    abrirResultadoFragment(dto);
                 } else {
                     Toast.makeText(requireContext(),
                             "Servidor: " + response.code(),
@@ -172,7 +179,7 @@ public class ScannerFragment extends Fragment {
         b.putString("nomeIngrediente", dto.nomeIngrediente != null ? dto.nomeIngrediente : "");
         b.putString("porcao", dto.porcao != null ? dto.porcao : "");
         b.putSerializable("nutrientes",
-                dto.nutrientes != null ? new ArrayList<>(dto.nutrientes) : null);
+                dto.nutrientes != null ? new ArrayList<>(dto.nutrientes) : new ArrayList<>());
 
         ResultadoFragment fragment = new ResultadoFragment();
         fragment.setArguments(b);
