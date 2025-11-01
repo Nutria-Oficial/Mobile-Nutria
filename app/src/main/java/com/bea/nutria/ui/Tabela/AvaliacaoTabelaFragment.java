@@ -1,4 +1,4 @@
-package com.bea.nutria;
+package com.bea.nutria.ui.Tabela;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -25,6 +25,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bea.nutria.R;
 import com.bea.nutria.api.TabelaAPI;
 import com.bea.nutria.api.conexaoApi.ConexaoAPI;
 import com.bea.nutria.databinding.FragmentAvaliacaoTabelaBinding;

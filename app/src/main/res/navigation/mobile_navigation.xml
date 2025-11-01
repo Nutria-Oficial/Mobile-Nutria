@@ -72,7 +72,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_avaliacao_tabela"
-        android:name="com.bea.nutria.AvaliacaoTabelaFragment"
+        android:name="com.bea.nutria.ui.Tabela.AvaliacaoTabelaFragment"
         android:label="fragment_avaliacao_tabela"
         tools:layout="@layout/fragment_avaliacao_tabela">
 
@@ -85,7 +85,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_visualizar"
-        android:name="com.bea.nutria.VisualizarFragment"
+        android:name="com.bea.nutria.ui.Tabela.VisualizarFragment"
         android:label="fragment_visualizar"
         tools:layout="@layout/fragment_visualizar" >
         <action

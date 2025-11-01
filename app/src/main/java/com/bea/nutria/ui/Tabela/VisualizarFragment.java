@@ -1,4 +1,4 @@
-package com.bea.nutria;
+package com.bea.nutria.ui.Tabela;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -29,12 +29,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bea.nutria.databinding.FragmentAvaliacaoTabelaBinding;
+import com.bea.nutria.R;
 import com.bea.nutria.databinding.FragmentVisualizarBinding;
 import com.bea.nutria.databinding.TelaDeslizavelBinding;
-import com.bea.nutria.model.GetNutrienteDTO;
-import com.bea.nutria.model.GetTabelaDTO;
-import com.bea.nutria.model.GetTabelaEAvaliacaoDTO;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,7 +39,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Locale;
 
 
 public class VisualizarFragment extends Fragment {
