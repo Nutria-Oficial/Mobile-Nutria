@@ -52,9 +52,11 @@
             app:cardElevation="4dp">
 
             <ScrollView
+                android:id="@+id/scrollView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fillViewport="true">
+                android:fillViewport="true"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:id="@+id/layoutInformacoes"
@@ -110,7 +112,9 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/button">
+                        app:layout_constraintTop_toBottomOf="@id/button"
+                        app:strokeColor="#000000"
+                        app:strokeWidth="0.5dp">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
@@ -181,7 +185,9 @@
                         android:id="@+id/avaliacaoComentarios"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
                         android:layout_marginTop="18dp"
+                        android:layout_marginRight="30dp"
                         android:layout_marginBottom="18dp"
                         android:fontFamily="@font/montserrat_semibold"
                         android:text="Avaliações e sugestões"
@@ -212,7 +218,7 @@
         android:background="#80FFFFFF"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ProgressBar
             android:id="@+id/progressBar"

@@ -41,20 +41,22 @@
                 android:textSize="24sp" />
         </LinearLayout>
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardViewConteudo"
             android:layout_width="match_parent"
             android:layout_height="596dp"
             android:layout_marginTop="8dp"
             android:layout_weight="1"
             app:cardBackgroundColor="#FFFFFF"
-            app:cardCornerRadius="30dp"
+            app:shapeAppearanceOverlay="@style/CardTopRounded"
             app:cardElevation="4dp">
 
             <ScrollView
+                android:id="@+id/scrollView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fillViewport="true">
+                android:fillViewport="true"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:id="@+id/layoutInformacoes"
@@ -101,12 +103,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="25dp"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         app:cardUseCompatPadding="false"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/button">
+                        app:layout_constraintTop_toBottomOf="@id/button"
+                        app:strokeColor="#000000"
+                        app:strokeWidth="0.5dp">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
@@ -194,11 +198,12 @@
                         android:text="Exportar tabela"
                         android:textAllCaps="false"
                         android:textSize="14sp"
+                        android:textStyle="bold"
                         app:cornerRadius="8dp" />
 
                 </LinearLayout>
             </ScrollView>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
     <LinearLayout
@@ -208,7 +213,7 @@
         android:background="#80FFFFFF"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ProgressBar
             android:id="@+id/progressBar"
