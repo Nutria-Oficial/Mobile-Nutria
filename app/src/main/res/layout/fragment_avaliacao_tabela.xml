@@ -123,6 +123,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/montserrat_semibold"
                                 android:text="Tabela Nutricional"
+                                android:textAlignment="center"
                                 android:textColor="#0B0B0B"
                                 android:textSize="16sp"
                                 app:layout_constraintEnd_toEndOf="parent"
