@@ -194,8 +194,6 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
             progressBar = itemView.findViewById(R.id.progressBar);
             containerTabela = itemView.findViewById(R.id.containerTabela);
             tvTabelaTitulo = itemView.findViewById(R.id.tvTabelaTitulo);
-            tvPorcaoEmbalagemColuna = itemView.findViewById(R.id.tvPorcaoEmbalagemColuna);
-            tvPorcaoColuna = itemView.findViewById(R.id.tvPorcaoColuna);
             tableLayout = itemView.findViewById(R.id.tableLayout);
         }
 
@@ -314,8 +312,6 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
 
             // atualizar título e porções
             tvTabelaTitulo.setText("Tabela Nutricional");
-            tvPorcaoEmbalagemColuna.setText("Porção por embalagem: 1");
-            tvPorcaoColuna.setText("Porção: 100g");
 
             int padding = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP, 8,
@@ -328,11 +324,9 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
 
             TextView coluna1 = criarTextViewColuna("Nutriente", true);
             TextView coluna2 = criarTextViewColuna("Valor", true);
-            TextView coluna3 = criarTextViewColuna("%VD*", true);
 
             nomeColuna.addView(coluna1);
             nomeColuna.addView(coluna2);
-            nomeColuna.addView(coluna3);
             tableLayout.addView(nomeColuna);
 
             // linha divisória
@@ -341,215 +335,180 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
             // adicionar nutrientes principais
             if (ingrediente.getCaloria() > 0) {
                 adicionarLinhaNutriente("Calorias",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f kcal", ingrediente.getCaloria()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f kcal", ingrediente.getCaloria()));
             }
 
             if (ingrediente.getProteina() > 0) {
                 adicionarLinhaNutriente("Proteínas",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getProteina()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getProteina()));
             }
 
             if (ingrediente.getCarboidrato() > 0) {
                 adicionarLinhaNutriente("Carboidratos",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getCarboidrato()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getCarboidrato()));
             }
 
             if (ingrediente.getAcucar() > 0) {
                 adicionarLinhaNutriente("  Açúcar",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getAcucar()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getAcucar()));
             }
 
             if (ingrediente.getGorduraTotal() > 0) {
                 adicionarLinhaNutriente("Gorduras Totais",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getGorduraTotal()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getGorduraTotal()));
             }
 
             if (ingrediente.getGorduraSaturada() > 0) {
                 adicionarLinhaNutriente("  Gordura Saturada",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getGorduraSaturada()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getGorduraSaturada()));
             }
 
             if (ingrediente.getGorduraMonoinsaturada() > 0) {
                 adicionarLinhaNutriente("  Gordura Monoinsaturada",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getGorduraMonoinsaturada()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getGorduraMonoinsaturada()));
             }
 
             if (ingrediente.getGorduraPoliinsaturada() > 0) {
                 adicionarLinhaNutriente("  Gordura Poliinsaturada",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getGorduraPoliinsaturada()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getGorduraPoliinsaturada()));
             }
 
             if (ingrediente.getFibra() > 0) {
                 adicionarLinhaNutriente("Fibras",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getFibra()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getFibra()));
             }
 
             if (ingrediente.getSodio() > 0) {
                 adicionarLinhaNutriente("Sódio",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getSodio()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getSodio()));
             }
 
             if (ingrediente.getColesterol() > 0) {
                 adicionarLinhaNutriente("Colesterol",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getColesterol()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getColesterol()));
             }
 
             if (ingrediente.getAgua() > 0) {
                 adicionarLinhaNutriente("Água",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getAgua()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getAgua()));
             }
 
             // minerais
             if (ingrediente.getCalcio() > 0) {
                 adicionarLinhaNutriente("Cálcio",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getCalcio()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getCalcio()));
             }
 
             if (ingrediente.getFerro() > 0) {
                 adicionarLinhaNutriente("Ferro",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getFerro()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getFerro()));
             }
 
             if (ingrediente.getMagnesio() > 0) {
                 adicionarLinhaNutriente("Magnésio",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getMagnesio()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getMagnesio()));
             }
 
             if (ingrediente.getFosforo() > 0) {
                 adicionarLinhaNutriente("Fósforo",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getFosforo()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getFosforo()));
             }
 
             if (ingrediente.getPotassio() > 0) {
                 adicionarLinhaNutriente("Potássio",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getPotassio()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getPotassio()));
             }
 
             if (ingrediente.getZinco() > 0) {
                 adicionarLinhaNutriente("Zinco",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getZinco()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getZinco()));
             }
 
             if (ingrediente.getCobre() > 0) {
                 adicionarLinhaNutriente("Cobre",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getCobre()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getCobre()));
             }
 
             if (ingrediente.getSelenio() > 0) {
                 adicionarLinhaNutriente("Selênio",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mcg", ingrediente.getSelenio()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mcg", ingrediente.getSelenio()));
             }
 
             // vitaminas
             if (ingrediente.getVitaminaC() > 0) {
                 adicionarLinhaNutriente("Vitamina C",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getVitaminaC()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getVitaminaC()));
             }
 
             if (ingrediente.getVitaminaD() > 0) {
                 adicionarLinhaNutriente("Vitamina D",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mcg", ingrediente.getVitaminaD()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mcg", ingrediente.getVitaminaD()));
             }
 
             if (ingrediente.getVitaminaE() > 0) {
                 adicionarLinhaNutriente("Vitamina E",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getVitaminaE()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getVitaminaE()));
             }
 
             if (ingrediente.getVitaminaK() > 0) {
                 adicionarLinhaNutriente("Vitamina K",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mcg", ingrediente.getVitaminaK()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mcg", ingrediente.getVitaminaK()));
             }
 
             if (ingrediente.getVitaminaB6() > 0) {
                 adicionarLinhaNutriente("Vitamina B6",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getVitaminaB6()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getVitaminaB6()));
             }
 
             if (ingrediente.getVitaminaB12() > 0) {
                 adicionarLinhaNutriente("Vitamina B12",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mcg", ingrediente.getVitaminaB12()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mcg", ingrediente.getVitaminaB12()));
             }
 
             if (ingrediente.getTiamina() > 0) {
                 adicionarLinhaNutriente("Tiamina (B1)",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getTiamina()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getTiamina()));
             }
 
             if (ingrediente.getRiboflavina() > 0) {
                 adicionarLinhaNutriente("Riboflavina (B2)",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getRiboflavina()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getRiboflavina()));
             }
 
             if (ingrediente.getNiacina() > 0) {
                 adicionarLinhaNutriente("Niacina (B3)",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getNiacina()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getNiacina()));
             }
 
             if (ingrediente.getFolato() > 0) {
                 adicionarLinhaNutriente("Folato",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mcg", ingrediente.getFolato()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mcg", ingrediente.getFolato()));
             }
 
             if (ingrediente.getRetinol() > 0) {
                 adicionarLinhaNutriente("Retinol (Vitamina A)",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mcg", ingrediente.getRetinol()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mcg", ingrediente.getRetinol()));
             }
 
             if (ingrediente.getColina() > 0) {
                 adicionarLinhaNutriente("Colina",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getColina()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getColina()));
             }
 
             // outros compostos
             if (ingrediente.getCafeina() > 0) {
                 adicionarLinhaNutriente("Cafeína",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getCafeina()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getCafeina()));
             }
 
             if (ingrediente.getTeobromina() > 0) {
                 adicionarLinhaNutriente("Teobromina",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getTeobromina()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f mg", ingrediente.getTeobromina()));
             }
 
             if (ingrediente.getAlcool() > 0) {
                 adicionarLinhaNutriente("Álcool",
-                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getAlcool()),
-                        "-");
+                        String.format(Locale.forLanguageTag("pt-BR"), "%.2f g", ingrediente.getAlcool()));
             }
         }
 
@@ -566,7 +525,7 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
             return textView;
         }
 
-        private void adicionarLinhaNutriente(String nutriente, String valor, String vd) {
+        private void adicionarLinhaNutriente(String nutriente, String valor) {
             int padding = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP, 8,
                     context.getResources().getDisplayMetrics()
@@ -577,11 +536,9 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
 
             TextView tvNutriente = criarTextViewColuna(nutriente, false);
             TextView tvValor = criarTextViewColuna(valor, false);
-            TextView tvVd = criarTextViewColuna(vd, false);
 
             row.addView(tvNutriente);
             row.addView(tvValor);
-            row.addView(tvVd);
 
             tableLayout.addView(row);
             adicionarDivisor();

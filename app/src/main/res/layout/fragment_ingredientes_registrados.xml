@@ -40,7 +40,8 @@
                     android:src="@drawable/ic_busca"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="Buscar ingrediente" />
 
                 <EditText
                     android:id="@+id/editPesquisar"
@@ -59,17 +60,93 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewIngredientes"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:clipToPadding="false"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/cardPaginacao"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buscar" />
+
+        <!-- ProgressBar de Carregamento -->
+        <ProgressBar
+            android:id="@+id/progressBarIngredientes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="#EE7026"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/cardPaginacao"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buscar" />
+
+        <!-- Card de Paginação -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardPaginacao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="25dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="8dp">
+
+                <!-- Botão Página Anterior -->
+                <ImageView
+                    android:id="@+id/btnPaginaAnterior"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Página anterior"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_arrow_left"
+                    app:tint="#EE7026" />
+
+                <!-- Número da Página -->
+                <TextView
+                    android:id="@+id/tvNumeroPagina"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center"
+                    android:minWidth="40dp"
+                    android:text="1"
+                    android:textColor="#333333"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <!-- Botão Próxima Página -->
+                <ImageView
+                    android:id="@+id/btnProximaPagina"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Próxima página"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_arrow_right"
+                    app:tint="#EE7026" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
