@@ -322,7 +322,7 @@ public class ComparacaoFragment extends Fragment {
     }
 
     /**
-     * Restaura o Fragment para o estado inicial.
+     *  Restaura o Fragment para o estado inicial.
      */
     private void resetEstado() {
         demonstracaoItem1.setVisibility(View.VISIBLE);
