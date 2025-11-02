@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
                 android:background="@drawable/bg_quantidade"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:minWidth="60dp"
                 android:minHeight="30dp"
                 android:text="100.0"
