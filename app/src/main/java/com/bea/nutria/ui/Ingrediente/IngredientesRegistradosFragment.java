@@ -88,74 +88,18 @@ public class IngredientesRegistradosFragment extends Fragment {
         sharedViewModel.getIngredientesSelecionados().observe(getViewLifecycleOwner(), selecionados -> {
             if (selecionados != null) {
                 adapter.restaurarSelecao(selecionados);
-                // Se estiver na página 1, recarregar para mostrar os selecionados no topo
-                if (paginaAtual == 0 && !estaBuscandoPorNome) {
-                    carregarPagina(paginaAtual);
-                }
             }
         });
 
-        sharedViewModel.getNovoIngredienteAdicionado().observe(getViewLifecycleOwner(), novoIngrediente -> {
-            if (novoIngrediente != null) {
-                // Adiciona aos selecionados
-                List<IngredienteResponse> selecionados = sharedViewModel.getIngredientesSelecionados().getValue();
-                if (selecionados == null) {
-                    selecionados = new ArrayList<>();
-                }
-
-                // Verifica se já não está na lista
-                boolean jaExiste = false;
-                for (IngredienteResponse ing : selecionados) {
-                    if (ing.getId().equals(novoIngrediente.getId())) {
-                        jaExiste = true;
-                        break;
-                    }
-                }
-
-                if (!jaExiste) {
-                    selecionados.add(0, novoIngrediente);
-                    sharedViewModel.setIngredientesSelecionados(selecionados);
-                }
-
-                // Se estiver na página 1, adiciona no topo da lista visível
-                if (paginaAtual == 0) {
-                    listaIngredientes.add(0, novoIngrediente);
-                    adapter.atualizarLista(listaIngredientes);
-                    recyclerViewIngredientes.scrollToPosition(0);
-                }
-            }
-        });
-
-        // listener para mudanças no adapter
         adapter.setOnIngredienteChangeListener(new IngredienteAdapter.OnIngredienteChangeListener() {
             @Override
             public void onIngredienteAdicionado(IngredienteResponse ingrediente) {
                 sharedViewModel.setIngredientesSelecionados(adapter.getListaSelecionados());
-
-                // Se estiver na página 1, move para o topo
-                if (paginaAtual == 0) {
-                    moverIngredienteParaTopo(ingrediente);
-                    adapter.atualizarLista(listaIngredientes);
-                    recyclerViewIngredientes.scrollToPosition(0);
-                } else {
-                    // Se estiver em outra página, remove da lista atual
-                    removerIngredienteDaLista(ingrediente);
-                    adapter.atualizarLista(listaIngredientes);
-                }
             }
 
             @Override
             public void onIngredienteRemovido(IngredienteResponse ingrediente) {
                 sharedViewModel.setIngredientesSelecionados(adapter.getListaSelecionados());
-
-                // Se estiver na página 1, pode precisar remover do topo
-                if (paginaAtual == 0) {
-                    adapter.atualizarLista(listaIngredientes);
-                } else {
-                    // Se estava em outra página e foi removido, adiciona de volta
-                    listaIngredientes.add(ingrediente);
-                    adapter.atualizarLista(listaIngredientes);
-                }
             }
         });
 
@@ -246,60 +190,8 @@ public class IngredientesRegistradosFragment extends Fragment {
 
                     listaIngredientes.clear();
 
-                    // Se for a primeira página, adicionar ingredientes selecionados no topo
-                    if (pagina == 0) {
-                        List<IngredienteResponse> selecionados = sharedViewModel.getIngredientesSelecionados().getValue();
-
-                        if (selecionados != null && !selecionados.isEmpty()) {
-                            // Adiciona os selecionados primeiro
-                            listaIngredientes.addAll(selecionados);
-                        }
-
-                        // Adiciona os ingredientes do banco, verificando duplicatas
-                        if (listaDoBanco != null) {
-                            for (IngredienteResponse ingBanco : listaDoBanco) {
-                                boolean jaAdicionado = false;
-
-                                // Verifica se já está nos selecionados
-                                if (selecionados != null) {
-                                    for (IngredienteResponse ingSel : selecionados) {
-                                        if (ingBanco.getId().equals(ingSel.getId())) {
-                                            jaAdicionado = true;
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                // Se não está duplicado, adiciona
-                                if (!jaAdicionado) {
-                                    listaIngredientes.add(ingBanco);
-                                }
-                            }
-                        }
-                    } else {
-                        // Em outras páginas, adiciona a lista do banco mas remove os selecionados
-                        List<IngredienteResponse> selecionados = sharedViewModel.getIngredientesSelecionados().getValue();
-
-                        if (listaDoBanco != null) {
-                            for (IngredienteResponse ingBanco : listaDoBanco) {
-                                boolean estaSelecionado = false;
-
-                                // Verifica se está nos selecionados
-                                if (selecionados != null) {
-                                    for (IngredienteResponse ingSel : selecionados) {
-                                        if (ingBanco.getId().equals(ingSel.getId())) {
-                                            estaSelecionado = true;
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                // Só adiciona se NÃO estiver selecionado
-                                if (!estaSelecionado) {
-                                    listaIngredientes.add(ingBanco);
-                                }
-                            }
-                        }
+                    if (listaDoBanco != null) {
+                        listaIngredientes.addAll(listaDoBanco);
                     }
 
                     adapter.atualizarLista(listaIngredientes);
@@ -370,25 +262,6 @@ public class IngredientesRegistradosFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private void moverIngredienteParaTopo(IngredienteResponse ingrediente) {
-        for (int i = 0; i < listaIngredientes.size(); i++) {
-            if (listaIngredientes.get(i).getId().equals(ingrediente.getId())) {
-                listaIngredientes.remove(i);
-                break;
-            }
-        }
-        listaIngredientes.add(0, ingrediente);
-    }
-
-    private void removerIngredienteDaLista(IngredienteResponse ingrediente) {
-        for (int i = 0; i < listaIngredientes.size(); i++) {
-            if (listaIngredientes.get(i).getId().equals(ingrediente.getId())) {
-                listaIngredientes.remove(i);
-                break;
-            }
-        }
     }
 
     private void atualizarNumeroPagina() {

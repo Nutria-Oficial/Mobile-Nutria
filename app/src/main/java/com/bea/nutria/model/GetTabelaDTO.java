@@ -8,6 +8,7 @@ public class GetTabelaDTO {
     double quantidadeTotal;
     double porcao;
     List<GetNutrienteDTO> nutrientes;
+    private transient boolean isExpanded = false;
 
     public GetTabelaDTO(){
 
@@ -58,5 +59,13 @@ public class GetTabelaDTO {
 
     public void setNutrientes(List<GetNutrienteDTO> nutrientes) {
         this.nutrientes = nutrientes;
+    }
+
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        isExpanded = expanded;
     }
 }

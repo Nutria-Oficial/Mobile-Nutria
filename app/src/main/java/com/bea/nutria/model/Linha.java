@@ -32,11 +32,22 @@ public class Linha implements Parcelable {
         }
     };
 
-    public String getNome() { return nome; }
-    public String getValor() { return valor; }
-    public String getVd() { return vd; }
+    public String getNome() {
+        return nome;
+    }
 
-    @Override public int describeContents() { return 0; }
+    public String getValor() {
+        return valor;
+    }
+
+    public String getVd() {
+        return vd;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {

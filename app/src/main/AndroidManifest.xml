@@ -2,17 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
 
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -25,21 +29,30 @@
         android:theme="@style/Theme.Nutria"
         tools:targetApi="31">
 
+        <!-- Tela de Perfil -->
         <activity
             android:name=".ui.Perfil.PerfilActivity"
             android:exported="false" />
 
+        <!-- Tela de login -->
         <activity
             android:name=".ui.Login.LoginActivity"
-            android:exported="false" />
+            android:exported="true"
+            android:label="@string/app_name" />
 
+        <!-- Tela de Cadastro -->
         <activity
             android:name=".ui.Cadastro.CadastroActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/app_name" />
+
+        <!-- Tela de foto de perfil -->
         <activity
             android:name=".ui.FotoPerfil.FotoPerfilActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/app_name" />
 
+        <!-- SplashScreen (tela inicial ao abrir o app) -->
         <activity
             android:name=".ui.SplashScreen.SplashScreen"
             android:exported="true"
@@ -50,11 +63,14 @@
             </intent-filter>
         </activity>
 
+        <!-- Tela principal -->
         <activity
-            android:windowSoftInputMode="adjustPan"
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
 
+        <!-- Receivers para Notificações -->
         <receiver
             android:name=".notification.NotificationReceiver"
             android:exported="false" />
@@ -77,5 +93,11 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+        <!-- Meta-dados de fontes -->
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
     </application>
+
 </manifest>

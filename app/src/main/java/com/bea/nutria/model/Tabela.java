@@ -39,12 +39,26 @@ public class Tabela implements Parcelable {
         }
     };
 
-    public String getTitulo() { return titulo; }
-    public String getPorcaoTexto() { return porcaoTexto; }
-    public List<Linha> getLinhas() { return linhas; }
-    public long getIdEstavel() { return idEstavel; }
+    public String getTitulo() {
+        return titulo;
+    }
 
-    @Override public int describeContents() { return 0; }
+    public String getPorcaoTexto() {
+        return porcaoTexto;
+    }
+
+    public List<Linha> getLinhas() {
+        return linhas;
+    }
+
+    public long getIdEstavel() {
+        return idEstavel;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {

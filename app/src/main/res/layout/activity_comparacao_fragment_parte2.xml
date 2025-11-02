@@ -1,0 +1,983 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F2F2F2">
+
+    <TextView
+        android:id="@+id/TextView_tituloTelaComparacao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:text="Escolha Tabela"
+        android:textColor="#040303"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/voltar"
+        android:layout_width="49dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_voltar"
+        app:layout_constraintBottom_toBottomOf="@+id/TextView_tituloTelaComparacao"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/TextView_tituloTelaComparacao"
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="ContentDescription" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/fundo_arredondado_topo"
+        android:backgroundTint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TextView_tituloTelaComparacao"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar_loading2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="#EE7026"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_comparar"
+        android:layout_width="330dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="50dp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:text="Comparar"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:backgroundTint="#EE7026"
+        app:cornerRadius="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewSelecionarProduto3"
+        android:layout_width="311dp"
+        android:layout_height="66dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:gravity="center_horizontal"
+        android:text="Escolha duas tabelas do produto"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.521"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/view" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header_item"
+        android:layout_width="351dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSelecionarProduto3"
+        android:clickable="false"
+        android:focusable="false"
+        android:descendantFocusability="blocksDescendants">
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="74dp"
+            android:background="@drawable/fundo_arredondado_cinza"
+            android:backgroundTint="#EEEDF7"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view_fundo_branco_item1"
+            android:layout_width="345dp"
+            android:layout_height="73dp"
+            android:layout_marginHorizontal="5dp"
+            android:background="@drawable/fundo_arredondado_cinza"
+            android:backgroundTint="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/imageButtonSeta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/seta"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/view_fundo_branco_item1"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/icon_selecionado1"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_selecionado"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/imageButtonSeta"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <View
+            android:id="@+id/view_demonstracaoItem4"
+            android:layout_width="63dp"
+            android:layout_height="73dp"
+            android:background="@drawable/quadrado_arredondado"
+            app:circularflow_defaultRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="Produto"
+            android:textColor="#161515"
+            android:textSize="18sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem4"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem4"
+            app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem4"
+            app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem4"
+            app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem4"
+            app:srcCompat="@drawable/xlsx"
+            tools:ignore="ContentDescription" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/conteudo_expansivel_tabela1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:background="@drawable/fundo_arredondado"
+        android:backgroundTint="#FFFFFF"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/header_item"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardBlocoTabela1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/fundo_arredondado_cinza"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:cardUseCompatPadding="false"
+            app:cardCornerRadius="8dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#0B0B0B"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:id="@+id/tvTabelaTitulo12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:fontFamily="@font/montserrat_semibold"
+                    android:text="Detalhes Nutricionais - Tabela 1"
+                    android:textColor="#0B0B0B"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/montserrat_semibold"
+                        android:text="Nutriente"
+                        android:textColor="#0B0B0B"
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_semibold"
+                        android:gravity="end"
+                        android:text="Valor"
+                        android:textColor="#0B0B0B"
+                        android:textSize="14sp"
+                        android:layout_marginEnd="16dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_semibold"
+                        android:gravity="end"
+                        android:text="%VD*"
+                        android:textColor="#0B0B0B"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#0B0B0B" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Valor Calórico"/>
+                    <TextView android:id="@+id/tv_valor_calorico_t1" style="@style/NutrientValueText" tools:text="120 kcal" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_valor_calorico_t1" style="@style/NutrientValueText" tools:text="6%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Proteína"/>
+                    <TextView android:id="@+id/tv_proteina_t1" style="@style/NutrientValueText" tools:text="5.5 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_proteina_t1" style="@style/NutrientValueText" tools:text="11%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Carboidrato"/>
+                    <TextView android:id="@+id/tv_carboidrato_t1" style="@style/NutrientValueText" tools:text="25.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_carboidrato_t1" style="@style/NutrientValueText" tools:text="8%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Açúcar Total"/>
+                    <TextView android:id="@+id/tv_acucar_total_t1" style="@style/NutrientValueText" tools:text="10.5 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_acucar_total_t1" style="@style/NutrientValueText" tools:text="21%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Fibra Alimentar"/>
+                    <TextView android:id="@+id/tv_fibra_alimentar_t1" style="@style/NutrientValueText" tools:text="3.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_fibra_alimentar_t1" style="@style/NutrientValueText" tools:text="12%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Gordura Total"/>
+                    <TextView android:id="@+id/tv_gordura_total_t1" style="@style/NutrientValueText" tools:text="8.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_gordura_total_t1" style="@style/NutrientValueText" tools:text="12%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Gordura Saturada"/>
+                    <TextView android:id="@+id/tv_gordura_saturada_t1" style="@style/NutrientValueText" tools:text="4.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_gordura_saturada_t1" style="@style/NutrientValueText" tools:text="20%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Gordura Monoinsaturada"/>
+                    <TextView android:id="@+id/tv_gordura_monoinsaturada_t1" style="@style/NutrientValueText" tools:text="2.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_gordura_monoinsaturada_t1" style="@style/NutrientValueText" tools:text="-"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Gordura Poli-Insaturada"/>
+                    <TextView android:id="@+id/tv_gordura_poliinsaturada_t1" style="@style/NutrientValueText" tools:text="1.5 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_gordura_poliinsaturada_t1" style="@style/NutrientValueText" tools:text="-"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Colesterol"/>
+                    <TextView android:id="@+id/tv_colesterol_t1" style="@style/NutrientValueText" tools:text="15 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_colesterol_t1" style="@style/NutrientValueText" tools:text="5%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Retinol/Vitamina A"/>
+                    <TextView android:id="@+id/tv_vitamina_a_t1" style="@style/NutrientValueText" tools:text="100 μg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_a_t1" style="@style/NutrientValueText" tools:text="11%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Tiamina"/>
+                    <TextView android:id="@+id/tv_tiamina_t1" style="@style/NutrientValueText" tools:text="0.5 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_tiamina_t1" style="@style/NutrientValueText" tools:text="42%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Riboflavina"/>
+                    <TextView android:id="@+id/tv_riboflavina_t1" style="@style/NutrientValueText" tools:text="0.3 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_riboflavina_t1" style="@style/NutrientValueText" tools:text="23%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Niacina"/>
+                    <TextView android:id="@+id/tv_niacina_t1" style="@style/NutrientValueText" tools:text="5.0 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_niacina_t1" style="@style/NutrientValueText" tools:text="31%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Vitamina B-6"/>
+                    <TextView android:id="@+id/tv_vitamina_b6_t1" style="@style/NutrientValueText" tools:text="0.2 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_b6_t1" style="@style/NutrientValueText" tools:text="15%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Ácido Fólico"/>
+                    <TextView android:id="@+id/tv_acido_folico_t1" style="@style/NutrientValueText" tools:text="40 μg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_acido_folico_t1" style="@style/NutrientValueText" tools:text="10%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Colina"/>
+                    <TextView android:id="@+id/tv_colina_t1" style="@style/NutrientValueText" tools:text="50 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_colina_t1" style="@style/NutrientValueText" tools:text="9%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Vitamina B-12"/>
+                    <TextView android:id="@+id/tv_vitamina_b12_t1" style="@style/NutrientValueText" tools:text="1.0 μg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_b12_t1" style="@style/NutrientValueText" tools:text="42%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Vitamina C"/>
+                    <TextView android:id="@+id/tv_vitamina_c_t1" style="@style/NutrientValueText" tools:text="10 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_c_t1" style="@style/NutrientValueText" tools:text="11%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Vitamina D"/>
+                    <TextView android:id="@+id/tv_vitamina_d_t1" style="@style/NutrientValueText" tools:text="2.0 μg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_d_t1" style="@style/NutrientValueText" tools:text="13%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Vitamina E"/>
+                    <TextView android:id="@+id/tv_vitamina_e_t1" style="@style/NutrientValueText" tools:text="1.5 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_e_t1" style="@style/NutrientValueText" tools:text="10%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Vitamina K"/>
+                    <TextView android:id="@+id/tv_vitamina_k_t1" style="@style/NutrientValueText" tools:text="5.0 μg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_k_t1" style="@style/NutrientValueText" tools:text="4%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Cálcio"/>
+                    <TextView android:id="@+id/tv_calcio_t1" style="@style/NutrientValueText" tools:text="150 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_calcio_t1" style="@style/NutrientValueText" tools:text="15%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Fósforo"/>
+                    <TextView android:id="@+id/tv_fosforo_t1" style="@style/NutrientValueText" tools:text="120 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_fosforo_t1" style="@style/NutrientValueText" tools:text="17%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Magnésio"/>
+                    <TextView android:id="@+id/tv_magnesio_t1" style="@style/NutrientValueText" tools:text="40 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_magnesio_t1" style="@style/NutrientValueText" tools:text="10%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Ferro"/>
+                    <TextView android:id="@+id/tv_ferro_t1" style="@style/NutrientValueText" tools:text="2.0 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_ferro_t1" style="@style/NutrientValueText" tools:text="14%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Zinco"/>
+                    <TextView android:id="@+id/tv_zinco_t1" style="@style/NutrientValueText" tools:text="1.0 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_zinco_t1" style="@style/NutrientValueText" tools:text="9%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Cobre"/>
+                    <TextView android:id="@+id/tv_cobre_t1" style="@style/NutrientValueText" tools:text="0.1 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_cobre_t1" style="@style/NutrientValueText" tools:text="11%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Selênio"/>
+                    <TextView android:id="@+id/tv_selenio_t1" style="@style/NutrientValueText" tools:text="5.0 μg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_selenio_t1" style="@style/NutrientValueText" tools:text="9%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Potássio"/>
+                    <TextView android:id="@+id/tv_potassio_t1" style="@style/NutrientValueText" tools:text="300 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_potassio_t1" style="@style/NutrientValueText" tools:text="6%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Sódio"/>
+                    <TextView android:id="@+id/tv_sodio_t1" style="@style/NutrientValueText" tools:text="500 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_sodio_t1" style="@style/NutrientValueText" tools:text="25%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Cafeína"/>
+                    <TextView android:id="@+id/tv_cafeina_t1" style="@style/NutrientValueText" tools:text="0.0 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_cafeina_t1" style="@style/NutrientValueText" tools:text="-"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Teobromina"/>
+                    <TextView android:id="@+id/tv_teobromina_t1" style="@style/NutrientValueText" tools:text="0.0 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_teobromina_t1" style="@style/NutrientValueText" tools:text="-"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Álcool"/>
+                    <TextView android:id="@+id/tv_alcool_t1" style="@style/NutrientValueText" tools:text="0.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_alcool_t1" style="@style/NutrientValueText" tools:text="-"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Água"/>
+                    <TextView android:id="@+id/tv_agua_t1" style="@style/NutrientValueText" tools:text="50.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_agua_t1" style="@style/NutrientValueText" tools:text="-"/>
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/tvAvisoVD1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textSize="12sp"
+                    android:textColor="#5A5A5A"
+                    android:textStyle="italic"
+                    android:text="*O %VD é baseado em uma dieta de 2.000 kcal."/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header_item1"
+        android:layout_width="351dp"
+        android:layout_height="83dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/conteudo_expansivel_tabela1"
+        android:clickable="false"
+        android:focusable="false"
+        android:descendantFocusability="blocksDescendants">
+
+        <View
+            android:id="@+id/view6"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:background="@drawable/fundo_arredondado_cinza"
+            android:backgroundTint="#EEEDF7"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view7"
+            android:layout_width="345dp"
+            android:layout_height="68dp"
+            android:layout_marginHorizontal="5dp"
+            android:background="@drawable/fundo_arredondado_cinza"
+            android:backgroundTint="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/imageButtonSeta2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/seta"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/view7"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/icon_selecionado2"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_selecionado"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/imageButtonSeta2"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <View
+            android:id="@+id/view_demonstracaoItem5"
+            android:layout_width="63dp"
+            android:layout_height="73dp"
+            android:background="@drawable/quadrado_arredondado"
+            app:circularflow_defaultRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewTitulo3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="Produto"
+            android:textColor="#161515"
+            android:textSize="18sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem5"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem5"
+            app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem5"
+            app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem5"
+            app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem5"
+            app:srcCompat="@drawable/xlsx"
+            tools:ignore="ContentDescription" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/conteudo_expansivel_tabela2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:background="@drawable/fundo_arredondado"
+        android:backgroundTint="#FFFFFF"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/header_item1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardBlocoTabela2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:cardUseCompatPadding="false"
+            app:cardCornerRadius="8dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#0B0B0B"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:id="@+id/tvTabelaTitulo2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:fontFamily="@font/montserrat_semibold"
+                    android:text="Detalhes Nutricionais - Tabela 2"
+                    android:textColor="#0B0B0B"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/montserrat_semibold"
+                        android:text="Nutriente"
+                        android:textColor="#0B0B0B"
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_semibold"
+                        android:gravity="end"
+                        android:text="Valor"
+                        android:textColor="#0B0B0B"
+                        android:textSize="14sp"
+                        android:layout_marginEnd="16dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_semibold"
+                        android:gravity="end"
+                        android:text="%VD*"
+                        android:textColor="#0B0B0B"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#0B0B0B" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Valor Calórico"/>
+                    <TextView android:id="@+id/tv_valor_calorico_t2" style="@style/NutrientValueText" tools:text="120 kcal" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_valor_calorico_t2" style="@style/NutrientValueText" tools:text="6%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Proteína"/>
+                    <TextView android:id="@+id/tv_proteina_t2" style="@style/NutrientValueText" tools:text="5.5 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_proteina_t2" style="@style/NutrientValueText" tools:text="11%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Carboidrato"/>
+                    <TextView android:id="@+id/tv_carboidrato_t2" style="@style/NutrientValueText" tools:text="25.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_carboidrato_t2" style="@style/NutrientValueText" tools:text="8%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Açúcar Total"/>
+                    <TextView android:id="@+id/tv_acucar_total_t2" style="@style/NutrientValueText" tools:text="10.5 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_acucar_total_t2" style="@style/NutrientValueText" tools:text="21%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Fibra Alimentar"/>
+                    <TextView android:id="@+id/tv_fibra_alimentar_t2" style="@style/NutrientValueText" tools:text="3.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_fibra_alimentar_t2" style="@style/NutrientValueText" tools:text="12%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Gordura Total"/>
+                    <TextView android:id="@+id/tv_gordura_total_t2" style="@style/NutrientValueText" tools:text="8.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_gordura_total_t2" style="@style/NutrientValueText" tools:text="12%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Gordura Saturada"/>
+                    <TextView android:id="@+id/tv_gordura_saturada_t2" style="@style/NutrientValueText" tools:text="4.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_gordura_saturada_t2" style="@style/NutrientValueText" tools:text="20%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Gordura Monoinsaturada"/>
+                    <TextView android:id="@+id/tv_gordura_monoinsaturada_t2" style="@style/NutrientValueText" tools:text="2.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_gordura_monoinsaturada_t2" style="@style/NutrientValueText" tools:text="-"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Gordura Poli-Insaturada"/>
+                    <TextView android:id="@+id/tv_gordura_poliinsaturada_t2" style="@style/NutrientValueText" tools:text="1.5 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_gordura_poliinsaturada_t2" style="@style/NutrientValueText" tools:text="-"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Colesterol"/>
+                    <TextView android:id="@+id/tv_colesterol_t2" style="@style/NutrientValueText" tools:text="15 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_colesterol_t2" style="@style/NutrientValueText" tools:text="5%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Retinol/Vitamina A"/>
+                    <TextView android:id="@+id/tv_vitamina_a_t2" style="@style/NutrientValueText" tools:text="100 μg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_a_t2" style="@style/NutrientValueText" tools:text="11%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Tiamina"/>
+                    <TextView android:id="@+id/tv_tiamina_t2" style="@style/NutrientValueText" tools:text="0.5 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_tiamina_t2" style="@style/NutrientValueText" tools:text="42%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Riboflavina"/>
+                    <TextView android:id="@+id/tv_riboflavina_t2" style="@style/NutrientValueText" tools:text="0.3 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_riboflavina_t2" style="@style/NutrientValueText" tools:text="23%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Niacina"/>
+                    <TextView android:id="@+id/tv_niacina_t2" style="@style/NutrientValueText" tools:text="5.0 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_niacina_t2" style="@style/NutrientValueText" tools:text="31%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Vitamina B-6"/>
+                    <TextView android:id="@+id/tv_vitamina_b6_t2" style="@style/NutrientValueText" tools:text="0.2 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_b6_t2" style="@style/NutrientValueText" tools:text="15%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Ácido Fólico"/>
+                    <TextView android:id="@+id/tv_acido_folico_t2" style="@style/NutrientValueText" tools:text="40 μg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_acido_folico_t2" style="@style/NutrientValueText" tools:text="10%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Colina"/>
+                    <TextView android:id="@+id/tv_colina_t2" style="@style/NutrientValueText" tools:text="50 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_colina_t2" style="@style/NutrientValueText" tools:text="9%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Vitamina B-12"/>
+                    <TextView android:id="@+id/tv_vitamina_b12_t2" style="@style/NutrientValueText" tools:text="1.0 μg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_b12_t2" style="@style/NutrientValueText" tools:text="42%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Vitamina C"/>
+                    <TextView android:id="@+id/tv_vitamina_c_t2" style="@style/NutrientValueText" tools:text="10 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_c_t2" style="@style/NutrientValueText" tools:text="11%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Vitamina D"/>
+                    <TextView android:id="@+id/tv_vitamina_d_t2" style="@style/NutrientValueText" tools:text="2.0 μg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_d_t2" style="@style/NutrientValueText" tools:text="13%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Vitamina E"/>
+                    <TextView android:id="@+id/tv_vitamina_e_t2" style="@style/NutrientValueText" tools:text="1.5 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_e_t2" style="@style/NutrientValueText" tools:text="10%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Vitamina K"/>
+                    <TextView android:id="@+id/tv_vitamina_k_t2" style="@style/NutrientValueText" tools:text="5.0 μg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_vitamina_k_t2" style="@style/NutrientValueText" tools:text="4%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Cálcio"/>
+                    <TextView android:id="@+id/tv_calcio_t2" style="@style/NutrientValueText" tools:text="150 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_calcio_t2" style="@style/NutrientValueText" tools:text="15%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Fósforo"/>
+                    <TextView android:id="@+id/tv_fosforo_t2" style="@style/NutrientValueText" tools:text="120 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_fosforo_t2" style="@style/NutrientValueText" tools:text="17%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Magnésio"/>
+                    <TextView android:id="@+id/tv_magnesio_t2" style="@style/NutrientValueText" tools:text="40 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_magnesio_t2" style="@style/NutrientValueText" tools:text="10%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Ferro"/>
+                    <TextView android:id="@+id/tv_ferro_t2" style="@style/NutrientValueText" tools:text="2.0 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_ferro_t2" style="@style/NutrientValueText" tools:text="14%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Zinco"/>
+                    <TextView android:id="@+id/tv_zinco_t2" style="@style/NutrientValueText" tools:text="1.0 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_zinco_t2" style="@style/NutrientValueText" tools:text="9%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Cobre"/>
+                    <TextView android:id="@+id/tv_cobre_t2" style="@style/NutrientValueText" tools:text="0.1 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_cobre_t2" style="@style/NutrientValueText" tools:text="11%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Selênio"/>
+                    <TextView android:id="@+id/tv_selenio_t2" style="@style/NutrientValueText" tools:text="5.0 μg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_selenio_t2" style="@style/NutrientValueText" tools:text="9%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Potássio"/>
+                    <TextView android:id="@+id/tv_potassio_t2" style="@style/NutrientValueText" tools:text="300 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_potassio_t2" style="@style/NutrientValueText" tools:text="6%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Sódio"/>
+                    <TextView android:id="@+id/tv_sodio_t2" style="@style/NutrientValueText" tools:text="500 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_sodio_t2" style="@style/NutrientValueText" tools:text="25%"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Cafeína"/>
+                    <TextView android:id="@+id/tv_cafeina_t2" style="@style/NutrientValueText" tools:text="0.0 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_cafeina_t2" style="@style/NutrientValueText" tools:text="-"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Teobromina"/>
+                    <TextView android:id="@+id/tv_teobromina_t2" style="@style/NutrientValueText" tools:text="0.0 mg" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_teobromina_t2" style="@style/NutrientValueText" tools:text="-"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Álcool"/>
+                    <TextView android:id="@+id/tv_alcool_t2" style="@style/NutrientValueText" tools:text="0.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_alcool_t2" style="@style/NutrientValueText" tools:text="-"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+
+                <LinearLayout style="@style/NutrientDetailRow">
+                    <TextView style="@style/NutrientNameText" android:text="Água"/>
+                    <TextView android:id="@+id/tv_agua_t2" style="@style/NutrientValueText" tools:text="50.0 g" android:layout_marginEnd="16dp"/>
+                    <TextView android:id="@+id/tv_vd_agua_t2" style="@style/NutrientValueText" tools:text="-"/>
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/tvAvisoVD2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textSize="12sp"
+                    android:textColor="#5A5A5A"
+                    android:textStyle="italic"
+                    android:text="*O %VD é baseado em uma dieta de 2.000 kcal."/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        android:id="@+id/listaItensPrincipal"
+        layout="@layout/itens_lista_escolha_tabela"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="16dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/btn_comparar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/conteudo_expansivel_tabela2" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

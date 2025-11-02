@@ -40,6 +40,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
@@ -59,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{POST_NOTIFICATIONS}, REQ_POST_NOTIFICATIONS);
-                return;
             }
         }
 
@@ -68,9 +70,19 @@ public class MainActivity extends AppCompatActivity {
         NotificationScheduler.startLoop(this);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_historico, R.id.navigation_nutria, R.id.navigation_scanner,R.id.navigation_comparacao, R.id.navigation_tabela, R.id.navigation_ingrediente)
+
+        // Define os destinos de topo (top-level destinations) que não terão a seta "Back"
+        Set<Integer> topLevelDestinations = new HashSet<>();
+        topLevelDestinations.add(R.id.navigation_historico);
+        topLevelDestinations.add(R.id.navigation_nutria);
+        topLevelDestinations.add(R.id.navigation_scanner);
+        topLevelDestinations.add(R.id.navigation_comparacao);
+        topLevelDestinations.add(R.id.navigation_tabela);
+
+        // Use a lista de IDs do bottom_nav_menu
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations)
                 .build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
@@ -96,17 +108,17 @@ public class MainActivity extends AppCompatActivity {
 
         api = retrofit.create(UsuarioAPI.class);
 
-        carregarFotoPerfil();
-
         perfil.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, PerfilActivity.class)));
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         //recarrega caso a foto tenha sido atualizada no Perfil
         carregarFotoPerfil();
     }
+
     private void maybeRequestExactAlarm() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             android.app.AlarmManager am = (android.app.AlarmManager) getSystemService(ALARM_SERVICE);

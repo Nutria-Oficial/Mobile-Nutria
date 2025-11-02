@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2;
+
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,8 +15,11 @@ import android.view.ViewTreeObserver;
 import com.bea.nutria.R;
 import com.bea.nutria.api.IngredienteAPI;
 import com.bea.nutria.databinding.FragmentIngredienteBinding;
+
 import okhttp3.Response;
+
 import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Retrofit;

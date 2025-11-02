@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F2F2F2">
+
+    <TextView
+        android:id="@+id/TextView_tituloTelaComparacao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:text="@string/title_comparacao"
+        android:textColor="#040303"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/fundo_arredondado"
+        android:backgroundTint="#FFF9F9"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TextView_tituloTelaComparacao"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <View
+        android:id="@+id/view_linha6"
+        android:layout_width="400dp"
+        android:layout_height="3dp"
+        android:layout_marginStart="90dp"
+        android:layout_marginBottom="22dp"
+        android:background="#EEEDF7"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_top_searchbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top_searchbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="232dp" />
+
+    <View
+        android:id="@+id/View_demonstracaoItem_1"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="17dp"
+        android:background="@drawable/quadrado_arredondado"
+        app:circularflow_defaultRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.095"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/view" />
+
+    <TextView
+        android:id="@+id/textViewSelecionarProduto1"
+        android:layout_width="261dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="-89dp"
+        android:layout_marginTop="40dp"
+        android:text="Escolha seu produto"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.423"
+        app:layout_constraintStart_toEndOf="@+id/View_demonstracaoItem_1"
+        app:layout_constraintTop_toTopOf="@+id/view" />
+
+    <View
+        android:id="@+id/View_demonstracaoItem_selecionado"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="17dp"
+        android:background="@drawable/quadrado_arredondado"
+        android:visibility="gone"
+        app:circularflow_defaultRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.095"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/view" />
+
+    <ImageView
+        android:id="@+id/imageViewIconeTabela"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintEnd_toEndOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintStart_toStartOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintTop_toTopOf="@+id/View_demonstracaoItem_selecionado"
+        app:srcCompat="@drawable/xlsx" />
+
+    <TextView
+        android:id="@+id/textViewNomeProdutoSelecionado"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:textColor="#161515"
+        android:textSize="18sp"
+        android:textStyle="normal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintStart_toEndOf="@+id/View_demonstracaoItem_selecionado"
+        app:layout_constraintTop_toTopOf="@+id/View_demonstracaoItem_selecionado"
+        tools:text="Manteiga" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="#EE7026"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view_demonstracaoItem2"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/quadrado_arredondado"
+        android:visibility="gone"
+        app:circularflow_defaultRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.095"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/View_demonstracaoItem_selecionado" />
+
+    <TextView
+        android:id="@+id/textViewSelecionarProduto2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:text="Selecione o 2º produto"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.221"
+        app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem2"
+        app:layout_constraintTop_toBottomOf="@+id/textViewNomeProdutoSelecionado" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/search_bar_container"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:background="@drawable/search_bar_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guideline_top_searchbar"> <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:hint="Pesquisar produto"
+        android:imeOptions="actionSearch"
+        android:paddingStart="48dp"
+        android:paddingEnd="16dp"
+        android:singleLine="true"
+        android:textColor="@android:color/black"
+        android:textColorHint="#A0A0A0"
+        android:textCursorDrawable="@drawable/black_cursor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+        <ImageView
+            android:id="@+id/search_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/ic_lupa"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.6" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        android:id="@+id/listaItens"
+        layout="@layout/itens_lista"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_bar_container" />
+
+    <!-- Botão Corrigido: Agora usa 0dp (match constraints) com margens laterais de 40dp para preencher a largura de forma padronizada. -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_escolherTabelas"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="70dp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:text="Escolher tabelas"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:backgroundTint="#EE7026"
+        app:cornerRadius="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
