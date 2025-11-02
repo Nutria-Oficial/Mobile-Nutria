@@ -77,6 +77,23 @@ public class TabelaViewModel extends ViewModel {
 
         return mapAtual.getOrDefault(ingredienteId, "0");
     }
+    public Map<String, Double> getTodasQuantidades() {
+        Map<Integer, String> quantidades = quantidadesLivedata.getValue();
+        Map<String, Double> mapaFinal = new HashMap<>();
+
+        if (quantidades != null) {
+            for (Map.Entry<Integer, String> entry : quantidades.entrySet()) {
+                try {
+                    double valor = Double.parseDouble(entry.getValue());
+                    mapaFinal.put(String.valueOf(entry.getKey()), valor);
+                } catch (NumberFormatException e) {
+                    mapaFinal.put(String.valueOf(entry.getKey()), 0.0);
+                }
+            }
+        }
+
+        return mapaFinal;
+    }
     public void removerQuantidade(int ingredienteId){
         Map<Integer, String> mapAtual = quantidadesLivedata.getValue();
 

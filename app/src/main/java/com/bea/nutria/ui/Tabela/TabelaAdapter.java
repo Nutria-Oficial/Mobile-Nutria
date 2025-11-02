@@ -46,12 +46,7 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaAdapter.ViewHolder
     public void setOnItemRemovedListener(OnItemRemovedListener listener) {
         this.listener = listener;
     }
-//    public LiveData<String> getQuantidadeIngrediente(){
-//        return quantidade;
-//    }
-//    public void setQuantidadeIngrediente(String valor){
-//        quantidade.setValue(valor);
-//    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -152,13 +147,22 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaAdapter.ViewHolder
     }
 
     public Map<String, Double> getQuantidades() {
-        return quantidades;
+        Map<String, Double> mapaFinal = new HashMap<>();
+        Map<String, Double> todas = tabelaViewModel.getTodasQuantidades();
+
+        for (IngredienteResponse ing : listaIngredientes) {
+            String id = ing.getId().toString();
+            Double valor = todas.get(id);
+            if (valor == null) valor = 0.0;
+            mapaFinal.put(id, valor);
+        }
+
+        return mapaFinal;
     }
 
     public List<IngredienteResponse> getIngredientes() {
         return listaIngredientes;
     }
-
     public void setIngredientes(List<IngredienteResponse> novaLista) {
         this.listaIngredientes.clear();
         this.listaIngredientes.addAll(novaLista);
