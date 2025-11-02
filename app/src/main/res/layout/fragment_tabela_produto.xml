@@ -9,28 +9,36 @@
     android:background="#E8E8E8"
     tools:context=".ui.Historico.TabelaProdutoFragment">
 
-    <ImageView
-        android:id="@+id/voltar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="40dp"
-        android:src="@drawable/ic_voltar"
+    <LinearLayout
+        android:id="@+id/layoutFixo"
+        android:layout_width="match_parent"
+        android:layout_height="113dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="20dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/tvTitulo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="40dp"
-        android:text="Nome produto"
-        android:textColor="#0B0B0B"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@id/voltar"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/voltar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:contentDescription="Voltar"
+            android:src="@drawable/ic_voltar" />
+
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="Nome Produto"
+            android:textColor="#0B0B0B"
+            android:textSize="24sp" />
+    </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardConteudo"
@@ -38,9 +46,10 @@
         android:layout_height="0dp"
         android:layout_marginTop="15dp"
         app:cardUseCompatPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/voltar"
+        app:layout_constraintTop_toBottomOf="@id/layoutFixo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:shapeAppearanceOverlay="@style/CardTopRounded"
         app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.core.widget.NestedScrollView
@@ -114,7 +123,9 @@
         <ProgressBar
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_gravity="center"
             android:indeterminate="true"
-            android:layout_gravity="center" />
+            android:indeterminateTint="#EE7026"
+            android:indeterminateTintMode="src_in" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

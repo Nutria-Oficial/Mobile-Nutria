@@ -47,4 +47,11 @@ public class IngredienteSharedViewModel extends ViewModel {
     public void limparSelecao() {
         ingredientesSelecionados.setValue(new ArrayList<>());
     }
+    public void limparIngredientes() {
+        ingredientesSelecionados.setValue(new ArrayList<>());
+    }
+
+    public boolean temIngredientesSalvos() {
+        return ingredientesSelecionados.getValue() != null && !ingredientesSelecionados.getValue().isEmpty();
+    }
 }

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,11 +30,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bea.nutria.R;
 import com.bea.nutria.api.ProdutoAPI;
+import com.bea.nutria.api.UsuarioAPI;
 import com.bea.nutria.api.conexaoApi.ConexaoAPI;
 import com.bea.nutria.databinding.FragmentComparacaoBinding;
 import com.bea.nutria.model.GetProdutoDTO;
+import com.bea.nutria.model.Usuario;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,8 +69,11 @@ public class ComparacaoFragment extends Fragment {
 
     private static final String TAG = "ComparacaoP1Fragment";
 
+    private ConexaoAPI conexaoAPIUsuario;
 
-    private Integer idUsuario = 1;
+    private UsuarioAPI usuarioAPI;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private int usuarioId = -1;
 
     // Variável para armazenar o ID do produto selecionado
     private Integer produtoSelecionadoId = null;
@@ -95,7 +105,14 @@ public class ComparacaoFragment extends Fragment {
         // --- Inicialização do Gerenciador de API ---
         apiManager = new ConexaoAPI(url);
         produtoApi = apiManager.getApi(ProdutoAPI.class);
+        conexaoAPIUsuario = new ConexaoAPI("https://api-spring-aql.onrender.com/");
+        usuarioAPI = conexaoAPIUsuario.getApi(UsuarioAPI.class);
         // ------------------------------------------
+
+        usuarioId = prefs().getInt("usuario_id", -1);
+        if (usuarioId < 0) {
+            resolverUsuarioId();
+        }
 
         // Referências dos elementos de UI
         demonstracaoItem1 = view.findViewById(R.id.View_demonstracaoItem_1);
@@ -129,7 +146,7 @@ public class ComparacaoFragment extends Fragment {
 
         // --- Uso da função iniciandoServidor (A Boa Prática) ---
         progressBarLoading.setVisibility(View.VISIBLE);
-        apiManager.iniciarServidor(requireActivity(), () -> buscarProdutoDoUsuario(idUsuario));
+        apiManager.iniciarServidor(requireActivity(), () -> buscarProdutoDoUsuario(usuarioId));
         // -------------------------------------------------------
 
         // Configurar o listener da barra de pesquisa
@@ -360,6 +377,58 @@ public class ComparacaoFragment extends Fragment {
         hideKeyboard();
     }
 
+    private void resolverUsuarioId() {
+        String email = prefs().getString("email", null);
+        if (email == null) {
+            try {
+                if (FirebaseAuth.getInstance().getCurrentUser() != null)
+                    email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            } catch (Throwable ignore) {}
+        }
+
+        if (email == null || email.trim().isEmpty()) {
+            mainHandler.post(() -> {
+                Toast.makeText(getContext(),
+                        "Não foi possível identificar o usuário logado",
+                        Toast.LENGTH_LONG).show();
+            });
+            return;
+        }
+
+        final String emailFinal = email.trim().toLowerCase(Locale.ROOT);
+
+        usuarioAPI.buscarUsuario(emailFinal).enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                if (!isAdded()) return;
+
+                if (response.isSuccessful() && response.body() != null) {
+                    Usuario u = response.body();
+                    Integer id = u.getId();
+
+                    if (id != null && id > 0) {
+                        prefs().edit().putInt("usuario_id", id).apply();
+                        usuarioId = id;
+                    }
+                } else {
+                    Toast.makeText(getContext(),
+                            "Usuário encontrado sem ID válido",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+                if (!isAdded()) return;
+                Toast.makeText(getContext(),
+                        "Falha de conexão: " + (t.getMessage() == null ? "desconhecida" : t.getMessage()),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    private android.content.SharedPreferences prefs() {
+        return requireContext().getSharedPreferences("nutria_prefs", Context.MODE_PRIVATE);
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();

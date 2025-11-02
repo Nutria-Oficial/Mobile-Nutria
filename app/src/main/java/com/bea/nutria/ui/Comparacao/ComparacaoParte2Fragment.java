@@ -26,9 +26,11 @@ import com.bea.nutria.R;
 import com.bea.nutria.api.ProdutoAPI;
 import com.bea.nutria.api.TabelaAPI;
 import com.bea.nutria.api.conexaoApi.ConexaoAPI;
-import com.bea.nutria.model.GetTabelaDTO;
+import com.bea.nutria.model.GetTabelaComparacaoDTO;
 import com.google.android.material.button.MaterialButton;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import retrofit2.Call;
@@ -83,8 +85,8 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     private boolean isTabela2Expanded = false;
 
     // Variáveis de estado para armazenar as tabelas selecionadas
-    private GetTabelaDTO tabelaSelecionada1 = null;
-    private GetTabelaDTO tabelaSelecionada2 = null;
+    private GetTabelaComparacaoDTO tabelaSelecionada1 = null;
+    private GetTabelaComparacaoDTO tabelaSelecionada2 = null;
 
     // URL da API
     private static final String url = "https://api-spring-mongodb.onrender.com/";
@@ -245,8 +247,8 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
                     Fragment nextFragment = ComparacaoParte3Fragment.newInstance(
                             tabelaSelecionada1.getTabelaId(),
                             tabelaSelecionada2.getTabelaId(),
-                            tabelaSelecionada1.getNomeTabela(),
-                            tabelaSelecionada2.getNomeTabela()
+                            corrigirTextoCodificado(tabelaSelecionada1.getNomeTabela()),
+                            corrigirTextoCodificado(tabelaSelecionada2.getNomeTabela())
                     );
 
                     FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
@@ -349,11 +351,11 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
             return;
         }
 
-        produtoApi.buscarTodasTabelasDoProduto(produtoId).enqueue(new Callback<List<GetTabelaDTO>>() {
+        produtoApi.buscarTodasTabelasDoProduto(produtoId).enqueue(new Callback<List<GetTabelaComparacaoDTO>>() {
             @Override
-            public void onResponse(@NonNull Call<List<GetTabelaDTO>> call, @NonNull Response<List<GetTabelaDTO>> response) {
+            public void onResponse(@NonNull Call<List<GetTabelaComparacaoDTO>> call, @NonNull Response<List<GetTabelaComparacaoDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<GetTabelaDTO> listaTabelas = response.body();
+                    List<GetTabelaComparacaoDTO> listaTabelas = response.body();
 
                     if (!listaTabelas.isEmpty()) {
                         setupAdapter(listaTabelas);
@@ -375,7 +377,7 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<GetTabelaDTO>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<GetTabelaComparacaoDTO>> call, @NonNull Throwable t) {
                 Log.e(TAG, "Falha de conexão: " + t.getMessage());
                 Toast.makeText(getContext(), "Falha ao conectar-se à API para buscar tabelas.", Toast.LENGTH_LONG).show();
                 if (listaItensPrincipalContainer != null)
@@ -391,7 +393,7 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
     /**
      * Configura o Adapter com a lista de resultados.
      */
-    private void setupAdapter(List<GetTabelaDTO> listaTabelas) {
+    private void setupAdapter(List<GetTabelaComparacaoDTO> listaTabelas) {
         if (!isAdded() || getContext() == null || recyclerViewTabelas == null) return;
 
         tabelaAdapter = new TabelaAdapter(listaTabelas);
@@ -408,10 +410,10 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
 
     // Implementação da interface TabelaAdapter.OnTabelaClickListener
     @Override
-    public void onEscolherTabelaClick(GetTabelaDTO tabela, int position) {
+    public void onEscolherTabelaClick(GetTabelaComparacaoDTO tabela, int position) {
 
         boolean itemRemovidoDaListaVisivel = false;
-        GetTabelaDTO tabelaParaReAdicionar = null;
+        GetTabelaComparacaoDTO tabelaParaReAdicionar = null;
 
         hideKeyboard();
 
@@ -553,6 +555,42 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
                     imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
                 }
             }
+        }
+    }
+    private String corrigirTextoCodificado(String texto) {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            boolean houveCorrecao = false;
+
+            for (int i = 0; i < texto.length();) {
+                char c = texto.charAt(i);
+
+                if (c == '\\' && i + 3 < texto.length() && texto.charAt(i + 1) == 'x') {
+                    String hex = texto.substring(i + 2, i + 4);
+                    try {
+                        int valor = Integer.parseInt(hex, 16);
+                        out.write(valor);
+                        i += 4;
+                        houveCorrecao = true;
+                    } catch (NumberFormatException e) {
+                        out.write((byte) c);
+                        i++;
+                    }
+                } else {
+                    out.write((byte) c);
+                    i++;
+                }
+            }
+
+            if (!houveCorrecao) {
+                return texto;
+            }
+
+            return new String(out.toByteArray(), StandardCharsets.UTF_8);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return texto;
         }
     }
 

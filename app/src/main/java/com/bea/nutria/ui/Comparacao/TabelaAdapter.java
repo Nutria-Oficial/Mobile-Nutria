@@ -10,26 +10,26 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bea.nutria.R;
-import com.bea.nutria.model.GetTabelaDTO;
+import com.bea.nutria.model.GetTabelaComparacaoDTO;
 
 import java.util.List;
 
 public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
 
-    private final List<GetTabelaDTO> listaTabelas;
+    private final List<GetTabelaComparacaoDTO> listaTabelas;
     private OnTabelaClickListener listener;
     private static final String TAG = "TabelaAdapter";
 
     // Interface para cliques no botão "Escolher Tabela"
     public interface OnTabelaClickListener {
-        void onEscolherTabelaClick(GetTabelaDTO tabela, int position);
+        void onEscolherTabelaClick(GetTabelaComparacaoDTO tabela, int position);
     }
 
     public void setOnTabelaClickListener(OnTabelaClickListener listener) {
         this.listener = listener;
     }
 
-    public TabelaAdapter(List<GetTabelaDTO> tabelas) {
+    public TabelaAdapter(List<GetTabelaComparacaoDTO> tabelas) {
         this.listaTabelas = tabelas;
 
         // ⭐️ 1. HABILITA IDs ESTÁVEIS
@@ -40,9 +40,9 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
     @Override
     public long getItemId(int position) {
         if (position >= 0 && position < listaTabelas.size()) {
-            // Se o GetTabelaDTO tiver um campo 'id', use-o.
-            // Exemplo assumindo que GetTabelaDTO tem um método getId() que retorna long.
-            return listaTabelas.get(position).getId();
+            // Se o GetTabelaComparacaoDTO tiver um campo 'id', use-o.
+            // Exemplo assumindo que GetTabelaComparacaoDTO tem um método getId() que retorna long.
+            return listaTabelas.get(position).getTabelaId();
         }
         return RecyclerView.NO_ID;
     }
@@ -65,7 +65,7 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull TabelaViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        GetTabelaDTO tabelaAtual = listaTabelas.get(position);
+        GetTabelaComparacaoDTO tabelaAtual = listaTabelas.get(position);
 
         // 1. Delegar todo o preenchimento dos 35 nutrientes ao ViewHolder
         holder.bind(tabelaAtual);
@@ -108,7 +108,7 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
     }
 
     // NOVO MÉTODO: Adiciona um item de volta (usado na deseleção)
-    public void addItem(GetTabelaDTO tabela) {
+    public void addItem(GetTabelaComparacaoDTO tabela) {
         listaTabelas.add(tabela);
         notifyItemInserted(listaTabelas.size() - 1);
     }

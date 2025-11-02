@@ -5,29 +5,17 @@ import android.widget.TextView;
 import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bea.nutria.model.GetTabelaComparacaoDTO;
 import com.google.android.material.button.MaterialButton;
 
 import com.bea.nutria.R;
-import com.bea.nutria.model.GetTabelaDTO;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-// Classe simples para armazenar o par de TextViews (Valor e Valor Diário)
-class NutrientTextViews {
-    public final TextView tvValor;
-    public final TextView tvVD;
-
-    public NutrientTextViews(TextView tvValor, TextView tvVD) {
-        this.tvValor = tvValor;
-        this.tvVD = tvVD;
-    }
-}
 
 public class TabelaViewHolder extends RecyclerView.ViewHolder {
 
@@ -298,7 +286,7 @@ public class TabelaViewHolder extends RecyclerView.ViewHolder {
     /**
      * Preenche todas as 35 TextViews com os dados da lista de nutrientes.
      */
-    public void bind(GetTabelaDTO tabela) {
+    public void bind(GetTabelaComparacaoDTO tabela) {
 
         // 1. Configurar Título do Item
         textViewTitulo.setText(tabela.getNomeTabela());
@@ -312,11 +300,11 @@ public class TabelaViewHolder extends RecyclerView.ViewHolder {
         }
 
         // 3. Cria um mapa de pesquisa rápida dos nutrientes vindos da API
-        Map<String, GetTabelaDTO.NutrienteDTO> dataLookup = new HashMap<>();
-        List<GetTabelaDTO.NutrienteDTO> nutrientes = tabela.getNutrientes();
+        Map<String, GetTabelaComparacaoDTO.NutrienteDTO> dataLookup = new HashMap<>();
+        List<GetTabelaComparacaoDTO.NutrienteDTO> nutrientes = tabela.getNutrientes();
 
         if (nutrientes != null) {
-            for (GetTabelaDTO.NutrienteDTO nutriente : nutrientes) {
+            for (GetTabelaComparacaoDTO.NutrienteDTO nutriente : nutrientes) {
                 // Limpa o nome para corresponder à chave do nosso mapa (Ex: "Proteína (g)" -> "Proteína")
                 String key = cleanNutrientName(nutriente.getNutriente());
                 dataLookup.put(key, nutriente);
@@ -328,7 +316,7 @@ public class TabelaViewHolder extends RecyclerView.ViewHolder {
             String nutrientName = entry.getKey();
             NutrientTextViews tvs = entry.getValue();
 
-            GetTabelaDTO.NutrienteDTO data = dataLookup.get(nutrientName);
+            GetTabelaComparacaoDTO.NutrienteDTO data = dataLookup.get(nutrientName);
 
             // Valores padrão se o nutriente não for encontrado na API
             String valorToDisplay = "-";

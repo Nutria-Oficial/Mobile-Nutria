@@ -15,6 +15,7 @@ import android.view.ViewTreeObserver;
 import com.bea.nutria.R;
 import com.bea.nutria.api.IngredienteAPI;
 import com.bea.nutria.databinding.FragmentIngredienteBinding;
+import com.bea.nutria.ui.Tabela.TabelaFragment;
 
 import okhttp3.Response;
 
@@ -95,8 +96,19 @@ public class IngredienteFragment extends Fragment {
         atualizarTabSelecionada(0);
 
         binding.btVoltar.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(IngredienteFragment.this);
-            navController.navigate(R.id.action_ingrediente_to_tabela);
+            if (getArguments() != null && getArguments().containsKey("nomeProduto")) {
+                String nomeProduto = getArguments().getString("nomeProduto");
+                String idProduto = getArguments().getString("idProduto");
+                Bundle result = new Bundle();
+                result.putString("nomeProduto", nomeProduto);
+                result.putString("idProduto", idProduto);
+                NavController navController = NavHostFragment.findNavController(IngredienteFragment.this);
+                navController.navigate(R.id.action_ingrediente_to_tabela, result);
+            }
+            else {
+                NavController navController = NavHostFragment.findNavController(IngredienteFragment.this);
+                navController.navigate(R.id.action_ingrediente_to_tabela);
+            }
         });
 
         client = new OkHttpClient.Builder()
