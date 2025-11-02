@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -177,7 +178,7 @@ public class TabelaProdutoFragment extends Fragment {
                     JSONObject o = arr.optJSONObject(i);
                     if (o == null) continue;
 
-                    String nomeTabela = o.optString("nomeTabela", "Tabela Nutricional");
+                    String nomeTabela = corrigirTextoCodificado(o.optString("nomeTabela", "Tabela Nutricional"));
                     String porcaoTexto = resolvePorcaoTexto(o);
 
                     List<Linha> linhas = new ArrayList<>();
@@ -354,5 +355,41 @@ public class TabelaProdutoFragment extends Fragment {
         s = s.replace("\\n", "\n");
         if ("null".equalsIgnoreCase(s)) return "";
         return s;
+    }
+    private String corrigirTextoCodificado(String texto) {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            boolean houveCorrecao = false;
+
+            for (int i = 0; i < texto.length();) {
+                char c = texto.charAt(i);
+
+                if (c == '\\' && i + 3 < texto.length() && texto.charAt(i + 1) == 'x') {
+                    String hex = texto.substring(i + 2, i + 4);
+                    try {
+                        int valor = Integer.parseInt(hex, 16);
+                        out.write(valor);
+                        i += 4;
+                        houveCorrecao = true;
+                    } catch (NumberFormatException e) {
+                        out.write((byte) c);
+                        i++;
+                    }
+                } else {
+                    out.write((byte) c);
+                    i++;
+                }
+            }
+
+            if (!houveCorrecao) {
+                return texto;
+            }
+
+            return new String(out.toByteArray(), StandardCharsets.UTF_8);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return texto;
+        }
     }
 }
