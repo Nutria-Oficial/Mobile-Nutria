@@ -45,8 +45,8 @@ public class ChatFragment extends Fragment {
     private static final String URL_FAST = "https://nutria-fast-api.koyeb.app/";
     private static final String URL_SPRING = "https://api-spring-mongodb.onrender.com/";
 
-    private int countErro = 0;
-    private int tentativas = 0;
+    private int countErro = 0; // Variável não utilizada, mantida por consistência
+    private int tentativas = 0; // Variável não utilizada, mantida por consistência
 
     private String prefsName = "nutria_prefs";
 
@@ -100,6 +100,11 @@ public class ChatFragment extends Fragment {
             chatAPISpring.listarChat(idUser).enqueue(new Callback<List<String>>() {
                 @Override
                 public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                    // **VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException**
+                    if (binding == null) {
+                        return;
+                    }
+
                     binding.progressBar.setVisibility(View.GONE);
                     if (response.isSuccessful() && response.body() != null) {
                         List<String> chatInteiro = response.body();
@@ -122,6 +127,11 @@ public class ChatFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<List<String>> call, Throwable throwable) {
+                    // **VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException**
+                    if (binding == null) {
+                        return;
+                    }
+
                     binding.progressBar.setVisibility(View.GONE);
                     mostrarTelaVazia();
                     Toast.makeText(getContext(), "Erro ao carregar chat", Toast.LENGTH_SHORT).show();
@@ -143,7 +153,7 @@ public class ChatFragment extends Fragment {
         chatAtual.add(mensagem);
         chatAdapter.addMessage(mensagem);
 
-        // scroll para última mensagem]
+        // scroll para última mensagem
         binding.recyclerViewChat.scrollToPosition(chatAdapter.getItemCount() - 1);
 
         binding.recyclerViewChat.setVisibility(View.VISIBLE);
@@ -161,6 +171,11 @@ public class ChatFragment extends Fragment {
         chatAPIFast.enviarMensagemPegarResposta(chatRequest).enqueue(new Callback<ChatResponse>() {
             @Override
             public void onResponse(Call<ChatResponse> call, Response<ChatResponse> response) {
+                // **VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException**
+                if (binding == null) {
+                    return;
+                }
+
                 binding.btEnviar.setEnabled(true);
 
                 if (response.isSuccessful() && response.body() != null) {
@@ -184,9 +199,16 @@ public class ChatFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ChatResponse> call, Throwable throwable) {
+                // **VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException**
+                if (binding == null) {
+                    return;
+                }
+
                 if (tentativa < 2) { // Tenta no máximo 3 vezes (0, 1, 2)
                     enviarParaFastAPI(chatRequest, tentativa + 1);
                 } else {
+                    binding.btEnviar.setEnabled(true); // Re-habilitar o botão após a falha final
+
                     // após 3 tentativas, mostra erro e remove a mensagem que foi enviada
                     Toast.makeText(getContext(), "Não foi possível enviar essa mensagem", Toast.LENGTH_SHORT).show();
 
@@ -205,6 +227,11 @@ public class ChatFragment extends Fragment {
             chatAPISpring.limparChat(idUser).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
+                    // **VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException**
+                    if (binding == null) {
+                        return;
+                    }
+
                     binding.imgLixeira.setEnabled(true);
 
                     if (response.isSuccessful()) {
@@ -219,6 +246,10 @@ public class ChatFragment extends Fragment {
                 }
                 @Override
                 public void onFailure(Call<Void> call, Throwable throwable) {
+                    // **VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException**
+                    if (binding == null) {
+                        return;
+                    }
 
                     if (finalTentativas < 2) { // Tenta no máximo 3 vezes
                         limparChat(finalTentativas + 1);
@@ -234,6 +265,9 @@ public class ChatFragment extends Fragment {
     }
 
     private void mostrarTelaVazia() {
+        if (binding == null) {
+            return;
+        }
         binding.recyclerViewChat.setVisibility(View.GONE);
         binding.imgLixeira.setVisibility(View.GONE);
         binding.imgNutriaChat.setVisibility(View.VISIBLE);
@@ -267,6 +301,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // Garante que o binding seja nullificado para evitar vazamento de memória e o NullPointerException
         binding = null;
     }
 }

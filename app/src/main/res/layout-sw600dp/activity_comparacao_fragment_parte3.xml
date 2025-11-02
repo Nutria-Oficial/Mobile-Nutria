@@ -1,0 +1,1091 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F2F2F2"
+    android:id="@+id/main_constraint">
+
+    <TextView
+        android:id="@+id/TextView_tituloTelaComparacao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:text="Comparação"
+        android:textColor="#040303"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/voltar"
+        android:layout_width="49dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_voltar"
+        app:layout_constraintBottom_toBottomOf="@+id/TextView_tituloTelaComparacao"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/TextView_tituloTelaComparacao"
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="ContentDescription" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_view_comparacao"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TextView_tituloTelaComparacao">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="100dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/fundo_arredondado_topo"
+            android:backgroundTint="#FFFFFF">
+
+            <!-- ... [Conteúdo do Produto 1 e Produto 2 (omitido por brevidade)] ... -->
+
+            <TextView
+                android:id="@+id/textViewTitulo2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="Produto 1"
+                android:textColor="#161515"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toTopOf="@+id/view_linha2"
+                app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.647" />
+
+            <View
+                android:id="@+id/view_demonstracaoItem3"
+                android:layout_width="63dp"
+                android:layout_height="73dp"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/quadrado_arredondado"
+                app:circularflow_defaultRadius="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:clickable="false"
+                android:focusable="false"
+                app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem3"
+                app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem3"
+                app:layout_constraintHorizontal_bias="0.2"
+                app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem3"
+                app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem3"
+                app:layout_constraintVertical_bias="0.533"
+                app:srcCompat="@drawable/xlsx"
+                tools:ignore="ContentDescription" />
+
+            <View
+                android:id="@+id/view_linha2"
+                android:layout_width="450dp"
+                android:layout_height="3dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="20dp"
+                android:background="#EEEDF7"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_demonstracaoItem3" />
+
+            <TextView
+                android:id="@+id/textViewTitulo4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="Produto 2"
+                android:textColor="#161515"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toTopOf="@+id/view_linha4"
+                app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem"
+                app:layout_constraintTop_toBottomOf="@+id/view_linha2"
+                app:layout_constraintVertical_bias="0.509" />
+
+            <View
+                android:id="@+id/view_demonstracaoItem"
+                android:layout_width="63dp"
+                android:layout_height="73dp"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/quadrado_arredondado"
+                app:circularflow_defaultRadius="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_linha2" />
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:clickable="false"
+                android:focusable="false"
+                app:layout_constraintBottom_toBottomOf="@+id/view_demonstracaoItem"
+                app:layout_constraintEnd_toEndOf="@+id/view_demonstracaoItem"
+                app:layout_constraintStart_toStartOf="@+id/view_demonstracaoItem"
+                app:layout_constraintTop_toTopOf="@+id/view_demonstracaoItem"
+                app:srcCompat="@drawable/xlsx"
+                tools:ignore="ContentDescription" />
+
+            <View
+                android:id="@+id/view_linha4"
+                android:layout_width="450dp"
+                android:layout_height="3dp"
+                android:layout_marginEnd="20dp"
+                android:background="#EEEDF7"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_demonstracaoItem" />
+
+            <View
+                android:id="@+id/view_linha5"
+                android:layout_width="360dp"
+                android:layout_height="3dp"
+                android:layout_marginTop="30dp"
+                android:background="#D0D0D0"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_linha4" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/header_item"
+                android:layout_width="351dp"
+                android:layout_height="83dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_linha5">
+                <!-- ... (Conteúdo do header_item) ... -->
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/conteudo_expansivel_tabela1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/fundo_arredondado"
+                android:backgroundTint="#FFFFFF"
+                android:paddingTop="8dp"
+                android:paddingBottom="16dp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/header_item">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardBlocoTabela1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="8dp"
+                    app:cardUseCompatPadding="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="#0B0B0B"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingVertical="8dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/montserrat_semibold"
+                                android:text="Tabela Nutricional"
+                                android:textColor="#0B0B0B"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="40dp"
+                                android:gravity="end"
+                                android:text="Diferença"
+                                android:textColor="#0B0B0B"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#0B0B0B" />
+
+                        <!-- LINHA 1: Valor Calórico (kcal) -->
+                        <LinearLayout
+                            android:id="@+id/row_valor_calorico"
+                            style="@style/NutrientDetailRow"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingVertical="8dp">
+
+                                <!-- Ícone de Abertura (Corrigido para seta_abertura_detalhes) -->
+                                <ImageView
+                                    android:id="@+id/iv_abertura_detalhes_calorico"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="10dp"
+                                    app:srcCompat="@drawable/seta_abertura_detalhes"
+                                    tools:ignore="ContentDescription" />
+
+                                <TextView
+                                    style="@style/NutrientNameText"
+                                    android:text="Valor Calórico" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_calorico_t1"
+                                    style="@style/NutrientValueText"
+                                    android:layout_marginEnd="16dp"
+                                    tools:text="120 kcal" />
+
+                                <ImageView
+                                    android:id="@+id/iv_valor_calorico_subtracao"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0"
+                                    app:srcCompat="@drawable/ic_subtracao"
+                                    tools:ignore="ContentDescription" />
+                            </LinearLayout>
+
+                            <!-- CONTEÚDO EXPANSÍVEL DO DETALHE CALÓRICO -->
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/detail_expansion_calorico"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="40dp"
+                                android:paddingTop="4dp"
+                                android:paddingEnd="12dp"
+                                android:paddingBottom="8dp"
+                                android:visibility="gone"
+                                tools:visibility="visible">
+
+                                <!-- Produto 1 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto1_calorico"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="Manteiga com Sal" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto1_calorico"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="120 Kcal" />
+
+                                <!-- Produto 2 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto2_calorico"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_nome_produto1_calorico"
+                                    tools:text="Manteiga Light" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto2_calorico"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_valor_produto1_calorico"
+                                    tools:text="100 Kcal" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+                        <!-- LINHA 2: Proteína (g) -->
+                        <LinearLayout
+                            android:id="@+id/row_proteina"
+                            style="@style/NutrientDetailRow"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingVertical="8dp">
+
+                                <!-- Ícone de Abertura (Corrigido para seta_abertura_detalhes) -->
+                                <ImageView
+                                    android:id="@+id/iv_abertura_detalhes_proteina"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="10dp"
+                                    app:srcCompat="@drawable/seta_abertura_detalhes"
+                                    tools:ignore="ContentDescription" />
+
+                                <TextView
+                                    style="@style/NutrientNameText"
+                                    android:text="Proteína" />
+
+                                <TextView
+                                    android:id="@+id/tv_proteina_t1"
+                                    style="@style/NutrientValueText"
+                                    android:layout_marginEnd="16dp"
+                                    tools:text="5.5 g" />
+
+                                <ImageView
+                                    android:id="@+id/iv_proteina_subtracao"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0"
+                                    app:srcCompat="@drawable/ic_subtracao"
+                                    tools:ignore="ContentDescription" />
+                            </LinearLayout>
+
+                            <!-- CONTEÚDO EXPANSÍVEL DO DETALHE PROTEÍNA -->
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/detail_expansion_proteina"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="40dp"
+                                android:paddingTop="4dp"
+                                android:paddingEnd="12dp"
+                                android:paddingBottom="8dp"
+                                android:visibility="gone">
+
+                                <!-- Produto 1 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto1_proteina"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="Manteiga com Sal" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto1_proteina"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="6.0 g" />
+
+                                <!-- Produto 2 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto2_proteina"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_nome_produto1_proteina"
+                                    tools:text="Manteiga Light" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto2_proteina"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_valor_produto1_proteina"
+                                    tools:text="4.5 g" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+                        <!-- LINHA 3: Carboidrato (g) -->
+                        <LinearLayout
+                            android:id="@+id/row_carboidrato"
+                            style="@style/NutrientDetailRow"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingVertical="8dp">
+
+                                <!-- Ícone de Abertura (Corrigido para seta_abertura_detalhes) -->
+                                <ImageView
+                                    android:id="@+id/iv_abertura_detalhes_carboidrato"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="10dp"
+                                    app:srcCompat="@drawable/seta_abertura_detalhes"
+                                    tools:ignore="ContentDescription" />
+
+                                <TextView
+                                    style="@style/NutrientNameText"
+                                    android:text="Carboidrato" />
+
+                                <TextView
+                                    android:id="@+id/tv_carboidrato_t1"
+                                    style="@style/NutrientValueText"
+                                    android:layout_marginEnd="16dp"
+                                    tools:text="25.0 g" />
+
+                                <ImageView
+                                    android:id="@+id/iv_carboidrato_subtracao"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0"
+                                    app:srcCompat="@drawable/ic_subtracao"
+                                    tools:ignore="ContentDescription" />
+                            </LinearLayout>
+
+                            <!-- CONTEÚDO EXPANSÍVEL DO DETALHE CARBOIDRATO -->
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/detail_expansion_carboidrato"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="40dp"
+                                android:paddingTop="4dp"
+                                android:paddingEnd="12dp"
+                                android:paddingBottom="8dp"
+                                android:visibility="gone">
+
+                                <!-- Produto 1 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto1_carboidrato"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="Manteiga com Sal" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto1_carboidrato"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="30.0 g" />
+
+                                <!-- Produto 2 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto2_carboidrato"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_nome_produto1_carboidrato"
+                                    tools:text="Manteiga Light" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto2_carboidrato"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_valor_produto1_carboidrato"
+                                    tools:text="5.0 g" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+                        <!-- LINHA 4: Açúcar Total (g) -->
+                        <LinearLayout
+                            android:id="@+id/row_acucar_total"
+                            style="@style/NutrientDetailRow"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingVertical="8dp">
+
+                                <!-- Ícone de Abertura (Corrigido para seta_abertura_detalhes) -->
+                                <ImageView
+                                    android:id="@+id/iv_abertura_detalhes_acucar_total"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="10dp"
+                                    app:srcCompat="@drawable/seta_abertura_detalhes"
+                                    tools:ignore="ContentDescription" />
+
+                                <TextView
+                                    style="@style/NutrientNameText"
+                                    android:text="Açúcar Total" />
+
+                                <TextView
+                                    android:id="@+id/tv_acucar_total_t1"
+                                    style="@style/NutrientValueText"
+                                    android:layout_marginEnd="16dp"
+                                    tools:text="10.5 g" />
+
+                                <ImageView
+                                    android:id="@+id/iv_acucar_total_subtracao"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0"
+                                    app:srcCompat="@drawable/ic_subtracao"
+                                    tools:ignore="ContentDescription" />
+                            </LinearLayout>
+
+                            <!-- CONTEÚDO EXPANSÍVEL DO DETALHE AÇÚCAR TOTAL -->
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/detail_expansion_acucar_total"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="40dp"
+                                android:paddingTop="4dp"
+                                android:paddingEnd="12dp"
+                                android:paddingBottom="8dp"
+                                android:visibility="gone">
+
+                                <!-- Produto 1 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto1_acucar_total"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="Manteiga com Sal" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto1_acucar_total"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="12.0 g" />
+
+                                <!-- Produto 2 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto2_acucar_total"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_nome_produto1_acucar_total"
+                                    tools:text="Manteiga Light" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto2_acucar_total"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_valor_produto1_acucar_total"
+                                    tools:text="1.5 g" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+                        <!-- LINHA 5: Gordura Total (g) -->
+                        <LinearLayout
+                            android:id="@+id/row_gordura_total"
+                            style="@style/NutrientDetailRow"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingVertical="8dp">
+
+                                <!-- Ícone de Abertura (Corrigido para seta_abertura_detalhes) -->
+                                <ImageView
+                                    android:id="@+id/iv_abertura_detalhes_gordura_total"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="10dp"
+                                    app:srcCompat="@drawable/seta_abertura_detalhes"
+                                    tools:ignore="ContentDescription" />
+
+                                <TextView
+                                    style="@style/NutrientNameText"
+                                    android:text="Gordura Total" />
+
+                                <TextView
+                                    android:id="@+id/tv_gordura_total_t1"
+                                    style="@style/NutrientValueText"
+                                    android:layout_marginEnd="16dp"
+                                    tools:text="8.0 g" />
+
+                                <ImageView
+                                    android:id="@+id/iv_gordura_total_subtracao"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0"
+                                    app:srcCompat="@drawable/ic_subtracao"
+                                    tools:ignore="ContentDescription" />
+                            </LinearLayout>
+
+                            <!-- CONTEÚDO EXPANSÍVEL DO DETALHE GORDURA TOTAL -->
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/detail_expansion_gordura_total"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="40dp"
+                                android:paddingTop="4dp"
+                                android:paddingEnd="12dp"
+                                android:paddingBottom="8dp"
+                                android:visibility="gone">
+
+                                <!-- Produto 1 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto1_gordura_total"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="Manteiga com Sal" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto1_gordura_total"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="10.0 g" />
+
+                                <!-- Produto 2 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto2_gordura_total"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_nome_produto1_gordura_total"
+                                    tools:text="Manteiga Light" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto2_gordura_total"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_valor_produto1_gordura_total"
+                                    tools:text="2.0 g" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+                        <!-- LINHA 6: Gordura Saturada (g) -->
+                        <LinearLayout
+                            android:id="@+id/row_gordura_saturada"
+                            style="@style/NutrientDetailRow"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingVertical="8dp">
+
+                                <!-- Ícone de Abertura (Corrigido para seta_abertura_detalhes) -->
+                                <ImageView
+                                    android:id="@+id/iv_abertura_detalhes_gordura_saturada"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="10dp"
+                                    app:srcCompat="@drawable/seta_abertura_detalhes"
+                                    tools:ignore="ContentDescription" />
+
+                                <TextView
+                                    style="@style/NutrientNameText"
+                                    android:text="Gordura Saturada" />
+
+                                <TextView
+                                    android:id="@+id/tv_gordura_saturada_t1"
+                                    style="@style/NutrientValueText"
+                                    android:layout_marginEnd="16dp"
+                                    tools:text="4.0 g" />
+
+                                <ImageView
+                                    android:id="@+id/iv_gordura_saturada_subtracao"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0"
+                                    app:srcCompat="@drawable/ic_subtracao"
+                                    tools:ignore="ContentDescription" />
+                            </LinearLayout>
+
+                            <!-- CONTEÚDO EXPANSÍVEL DO DETALHE GORDURA SATURADA -->
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/detail_expansion_gordura_saturada"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="40dp"
+                                android:paddingTop="4dp"
+                                android:paddingEnd="12dp"
+                                android:paddingBottom="8dp"
+                                android:visibility="gone">
+
+                                <!-- Produto 1 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto1_gordura_saturada"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="Manteiga com Sal" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto1_gordura_saturada"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="6.0 g" />
+
+                                <!-- Produto 2 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto2_gordura_saturada"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_nome_produto1_gordura_saturada"
+                                    tools:text="Manteiga Light" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto2_gordura_saturada"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_valor_produto1_gordura_saturada"
+                                    tools:text="1.0 g" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+                        <!-- LINHA 7: Sódio (mg) -->
+                        <LinearLayout
+                            android:id="@+id/row_sodio"
+                            style="@style/NutrientDetailRow"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingVertical="8dp">
+
+                                <!-- Ícone de Abertura (Corrigido para seta_abertura_detalhes) -->
+                                <ImageView
+                                    android:id="@+id/iv_abertura_detalhes_sodio"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="10dp"
+                                    app:srcCompat="@drawable/seta_abertura_detalhes"
+                                    tools:ignore="ContentDescription" />
+
+                                <TextView
+                                    style="@style/NutrientNameText"
+                                    android:text="Sódio" />
+
+                                <TextView
+                                    android:id="@+id/tv_sodio_t1"
+                                    style="@style/NutrientValueText"
+                                    android:layout_marginEnd="16dp"
+                                    tools:text="500 mg" />
+
+                                <ImageView
+                                    android:id="@+id/iv_sodio_subtracao"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0"
+                                    app:srcCompat="@drawable/ic_subtracao"
+                                    tools:ignore="ContentDescription" />
+                            </LinearLayout>
+
+                            <!-- CONTEÚDO EXPANSÍVEL DO DETALHE SÓDIO -->
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/detail_expansion_sodio"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="40dp"
+                                android:paddingTop="4dp"
+                                android:paddingEnd="12dp"
+                                android:paddingBottom="8dp"
+                                android:visibility="gone">
+
+                                <!-- Produto 1 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto1_sodio"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="Manteiga com Sal" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto1_sodio"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="600 mg" />
+
+                                <!-- Produto 2 Detalhe -->
+                                <TextView
+                                    android:id="@+id/tv_nome_produto2_sodio"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:textColor="#333333"
+                                    android:textSize="14sp"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_nome_produto1_sodio"
+                                    tools:text="Manteiga Light" />
+
+                                <TextView
+                                    android:id="@+id/tv_valor_produto2_sodio"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/montserrat_medium"
+                                    android:textColor="#000000"
+                                    android:textSize="14sp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/tv_valor_produto1_sodio"
+                                    tools:text="100 mg" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E0E0E0" />
+
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-10dp"
+                app:layout_constraintEnd_toStartOf="@+id/view_demonstracaoItem3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_demonstracaoItem3"
+                app:srcCompat="@drawable/ic_inverter_tabela" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="216dp"
+                android:layout_height="40dp"
+                android:text="Clique na seta laranja para adquirir mais detalhes"
+                android:textColor="#000000"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/conteudo_expansivel_tabela1" />
+
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintEnd_toStartOf="@+id/textView"
+                app:layout_constraintTop_toBottomOf="@+id/conteudo_expansivel_tabela1"
+                app:srcCompat="@drawable/seta_abertura_detalhes" />
+
+            <TextView
+                android:id="@+id/tvTabelaTitulo1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/montserrat_semibold"
+                android:gravity="center"
+                android:text="TextView"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/conteudo_expansivel_tabela1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/view_linha5" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar_loading3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTint="#EE7026"
+        android:visibility="visible"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
