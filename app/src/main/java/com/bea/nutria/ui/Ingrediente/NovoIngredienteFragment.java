@@ -226,6 +226,33 @@ public class NovoIngredienteFragment extends Fragment {
         binding.editGordurasSaturadas.setText("");
         binding.editSodio.setText("");
         binding.editFibra.setText("");
+        binding.editAgua.setText("");
+        binding.editGordurasMono.setText("");
+        binding.editGordurasPoli.setText("");
+        binding.editColesterol.setText("");
+        binding.editAlcool.setText("");
+        binding.editVitaminaB6.setText("");
+        binding.editVitaminaB12.setText("");
+        binding.editVitaminaC.setText("");
+        binding.editVitaminaD.setText("");
+        binding.editVitaminaE.setText("");
+        binding.editVitaminaK.setText("");
+        binding.editTeobromina.setText("");
+        binding.editCafeina.setText("");
+        binding.editColina.setText("");
+        binding.editCalcio.setText("");
+        binding.editFosforo.setText("");
+        binding.editMagnesio.setText("");
+        binding.editPotassio.setText("");
+        binding.editFerro.setText("");
+        binding.editZinco.setText("");
+        binding.editCobre.setText("");
+        binding.editSelenio.setText("");
+        binding.editRetinol.setText("");
+        binding.editTiamina.setText("");
+        binding.editRiboflavina.setText("");
+        binding.editNiacina.setText("");
+        binding.editFolato.setText("");
     }
 
     @Override
