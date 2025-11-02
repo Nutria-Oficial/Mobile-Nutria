@@ -5,61 +5,51 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_historico">
 
-    <!-- 1. Fragmento Histórico -->
     <fragment
         android:id="@+id/navigation_historico"
         android:name="com.bea.nutria.ui.Historico.HistoricoFragment"
         android:label="Histórico"
         tools:layout="@layout/fragment_historico" >
-        <!-- Ação para ir para a tela de detalhes do produto a partir do histórico -->
         <action
             android:id="@+id/action_navigation_historico_to_tabelaProdutoFragment"
             app:destination="@id/tabelaProdutoFragment" />
     </fragment>
 
-    <!-- 2. Fragmento NutrIA (Chat) -->
     <fragment
         android:id="@+id/navigation_nutria"
         android:name="com.bea.nutria.ui.Chat.ChatFragment"
         android:label="NutrIA"
         tools:layout="@layout/fragment_nutria" />
 
-    <!-- 3. Fragmento Scanner -->
     <fragment
         android:id="@+id/navigation_scanner"
         android:name="com.bea.nutria.ui.Scanner.ScannerFragment"
         android:label="Scanner"
         tools:layout="@layout/fragment_scanner" >
-        <!-- Ação para navegar para o fragment resultado -->
         <action
             android:id="@+id/action_scanner_to_resultado"
             app:destination="@id/resultadoFragment" />
     </fragment>
 
-    <!-- 3.2. Fragmento Resultado -->
     <fragment
         android:id="@+id/resultadoFragment"
         android:name="com.bea.nutria.ui.Scanner.ResultadoFragment"
         android:label="Resultado"
         tools:layout="@layout/fragment_resultado" >
-        <!-- Ação para navegar para o fragment scanner -->
         <action
             android:id="@+id/action_resultado_to_scanner"
             app:destination="@id/navigation_scanner" />
     </fragment>
 
-    <!-- 4. Fragmento Comparação (Produto 1) -->
     <fragment
         android:id="@+id/navigation_comparacao"
         android:name="com.bea.nutria.ui.Comparacao.ComparacaoFragment"
         android:label="Comparação">
-        <!-- Ação para navegar para o fragment do produto 2 -->
         <action
             android:id="@+id/action_navigation_comparacao_to_comparacaoParte2Fragment"
             app:destination="@id/comparacaoParte2Fragment" />
     </fragment>
 
-    <!-- 5. Fragmento Tabela (Principal/Geral) -->
     <fragment
         android:id="@+id/navigation_tabela"
         android:name="com.bea.nutria.ui.Tabela.TabelaFragment"
@@ -74,29 +64,25 @@
             app:destination="@id/navigation_ingrediente" />
     </fragment>
 
-    <!-- 6. Fragmento de Detalhes do Produto (usado pelo Histórico) -->
     <fragment
         android:id="@+id/tabelaProdutoFragment"
         android:name="com.bea.nutria.ui.Historico.TabelaProdutoFragment"
         android:label="fragment_tabela_produto"
         tools:layout="@layout/fragment_tabela_produto" >
-        <!-- Ação para voltar para a Tabela geral (se aplicável) -->
         <action
             android:id="@+id/action_tabelaProdutoFragment_to_navigation_tabela"
             app:destination="@id/navigation_tabela" />
-        <!-- Ação para ir para os detalhes do Ingrediente -->
         <action
             android:id="@+id/action_tabelaProduto_to_ingrediente"
             app:destination="@id/navigation_ingrediente" />
+
     </fragment>
 
-    <!-- 6.2. Fragmento de Detalhes do Ingrediente -->
     <fragment
         android:id="@+id/navigation_ingrediente"
         android:name="com.bea.nutria.ui.Ingrediente.IngredienteFragment"
         android:label="fragment_ingrediente"
         tools:layout="@layout/fragment_ingrediente" >
-        <!-- Ação para voltar para a Tabela (de produto ou geral) -->
         <action
             android:id="@+id/action_ingrediente_to_tabela"
             app:destination="@id/navigation_tabela" />
@@ -124,7 +110,6 @@
             app:destination="@id/navigation_avaliacao_tabela" />
     </fragment>
 
-    <!-- 7. Fragmento de Comparação do Produto 2 -->
     <fragment
         android:id="@+id/comparacaoParte2Fragment"
         android:name="com.bea.nutria.ui.Comparacao.ComparacaoParte2Fragment"

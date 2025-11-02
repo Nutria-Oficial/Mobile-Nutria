@@ -128,6 +128,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:elevation="10dp"
+        android:indeterminateTint="#EE7026"
+        android:indeterminateTintMode="src_in"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/layoutInput"
         app:layout_constraintEnd_toEndOf="parent"
