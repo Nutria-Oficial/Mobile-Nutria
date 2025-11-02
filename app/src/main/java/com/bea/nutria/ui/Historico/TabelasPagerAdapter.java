@@ -25,7 +25,9 @@ import java.util.List;
 
 public class TabelasPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public interface OnAddClickListener { void onAddClick(); }
+    public interface OnAddClickListener {
+        void onAddClick();
+    }
 
     private static final int VT_TABELA = 0;
     private static final int VT_ADD = 1;
@@ -48,7 +50,9 @@ public class TabelasPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyDataSetChanged();
     }
 
-    public int getRealCount() { return tabelas.size(); }
+    public int getRealCount() {
+        return tabelas.size();
+    }
 
     @Override
     public int getItemViewType(int position) {
@@ -56,7 +60,9 @@ public class TabelasPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public int getItemCount() { return getRealCount() + 1; }
+    public int getItemCount() {
+        return getRealCount() + 1;
+    }
 
     @NonNull
     @Override
@@ -86,7 +92,7 @@ public class TabelasPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             super(itemView);
             tvTitulo = itemView.findViewById(R.id.tvTabelaTitulo);
             tvPorcao = itemView.findViewById(R.id.tvPorcaoColuna);
-            table    = itemView.findViewById(R.id.tableNutri);
+            table = itemView.findViewById(R.id.tableNutri);
         }
 
         void bind(@NonNull Tabela t) {
@@ -126,7 +132,7 @@ public class TabelasPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             tr.addView(c1);
             tr.addView(tv(ns(l.getValor()), 1f, Gravity.END, false));
-            tr.addView(tv(ns(l.getVd()),    1f, Gravity.END, false));
+            tr.addView(tv(ns(l.getVd()), 1f, Gravity.END, false));
             return tr;
         }
 
@@ -156,7 +162,9 @@ public class TabelasPagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return (int) (v * d);
         }
 
-        private String ns(String s) { return s == null ? "" : s; }
+        private String ns(String s) {
+            return s == null ? "" : s;
+        }
     }
 
     static class AddVH extends RecyclerView.ViewHolder {

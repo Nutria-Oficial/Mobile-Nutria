@@ -53,6 +53,7 @@ public class IngredienteAdapter extends RecyclerView.Adapter<IngredienteAdapter.
 
     public interface OnIngredienteChangeListener {
         void onIngredienteAdicionado(IngredienteResponse ingrediente);
+
         void onIngredienteRemovido(IngredienteResponse ingrediente);
     }
 

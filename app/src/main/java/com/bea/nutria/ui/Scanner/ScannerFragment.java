@@ -5,7 +5,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+
 import java.text.Normalizer;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -199,7 +201,7 @@ public class ScannerFragment extends Fragment {
         // Delay progressivo: 2s, 4s, 6s, 8s, 10s
         long delay = (tentativa + 1) * 2000L;
 
-        Log.d(TAG, "Aguardando " + (delay/1000) + "s antes da tentativa " + (tentativa + 1) + " de " + maxTentativas);
+        Log.d(TAG, "Aguardando " + (delay / 1000) + "s antes da tentativa " + (tentativa + 1) + " de " + maxTentativas);
 
         new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
             Log.d(TAG, "Iniciando tentativa " + (tentativa + 1) + " - ID: " + idIngrediente);
@@ -385,25 +387,49 @@ public class ScannerFragment extends Fragment {
         double vd = 0;
 
         switch (nomeNutriente) {
-            case "Calorias": vd = (valor / 2000) * 100; break;
-            case "Carboidratos": vd = (valor / 300) * 100; break;
-            case "Proteína": vd = (valor / 75) * 100; break;
-            case "Gordura Total": vd = (valor / 55) * 100; break;
-            case "Gordura Saturada": vd = (valor / 22) * 100; break;
-            case "Fibra": vd = (valor / 25) * 100; break;
-            case "Sódio": vd = (valor / 2400) * 100; break;
-            case "Cálcio": vd = (valor / 1000) * 100; break;
-            case "Ferro": vd = (valor / 14) * 100; break;
-            case "Vitamina C": vd = (valor / 45) * 100; break;
-            case "Vitamina D": vd = (valor / 5) * 100; break;
-            default: return "-";
+            case "Calorias":
+                vd = (valor / 2000) * 100;
+                break;
+            case "Carboidratos":
+                vd = (valor / 300) * 100;
+                break;
+            case "Proteína":
+                vd = (valor / 75) * 100;
+                break;
+            case "Gordura Total":
+                vd = (valor / 55) * 100;
+                break;
+            case "Gordura Saturada":
+                vd = (valor / 22) * 100;
+                break;
+            case "Fibra":
+                vd = (valor / 25) * 100;
+                break;
+            case "Sódio":
+                vd = (valor / 2400) * 100;
+                break;
+            case "Cálcio":
+                vd = (valor / 1000) * 100;
+                break;
+            case "Ferro":
+                vd = (valor / 14) * 100;
+                break;
+            case "Vitamina C":
+                vd = (valor / 45) * 100;
+                break;
+            case "Vitamina D":
+                vd = (valor / 5) * 100;
+                break;
+            default:
+                return "-";
         }
 
         return vd > 0 ? String.format("%.0f%%", vd) : "-";
     }
 
     private void mostrarCarregando(boolean mostrar) {
-        if (progressBarEnvio != null) progressBarEnvio.setVisibility(mostrar ? View.VISIBLE : View.GONE);
+        if (progressBarEnvio != null)
+            progressBarEnvio.setVisibility(mostrar ? View.VISIBLE : View.GONE);
     }
 
     private String normalizar(String s) {

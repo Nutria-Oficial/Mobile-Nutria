@@ -1,6 +1,7 @@
 package com.bea.nutria.ui.Ingrediente;
 
 import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class PaginatedResponse {
@@ -32,7 +33,8 @@ public class PaginatedResponse {
     @SerializedName("empty")
     private boolean empty;
 
-    public PaginatedResponse() {}
+    public PaginatedResponse() {
+    }
 
     public List<IngredienteResponse> getContent() {
         return content;

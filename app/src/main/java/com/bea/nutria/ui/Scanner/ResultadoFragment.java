@@ -51,7 +51,8 @@ public class ResultadoFragment extends Fragment {
         if (ser instanceof List) {
             try {
                 nutrientes = (List<ScannerAPI.NutrienteDTO>) ser;
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         // Log para debugggg

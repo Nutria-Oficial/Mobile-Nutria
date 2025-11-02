@@ -111,12 +111,14 @@ public class MainActivity extends AppCompatActivity {
         perfil.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, PerfilActivity.class)));
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         //recarrega caso a foto tenha sido atualizada no Perfil
         carregarFotoPerfil();
     }
+
     private void maybeRequestExactAlarm() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             android.app.AlarmManager am = (android.app.AlarmManager) getSystemService(ALARM_SERVICE);
@@ -169,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                                 .circleCrop()
                                 .into(perfil);
                     }
-                }  else {
+                } else {
                     Glide.with(MainActivity.this).load(R.drawable.foto_padrao).circleCrop().into(perfil);
                 }
             }

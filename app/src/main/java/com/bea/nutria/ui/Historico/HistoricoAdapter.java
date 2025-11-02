@@ -18,7 +18,9 @@ import java.util.Locale;
 public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.ViewHolder> {
 
     // >>> Assinatura por POSIÇÃO <<<
-    public interface OnItemClickListener { void onItemClick(int position); }
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
 
     private final OnItemClickListener listener;
     private final List<String> nomes = new ArrayList<>();
@@ -46,7 +48,8 @@ public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.View
         notifyDataSetChanged();
     }
 
-    @NonNull @Override
+    @NonNull
+    @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_historico, parent, false);
@@ -59,7 +62,10 @@ public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.View
         holder.img.setImageResource(R.drawable.imagem_item_historico);
     }
 
-    @Override public int getItemCount() { return nomes.size(); }
+    @Override
+    public int getItemCount() {
+        return nomes.size();
+    }
 
     public void filtro(String query) {
         String q = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
@@ -78,6 +84,7 @@ public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.View
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtNome;
         ImageView img;
+
         ViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
             txtNome = itemView.findViewById(R.id.nomeProdutoHistorico);

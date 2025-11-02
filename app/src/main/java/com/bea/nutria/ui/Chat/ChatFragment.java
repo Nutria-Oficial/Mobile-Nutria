@@ -55,9 +55,9 @@ public class ChatFragment extends Fragment {
         SharedPreferences prefs = requireActivity().getSharedPreferences(prefsName, Context.MODE_PRIVATE);
         idUser = prefs.getInt("id", 1);
 
-        if(idUser == 0){
+        if (idUser == 0) {
             mostrarTelaVazia();
-        }else{
+        } else {
             binding.progressBar.setVisibility(View.VISIBLE);
             inicializarChat();
             setupRecyclerView();

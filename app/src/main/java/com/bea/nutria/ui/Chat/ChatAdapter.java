@@ -5,9 +5,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bea.nutria.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +37,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         holder.bind(mensagens.get(position), isUserMessage);
     }
 
-    public void enviarMensagem(String mensagem){
+    public void enviarMensagem(String mensagem) {
         mensagens.add(mensagem);
         notifyDataSetChanged();
     }

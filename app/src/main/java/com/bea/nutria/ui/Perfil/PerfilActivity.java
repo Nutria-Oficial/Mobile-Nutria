@@ -120,7 +120,7 @@ public class PerfilActivity extends AppCompatActivity {
         api = retrofit.create(UsuarioAPI.class);
 
         overlayCarregando = findViewById(R.id.loadingOverlay);
-        txtCarregando     = findViewById(R.id.txtLoading);
+        txtCarregando = findViewById(R.id.txtLoading);
 
         nomeTopo = findViewById(R.id.nomeTopo);
         empresaTopo = findViewById(R.id.empresaTopo);
@@ -189,7 +189,8 @@ public class PerfilActivity extends AppCompatActivity {
 
     //mostra o overlay de carregamento com mensagem
     private void mostrarCarregando(String mensagem) {
-        if (txtCarregando != null) txtCarregando.setText(mensagem == null ? "Carregando..." : mensagem);
+        if (txtCarregando != null)
+            txtCarregando.setText(mensagem == null ? "Carregando..." : mensagem);
         if (overlayCarregando != null) overlayCarregando.setVisibility(View.VISIBLE);
     }
 
@@ -220,7 +221,9 @@ public class PerfilActivity extends AppCompatActivity {
                 }
             }
             ultimoWakeMs = System.currentTimeMillis();
-            runOnUiThread(() -> { if (proximoPasso != null) proximoPasso.run(); });
+            runOnUiThread(() -> {
+                if (proximoPasso != null) proximoPasso.run();
+            });
         }).start();
     }
 
@@ -457,10 +460,12 @@ public class PerfilActivity extends AppCompatActivity {
                     .option("folder", "fotos")
                     .callback(new com.cloudinary.android.callback.UploadCallback() {
                         @Override
-                        public void onStart(String requestId) {}
+                        public void onStart(String requestId) {
+                        }
 
                         @Override
-                        public void onProgress(String requestId, long bytes, long totalBytes) {}
+                        public void onProgress(String requestId, long bytes, long totalBytes) {
+                        }
 
                         @Override
                         public void onSuccess(String requestId, java.util.Map resultData) {
@@ -511,7 +516,8 @@ public class PerfilActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onReschedule(String requestId, com.cloudinary.android.callback.ErrorInfo error) {}
+                        public void onReschedule(String requestId, com.cloudinary.android.callback.ErrorInfo error) {
+                        }
                     })
                     .dispatch(PerfilActivity.this);
 

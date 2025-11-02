@@ -121,15 +121,22 @@ public class HistoricoFragment extends Fragment implements HistoricoAdapter.OnIt
 
         // Listener para a caixa de pesquisa
         binding.editPesquisar.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException
                 if (binding == null || adapter == null) return;
 
                 adapter.filtro(s == null ? "" : s.toString());
                 toggleEmpty();
             }
-            @Override public void afterTextChanged(Editable s) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
         });
     }
 
@@ -368,6 +375,7 @@ public class HistoricoFragment extends Fragment implements HistoricoAdapter.OnIt
     static class ProdutoItem {
         String id;
         String nome;
+
         ProdutoItem(String id, String nome) {
             this.id = id;
             this.nome = nome;

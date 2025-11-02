@@ -2,6 +2,7 @@ package com.bea.nutria.api;
 
 import java.io.Serializable;
 import java.util.List;
+
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Multipart;

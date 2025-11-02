@@ -43,14 +43,14 @@ public class Ingrediente {
     }
 
     public Ingrediente(Integer id, String nomeIngrediente, double caloria, double carboidrato, double acucar,
-                              double proteina, double gorduraTotal, double gorduraSaturada, double sodio,
-                              double fibra, double agua, double gorduraMonoinsaturada, double gorduraPoliinsaturada,
-                              double colesterol, double alcool, double vitaminaB6, double vitaminaB12,
-                              double vitaminaC, double vitaminaD, double vitaminaE, double vitaminaK,
-                              double teobromina, double cafeina, double colina, double calcio, double fosforo,
-                              double magnesio, double potassio, double ferro, double zinco, double cobre,
-                              double selenio, double retinol, double tiamina, double riboflavina,
-                              double niacina, double folato) {
+                       double proteina, double gorduraTotal, double gorduraSaturada, double sodio,
+                       double fibra, double agua, double gorduraMonoinsaturada, double gorduraPoliinsaturada,
+                       double colesterol, double alcool, double vitaminaB6, double vitaminaB12,
+                       double vitaminaC, double vitaminaD, double vitaminaE, double vitaminaK,
+                       double teobromina, double cafeina, double colina, double calcio, double fosforo,
+                       double magnesio, double potassio, double ferro, double zinco, double cobre,
+                       double selenio, double retinol, double tiamina, double riboflavina,
+                       double niacina, double folato) {
         this.id = id;
         this.nomeIngrediente = nomeIngrediente;
         this.caloria = caloria;

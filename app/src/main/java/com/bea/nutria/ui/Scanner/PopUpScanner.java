@@ -21,7 +21,9 @@ public class PopUpScanner extends DialogFragment {
 
     private OnNomeConfirmadoListener listener;
 
-    public static PopUpScanner newInstance() { return new PopUpScanner(); }
+    public static PopUpScanner newInstance() {
+        return new PopUpScanner();
+    }
 
     public void setOnNomeConfirmadoListener(OnNomeConfirmadoListener l) {
         this.listener = l;
