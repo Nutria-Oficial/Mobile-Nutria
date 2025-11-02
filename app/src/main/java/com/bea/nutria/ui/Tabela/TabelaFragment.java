@@ -635,6 +635,7 @@ public class TabelaFragment extends Fragment {
             tabelaViewModel.getQuantidades().getValue().clear();
         }
         sharedViewModel.limparIngredientes();
+        tabelaViewModel.setTemDadosSalvos(false);
     }
     private void resolverUsuarioId() {
         String email = prefs().getString("email", null);
