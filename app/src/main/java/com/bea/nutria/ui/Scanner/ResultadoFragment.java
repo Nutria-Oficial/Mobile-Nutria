@@ -36,7 +36,7 @@ public class ResultadoFragment extends Fragment {
     public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
 
-        ImageView voltar = v.findViewById(R.id.voltar);
+        ImageView voltar = v.findViewById(R.id.btVoltar);
         TextView tvTitulo = v.findViewById(R.id.tvTitulo);
         TextView tvPorcao = v.findViewById(R.id.tvPorcao);
         TextView tvPorcaoColuna = v.findViewById(R.id.tvPorcaoColuna);
@@ -54,7 +54,7 @@ public class ResultadoFragment extends Fragment {
             } catch (Exception ignored) {}
         }
 
-        // Log para debug
+        // Log para debugggg
         Log.d("ResultadoFragment", "Nome: " + nome);
         Log.d("ResultadoFragment", "Porção: " + porcao);
         Log.d("ResultadoFragment", "Nutrientes: " + (nutrientes != null ? nutrientes.size() : "null"));
@@ -69,13 +69,11 @@ public class ResultadoFragment extends Fragment {
         // Adiciona cabeçalho
         addHeader(table);
 
-        // Adiciona linhas dos nutrientes
         if (nutrientes != null && !nutrientes.isEmpty()) {
             for (ScannerAPI.NutrienteDTO n : nutrientes) {
                 addRow(table, safe(n.nome), safe(n.valor), safe(n.vd));
             }
         } else {
-            // Se não tiver nutrientes, mostra mensagem
             Log.e("ResultadoFragment", "Lista de nutrientes vazia!");
             addRow(table, "Nenhum nutriente encontrado", "-", "-");
         }

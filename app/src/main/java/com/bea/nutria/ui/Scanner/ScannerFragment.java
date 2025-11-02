@@ -25,12 +25,16 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bea.nutria.R;
+import com.bea.nutria.api.IngredienteAPI;
 import com.bea.nutria.api.ScannerAPI;
 import com.bea.nutria.api.ScannerClient;
+import com.bea.nutria.ui.Ingrediente.Ingrediente;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -42,6 +46,7 @@ import retrofit2.Response;
 public class ScannerFragment extends Fragment {
 
     private static final int CAMERA_PERMISSION_REQUEST = 42;
+    private static final String TAG = "ScannerFragment";
 
     private FrameLayout previewContainer;
     private PreviewView previewView;
@@ -130,56 +135,218 @@ public class ScannerFragment extends Fragment {
         RequestBody requestFile = RequestBody.create(foto, MediaType.parse("image/jpeg"));
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", foto.getName(), requestFile);
 
-        ScannerAPI api = ScannerClient.createService();
-        Call<ScannerAPI.ScannerResultadoDTO> call = api.enviarScanner(body, nomeIngrediente);
+        ScannerAPI scannerAPI = ScannerClient.createScannerService();
+        Call<ScannerAPI.ScannerResponseDTO> call = scannerAPI.enviarScanner(body, nomeIngrediente);
 
-        call.enqueue(new Callback<ScannerAPI.ScannerResultadoDTO>() {
+        call.enqueue(new Callback<ScannerAPI.ScannerResponseDTO>() {
             @Override
-            public void onResponse(@NonNull Call<ScannerAPI.ScannerResultadoDTO> call,
-                                   @NonNull Response<ScannerAPI.ScannerResultadoDTO> response) {
+            public void onResponse(@NonNull Call<ScannerAPI.ScannerResponseDTO> call,
+                                   @NonNull Response<ScannerAPI.ScannerResponseDTO> response) {
                 if (!isAdded()) return;
-                mostrarCarregando(false);
 
                 if (response.isSuccessful() && response.body() != null) {
-                    ScannerAPI.ScannerResultadoDTO dto = response.body();
+                    ScannerAPI.ScannerResponseDTO dto = response.body();
 
-                    // Log para debug
-                    Log.d("ScannerFragment", "DTO recebido:");
-                    Log.d("ScannerFragment", "Nome: " + dto.nomeIngrediente);
-                    Log.d("ScannerFragment", "Porção: " + dto.porcao);
-                    Log.d("ScannerFragment", "Nutrientes: " + (dto.nutrientes != null ? dto.nutrientes.size() : "null"));
+                    Log.d(TAG, "========== SCANNER RESPONSE ==========");
+                    Log.d(TAG, "Message: " + dto.message);
+                    Log.d(TAG, "ID novo: " + dto.id_novo);
+                    Log.d(TAG, "======================================");
 
-                    if (dto.nutrientes != null) {
-                        for (ScannerAPI.NutrienteDTO n : dto.nutrientes) {
-                            Log.d("ScannerFragment", "  - " + n.nome + ": " + n.valor + " (" + n.vd + ")");
-                        }
+                    if (dto.id_novo != null) {
+                        // Busca pelo ID com retry
+                        buscarDetalhesIngredientePorId(dto.id_novo);
+                    } else {
+                        mostrarCarregando(false);
+                        Toast.makeText(requireContext(),
+                                "Erro: ID do ingrediente não retornado pelo servidor",
+                                Toast.LENGTH_LONG).show();
                     }
-
-                    abrirResultadoFragment(dto);
                 } else {
+                    mostrarCarregando(false);
+                    Log.e(TAG, "Erro no servidor: " + response.code());
                     Toast.makeText(requireContext(),
-                            "Servidor: " + response.code(),
+                            "Erro no servidor: " + response.code(),
                             Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<ScannerAPI.ScannerResultadoDTO> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ScannerAPI.ScannerResponseDTO> call, @NonNull Throwable t) {
                 if (!isAdded()) return;
                 mostrarCarregando(false);
+                Log.e(TAG, "Falha no envio do scanner", t);
                 Toast.makeText(requireContext(),
-                        "Falha: " + t.getMessage(),
+                        "Falha ao enviar: " + t.getMessage(),
                         Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    private void abrirResultadoFragment(ScannerAPI.ScannerResultadoDTO dto) {
+    private void buscarDetalhesIngredientePorId(Integer idIngrediente) {
+        buscarComRetry(idIngrediente, 0, 5); // 5 tentativas
+    }
+
+    private void buscarComRetry(Integer idIngrediente, int tentativa, int maxTentativas) {
+        if (tentativa >= maxTentativas) {
+            mostrarCarregando(false);
+            Toast.makeText(requireContext(),
+                    "Não foi possível recuperar o ingrediente após " + maxTentativas + " tentativas. " +
+                            "ID: " + idIngrediente,
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Delay progressivo: 2s, 4s, 6s, 8s, 10s
+        long delay = (tentativa + 1) * 2000L;
+
+        Log.d(TAG, "Aguardando " + (delay/1000) + "s antes da tentativa " + (tentativa + 1) + " de " + maxTentativas);
+
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+            Log.d(TAG, "Iniciando tentativa " + (tentativa + 1) + " - ID: " + idIngrediente);
+
+            // Agora usa o ScannerClient que já tem autenticação configurada
+            IngredienteAPI ingredienteAPI = ScannerClient.createIngredienteService();
+            Call<Ingrediente> call = ingredienteAPI.getIngredienteById(idIngrediente);
+
+            Log.d(TAG, "URL da requisição: " + call.request().url());
+
+            call.enqueue(new Callback<Ingrediente>() {
+                @Override
+                public void onResponse(@NonNull Call<Ingrediente> call,
+                                       @NonNull Response<Ingrediente> response) {
+                    if (!isAdded()) return;
+
+                    Log.d(TAG, "========== RESPOSTA GET BY ID (Tentativa " + (tentativa + 1) + ") ==========");
+                    Log.d(TAG, "Status code: " + response.code());
+                    Log.d(TAG, "URL: " + call.request().url());
+
+                    if (response.isSuccessful() && response.body() != null) {
+                        mostrarCarregando(false);
+                        Ingrediente ingrediente = response.body();
+
+                        Log.d(TAG, "✓ Ingrediente recebido com sucesso!");
+                        Log.d(TAG, "ID: " + ingrediente.getId());
+                        Log.d(TAG, "Nome: " + ingrediente.getNomeIngrediente());
+                        Log.d(TAG, "Calorias: " + ingrediente.getCaloria());
+                        Log.d(TAG, "========================================");
+
+                        abrirResultadoFragment(ingrediente);
+                    } else if (response.code() == 404) {
+                        // Ingrediente ainda não está disponível, tentar novamente
+                        Log.w(TAG, "✗ Ingrediente ainda não disponível (404), tentando novamente...");
+                        Log.d(TAG, "========================================");
+                        buscarComRetry(idIngrediente, tentativa + 1, maxTentativas);
+                    } else if (response.code() == 401) {
+                        // Erro de autenticação
+                        mostrarCarregando(false);
+                        Log.e(TAG, "✗ Erro de autenticação (401)!");
+                        Log.e(TAG, "Verifique as credenciais no ScannerClient");
+                        Log.e(TAG, "========================================");
+                        Toast.makeText(requireContext(),
+                                "Erro de autenticação. Verifique as credenciais da API.",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Log.e(TAG, "✗ Erro na resposta!");
+                        Log.e(TAG, "Status code: " + response.code());
+
+                        try {
+                            String errorBody = response.errorBody() != null ?
+                                    response.errorBody().string() : "sem corpo de erro";
+                            Log.e(TAG, "Error body: " + errorBody);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Erro ao ler error body", e);
+                        }
+
+                        Log.e(TAG, "========================================");
+
+                        // Tentar novamente se for erro de servidor (5xx)
+                        if (response.code() >= 500) {
+                            buscarComRetry(idIngrediente, tentativa + 1, maxTentativas);
+                        } else {
+                            mostrarCarregando(false);
+                            Toast.makeText(requireContext(),
+                                    "Erro ao buscar ingrediente: " + response.code(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<Ingrediente> call, @NonNull Throwable t) {
+                    if (!isAdded()) return;
+
+                    Log.e(TAG, "========== FALHA NA REQUISIÇÃO (Tentativa " + (tentativa + 1) + ") ==========");
+                    Log.e(TAG, "URL: " + call.request().url());
+                    Log.e(TAG, "Erro: " + t.getMessage(), t);
+                    Log.e(TAG, "=========================================");
+
+                    // Tentar novamente em caso de falha de rede
+                    buscarComRetry(idIngrediente, tentativa + 1, maxTentativas);
+                }
+            });
+        }, delay);
+    }
+
+    private void abrirResultadoFragment(Ingrediente ing) {
         Bundle b = new Bundle();
-        b.putString("nomeIngrediente", dto.nomeIngrediente != null ? dto.nomeIngrediente : "");
-        b.putString("porcao", dto.porcao != null ? dto.porcao : "");
-        b.putSerializable("nutrientes",
-                dto.nutrientes != null ? new ArrayList<>(dto.nutrientes) : new ArrayList<>());
+        b.putString("nomeIngrediente", ing.getNomeIngrediente() != null ? ing.getNomeIngrediente() : "Ingrediente");
+        b.putString("porcao", "100g");
+
+        // Converter todos os campos do Ingrediente para NutrienteDTO
+        ArrayList<ScannerAPI.NutrienteDTO> nutrientesDTO = new ArrayList<>();
+
+        // Mapa com nome do nutriente -> valor
+        LinkedHashMap<String, Double> nutrientes = new LinkedHashMap<>();
+        nutrientes.put("Calorias", ing.getCaloria());
+        nutrientes.put("Carboidratos", ing.getCarboidrato());
+        nutrientes.put("Açúcar", ing.getAcucar());
+        nutrientes.put("Proteína", ing.getProteina());
+        nutrientes.put("Gordura Total", ing.getGorduraTotal());
+        nutrientes.put("Gordura Saturada", ing.getGorduraSaturada());
+        nutrientes.put("Gordura Monoinsaturada", ing.getGorduraMonoinsaturada());
+        nutrientes.put("Gordura Poliinsaturada", ing.getGorduraPoliinsaturada());
+        nutrientes.put("Colesterol", ing.getColesterol());
+        nutrientes.put("Sódio", ing.getSodio());
+        nutrientes.put("Fibra", ing.getFibra());
+        nutrientes.put("Água", ing.getAgua());
+        nutrientes.put("Álcool", ing.getAlcool());
+        nutrientes.put("Cálcio", ing.getCalcio());
+        nutrientes.put("Fósforo", ing.getFosforo());
+        nutrientes.put("Magnésio", ing.getMagnesio());
+        nutrientes.put("Potássio", ing.getPotassio());
+        nutrientes.put("Ferro", ing.getFerro());
+        nutrientes.put("Zinco", ing.getZinco());
+        nutrientes.put("Cobre", ing.getCobre());
+        nutrientes.put("Selênio", ing.getSelenio());
+        nutrientes.put("Vitamina B6", ing.getVitaminaB6());
+        nutrientes.put("Vitamina B12", ing.getVitaminaB12());
+        nutrientes.put("Vitamina C", ing.getVitaminaC());
+        nutrientes.put("Vitamina D", ing.getVitaminaD());
+        nutrientes.put("Vitamina E", ing.getVitaminaE());
+        nutrientes.put("Vitamina K", ing.getVitaminaK());
+        nutrientes.put("Retinol", ing.getRetinol());
+        nutrientes.put("Tiamina", ing.getTiamina());
+        nutrientes.put("Riboflavina", ing.getRiboflavina());
+        nutrientes.put("Niacina", ing.getNiacina());
+        nutrientes.put("Folato", ing.getFolato());
+        nutrientes.put("Colina", ing.getColina());
+        nutrientes.put("Teobromina", ing.getTeobromina());
+        nutrientes.put("Cafeína", ing.getCafeina());
+
+        // Converter para DTOs, ignorando valores zero
+        for (Map.Entry<String, Double> entry : nutrientes.entrySet()) {
+            double valor = entry.getValue();
+            if (valor != 0.0) {
+                ScannerAPI.NutrienteDTO dto = new ScannerAPI.NutrienteDTO();
+                dto.nome = entry.getKey();
+                dto.valor = formatarValor(entry.getKey(), valor);
+                dto.vd = calcularVD(entry.getKey(), valor);
+                nutrientesDTO.add(dto);
+            }
+        }
+
+        Log.d(TAG, "Total de nutrientes com valor: " + nutrientesDTO.size());
+        b.putSerializable("nutrientes", nutrientesDTO);
 
         ResultadoFragment fragment = new ResultadoFragment();
         fragment.setArguments(b);
@@ -189,6 +356,50 @@ public class ScannerFragment extends Fragment {
                 .replace(R.id.nav_host_fragment_activity_main, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    private String formatarValor(String nomeNutriente, double valor) {
+        if (nomeNutriente.equals("Calorias")) {
+            return String.format("%.0f kcal", valor);
+        } else if (nomeNutriente.contains("Vitamina") ||
+                nomeNutriente.equals("Selênio") ||
+                nomeNutriente.equals("Folato") ||
+                nomeNutriente.equals("Retinol")) {
+            return String.format("%.2f µg", valor);
+        } else if (nomeNutriente.equals("Colesterol") ||
+                nomeNutriente.equals("Sódio") ||
+                nomeNutriente.equals("Cálcio") ||
+                nomeNutriente.equals("Fósforo") ||
+                nomeNutriente.equals("Magnésio") ||
+                nomeNutriente.equals("Potássio") ||
+                nomeNutriente.equals("Ferro") ||
+                nomeNutriente.equals("Zinco") ||
+                nomeNutriente.equals("Cobre")) {
+            return String.format("%.2f mg", valor);
+        } else {
+            return String.format("%.2f g", valor);
+        }
+    }
+
+    private String calcularVD(String nomeNutriente, double valor) {
+        double vd = 0;
+
+        switch (nomeNutriente) {
+            case "Calorias": vd = (valor / 2000) * 100; break;
+            case "Carboidratos": vd = (valor / 300) * 100; break;
+            case "Proteína": vd = (valor / 75) * 100; break;
+            case "Gordura Total": vd = (valor / 55) * 100; break;
+            case "Gordura Saturada": vd = (valor / 22) * 100; break;
+            case "Fibra": vd = (valor / 25) * 100; break;
+            case "Sódio": vd = (valor / 2400) * 100; break;
+            case "Cálcio": vd = (valor / 1000) * 100; break;
+            case "Ferro": vd = (valor / 14) * 100; break;
+            case "Vitamina C": vd = (valor / 45) * 100; break;
+            case "Vitamina D": vd = (valor / 5) * 100; break;
+            default: return "-";
+        }
+
+        return vd > 0 ? String.format("%.0f%%", vd) : "-";
     }
 
     private void mostrarCarregando(boolean mostrar) {

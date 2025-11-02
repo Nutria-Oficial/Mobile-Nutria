@@ -17,15 +17,14 @@ public interface ScannerAPI {
         public String vd;
     }
 
-    class ScannerResultadoDTO implements Serializable {
-        public String nomeIngrediente;
-        public String porcao;
-        public List<NutrienteDTO> nutrientes;
+    class ScannerResponseDTO implements Serializable {
+        public String message;
+        public Integer id_novo;
     }
 
     @Multipart
     @POST("scanner/")
-    Call<ScannerResultadoDTO> enviarScanner(
+    Call<ScannerResponseDTO> enviarScanner(
             @Part MultipartBody.Part file,
             @Query("nome_ingrediente") String nomeIngrediente
     );
