@@ -1,9 +1,12 @@
 package com.bea.nutria.ui.Tabela;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -34,10 +37,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bea.nutria.R;
 import com.bea.nutria.api.TabelaAPI;
+import com.bea.nutria.api.UsuarioAPI;
 import com.bea.nutria.api.conexaoApi.ConexaoAPI;
 import com.bea.nutria.databinding.FragmentTabelaBinding;
 import com.bea.nutria.model.GetNutrienteDTO;
 import com.bea.nutria.model.GetTabelaDTO;
+import com.bea.nutria.model.Usuario;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -55,8 +60,10 @@ import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 import com.bea.nutria.ui.Ingrediente.IngredienteSharedViewModel;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class TabelaFragment extends Fragment {
 
@@ -67,9 +74,13 @@ public class TabelaFragment extends Fragment {
     private Integer idTabela = 0;
     private TabelaAPI api;
     private ConexaoAPI conexaoAPI;
+    private ConexaoAPI conexaoAPIUsuario;
     private TabelaAdapter adapter;
     private IngredienteSharedViewModel sharedViewModel;
     private TabelaViewModel tabelaViewModel;
+    private UsuarioAPI usuarioAPI;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private int usuarioId = -1;
 
 
     @Override
@@ -83,6 +94,8 @@ public class TabelaFragment extends Fragment {
         setCheckBoxListener(binding.checkBox4);
 
         conexaoAPI = new ConexaoAPI("https://api-spring-mongodb.onrender.com");
+        conexaoAPIUsuario = new ConexaoAPI("https://api-spring-aql.onrender.com/");
+        usuarioAPI = conexaoAPIUsuario.getApi(UsuarioAPI.class);
         api = conexaoAPI.getApi(TabelaAPI.class);
 
 
@@ -108,6 +121,10 @@ public class TabelaFragment extends Fragment {
         binding.porcao.setText(String.valueOf(porcaoAtual));
         binding.porcao.setInputType(InputType.TYPE_CLASS_NUMBER);
 
+        usuarioId = prefs().getInt("usuario_id", -1);
+        if (usuarioId < 0) {
+            resolverUsuarioId();
+        }
 
         binding.btnAumentar.setOnClickListener(v -> {
             atualizarPorcao(porcaoAtual + 1);
@@ -202,9 +219,9 @@ public class TabelaFragment extends Fragment {
 
                 if (getArguments() != null) {
                     Integer idProduto = getArguments().getInt("idProduto");
-                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> adicionarTabela(27, idProduto, getTabelaInformacoes(adapter.getQuantidades())));
+                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> adicionarTabela(usuarioId, idProduto, getTabelaInformacoes(adapter.getQuantidades())));
                 } else {
-                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> criarTabela(27, getTabelaInformacoes(adapter.getQuantidades())));
+                    conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> criarTabela(usuarioId, getTabelaInformacoes(adapter.getQuantidades())));
                 }
             }else {
                 Toast.makeText(getContext(),
@@ -233,7 +250,7 @@ public class TabelaFragment extends Fragment {
         new android.os.Handler().postDelayed(() -> {
             Boolean temDadosSalvos = tabelaViewModel.hasDadosSalvos().getValue();
 
-            if ((temDadosSalvos != null && temDadosSalvos) || sharedViewModel.temIngredientesSalvos()) {
+            if ((temDadosSalvos != null && temDadosSalvos) || (sharedViewModel.temIngredientesSalvos() && tabelaViewModel.getQuantidades().getValue() != null && !tabelaViewModel.getQuantidades().getValue().isEmpty())) {
                 mostrarDialogContinuarEditando();
             }
         }, 250);
@@ -270,7 +287,7 @@ public class TabelaFragment extends Fragment {
     }
     private void criarTabela(Integer usuarioLogado, Map<String,Object> tabela) {
         mostrarCarregando(true);
-        setHabilitarCampos(false);
+        setHabilitarButtonCalcular(false);
         api.criarTabela(usuarioLogado, tabela).enqueue(new Callback<GetTabelaDTO>() {
             @Override
             public void onResponse(Call<GetTabelaDTO> call, retrofit2.Response<GetTabelaDTO> response) {
@@ -278,7 +295,7 @@ public class TabelaFragment extends Fragment {
                     GetTabelaDTO tabelaCriada = response.body();
                     preencherDadosTabela(tabelaCriada);
                     mostrarCarregando(false);
-                    setHabilitarCampos(true);
+                    setHabilitarButtonCalcular(true);
                     binding.cardConteudo.setVisibility(View.VISIBLE);
                     binding.btnNovo.setVisibility(View.VISIBLE);
                     Toast.makeText(getContext(), "Tabela adicionada com sucesso!", Toast.LENGTH_SHORT).show();
@@ -286,7 +303,7 @@ public class TabelaFragment extends Fragment {
                 } else {
                     int code = response.code();
                     mostrarCarregando(false);
-                    setHabilitarCampos(true);
+                    setHabilitarButtonCalcular(true);
                     Toast.makeText(
                             getContext(),
                             "Erro ao inserir Tabela (" + code + ")\n",
@@ -304,7 +321,7 @@ public class TabelaFragment extends Fragment {
             @Override
             public void onFailure(Call<GetTabelaDTO> call, Throwable t) {
                 mostrarCarregando(false);
-                setHabilitarCampos(true);
+                setHabilitarButtonCalcular(true);
                 Toast.makeText(getContext(),
                         "Falha de conexão: " + (t.getMessage() == null ? "desconhecida" : t.getMessage()),
                         Toast.LENGTH_LONG).show();
@@ -315,7 +332,7 @@ public class TabelaFragment extends Fragment {
     }
     private void adicionarTabela(Integer usuarioLogado, Integer idProduto, Map<String,Object> tabela) {
         mostrarCarregando(true);
-        setHabilitarCampos(false);
+        setHabilitarButtonCalcular(false);
         api.adicionarTabela(usuarioLogado, idProduto, tabela).enqueue(new Callback<GetTabelaDTO>() {
             @Override
             public void onResponse(Call<GetTabelaDTO> call, retrofit2.Response<GetTabelaDTO> response) {
@@ -323,7 +340,7 @@ public class TabelaFragment extends Fragment {
                     GetTabelaDTO tabelaCriada = response.body();
                     preencherDadosTabela(tabelaCriada);
                     mostrarCarregando(false);
-                    setHabilitarCampos(true);
+                    setHabilitarButtonCalcular(true);
                     binding.cardConteudo.setVisibility(View.VISIBLE);
                     binding.btnNovo.setVisibility(View.VISIBLE);
 
@@ -331,7 +348,7 @@ public class TabelaFragment extends Fragment {
                 } else {
                     int code = response.code();
                     mostrarCarregando(false);
-                    setHabilitarCampos(true);
+                    setHabilitarButtonCalcular(true);
                     Toast.makeText(
                             getContext(),
                             "Erro ao inserir Tabela (" + code + ")\n",
@@ -343,7 +360,7 @@ public class TabelaFragment extends Fragment {
             @Override
             public void onFailure(Call<GetTabelaDTO> call, Throwable t) {
                 mostrarCarregando(false);
-                setHabilitarCampos(true);
+                setHabilitarButtonCalcular(true);
                 Toast.makeText(getContext(),
                         "Falha de conexão: " + (t.getMessage() == null ? "desconhecida" : t.getMessage()),
                         Toast.LENGTH_LONG).show();
@@ -581,16 +598,8 @@ public class TabelaFragment extends Fragment {
             binding.checkBox4.setChecked(true);
         }
     }
-    private void setHabilitarCampos(boolean habilitarCampos){
-        binding.nomeProdutoLayout.getEditText().setEnabled(habilitarCampos);
-        binding.nomeTabelaLayout.getEditText().setEnabled(habilitarCampos);
-        binding.checkBox.setEnabled(habilitarCampos);
-        binding.checkBox.setEnabled(habilitarCampos);
-        binding.checkBox.setEnabled(habilitarCampos);
-        binding.checkBox.setEnabled(habilitarCampos);
-        binding.porcao.setEnabled(habilitarCampos);
-        binding.valor.setEnabled(habilitarCampos);
-        binding.button.setEnabled(habilitarCampos);
+    private void setHabilitarButtonCalcular(boolean habilitar){
+        binding.button.setEnabled(habilitar);
     }
     private void mostrarDialogContinuarEditando() {
         new AlertDialog.Builder(requireContext())
@@ -626,6 +635,58 @@ public class TabelaFragment extends Fragment {
             tabelaViewModel.getQuantidades().getValue().clear();
         }
         sharedViewModel.limparIngredientes();
+    }
+    private void resolverUsuarioId() {
+        String email = prefs().getString("email", null);
+        if (email == null) {
+            try {
+                if (FirebaseAuth.getInstance().getCurrentUser() != null)
+                    email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            } catch (Throwable ignore) {}
+        }
+
+        if (email == null || email.trim().isEmpty()) {
+            mainHandler.post(() -> {
+                Toast.makeText(getContext(),
+                        "Não foi possível identificar o usuário logado",
+                        Toast.LENGTH_LONG).show();
+            });
+            return;
+        }
+
+        final String emailFinal = email.trim().toLowerCase(Locale.ROOT);
+
+        usuarioAPI.buscarUsuario(emailFinal).enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                if (!isAdded()) return;
+
+                if (response.isSuccessful() && response.body() != null) {
+                    Usuario u = response.body();
+                    Integer id = u.getId();
+
+                    if (id != null && id > 0) {
+                        prefs().edit().putInt("usuario_id", id).apply();
+                        usuarioId = id;
+                    }
+                } else {
+                    Toast.makeText(getContext(),
+                            "Usuário encontrado sem ID válido",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+                if (!isAdded()) return;
+                Toast.makeText(getContext(),
+                        "Falha de conexão: " + (t.getMessage() == null ? "desconhecida" : t.getMessage()),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    private android.content.SharedPreferences prefs() {
+        return requireContext().getSharedPreferences("nutria_prefs", Context.MODE_PRIVATE);
     }
     @Override
     public void onDestroyView() {
