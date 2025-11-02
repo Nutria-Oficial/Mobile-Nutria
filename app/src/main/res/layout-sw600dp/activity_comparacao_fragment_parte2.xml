@@ -63,7 +63,6 @@
         android:layout_height="48dp"
         android:layout_marginBottom="50dp"
         android:fontFamily="@font/montserrat_semibold"
-        android:onClick="openFragmentComparacaoPart2"
         android:text="Comparar"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
