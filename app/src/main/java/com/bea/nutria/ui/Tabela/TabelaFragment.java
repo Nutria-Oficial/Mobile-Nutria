@@ -78,6 +78,7 @@ public class TabelaFragment extends Fragment {
     private TabelaAdapter adapter;
     private IngredienteSharedViewModel sharedViewModel;
     private TabelaViewModel tabelaViewModel;
+    private boolean restaurandoDados = false;
     private UsuarioAPI usuarioAPI;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private int usuarioId = -1;
@@ -153,7 +154,6 @@ public class TabelaFragment extends Fragment {
                     porcaoAtual = 0.0;
                 }
                 tabelaViewModel.setPorcao(porcaoAtual);
-                tabelaViewModel.setTemDadosSalvos(true);
             }
         });
         binding.valor.addTextChangedListener(new TextWatcher() {
@@ -170,11 +170,10 @@ public class TabelaFragment extends Fragment {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 try {
                     porcaoEmbalagemAtual = Integer.parseInt(charSequence.toString());
-                    tabelaViewModel.setPorcaoEmbalagem(porcaoEmbalagemAtual);
                 }catch (NumberFormatException exception){
                     porcaoEmbalagemAtual = 0;
                 }
-                tabelaViewModel.setTemDadosSalvos(true);
+                tabelaViewModel.setPorcaoEmbalagem(porcaoEmbalagemAtual);
             }
         });
         binding.nomeProdutoLayout.getEditText().addTextChangedListener(new TextWatcher() {
@@ -190,7 +189,6 @@ public class TabelaFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 tabelaViewModel.setNomeProduto(charSequence.toString());
-                tabelaViewModel.setTemDadosSalvos(true);
             }
         });
         binding.nomeTabelaLayout.getEditText().addTextChangedListener(new TextWatcher() {
@@ -206,7 +204,6 @@ public class TabelaFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 tabelaViewModel.setNomeTabela(charSequence.toString());
-                tabelaViewModel.setTemDadosSalvos(true);
             }
         });
 
@@ -247,13 +244,12 @@ public class TabelaFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        new android.os.Handler().postDelayed(() -> {
-            Boolean temDadosSalvos = tabelaViewModel.hasDadosSalvos().getValue();
-
-            if ((temDadosSalvos != null && temDadosSalvos) || (sharedViewModel.temIngredientesSalvos() && tabelaViewModel.getQuantidades().getValue() != null && !tabelaViewModel.getQuantidades().getValue().isEmpty())) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (existemDadosSalvos()) {
                 mostrarDialogContinuarEditando();
             }
         }, 250);
+
     }
 
     public void atualizarPorcao(double novoValor){
@@ -276,7 +272,6 @@ public class TabelaFragment extends Fragment {
 
                 tipoMedida = checkBox.getText().toString();
                 tabelaViewModel.setUnidadeMedida(tipoMedida);
-                tabelaViewModel.setTemDadosSalvos(true);
             }
             else {
                 if (tipoMedida.equals(checkBox.getText().toString())){
@@ -580,6 +575,8 @@ public class TabelaFragment extends Fragment {
         return novaTabela;
     }
     private void restaurarUltimasAtualizacoesDadosTabela() {
+        restaurandoDados = true;
+
         binding.nomeProdutoLayout.getEditText().setText(
                 tabelaViewModel.getNomeProdutoLiveData().getValue() != null ? tabelaViewModel.getNomeProdutoLiveData().getValue() : "");
         binding.nomeTabelaLayout.getEditText().setText(tabelaViewModel.getNomeTabelaLiveData().getValue() != null ? tabelaViewModel.getNomeTabelaLiveData().getValue() : "");
@@ -597,6 +594,7 @@ public class TabelaFragment extends Fragment {
         } else if (Objects.equals(unidadeMedida, "l")) {
             binding.checkBox4.setChecked(true);
         }
+        restaurandoDados = false;
     }
     private void setHabilitarButtonCalcular(boolean habilitar){
         binding.button.setEnabled(habilitar);
@@ -606,12 +604,16 @@ public class TabelaFragment extends Fragment {
                 .setTitle("Continuar Editando?")
                 .setMessage("Você possui alterações salvas. Deseja continuar editando?")
                 .setPositiveButton("Sim", (dialog, which) -> {
+                    tabelaViewModel.setTemDadosSalvos(false);
                     restaurarUltimasAtualizacoesDadosTabela();
                     dialog.dismiss();
                 })
                 .setNegativeButton("Não", (dialog, which) -> {
-                    limparDadosTabela();
                     tabelaViewModel.setTemDadosSalvos(false);
+                    if (tabelaViewModel.getQuantidades().getValue() != null) {
+                        tabelaViewModel.getQuantidades().getValue().clear();
+                    }
+                    limparDadosTabela();
                     dialog.dismiss();
                 })
                 .show();
@@ -688,6 +690,25 @@ public class TabelaFragment extends Fragment {
     }
     private android.content.SharedPreferences prefs() {
         return requireContext().getSharedPreferences("nutria_prefs", Context.MODE_PRIVATE);
+    }
+    private boolean existemDadosSalvos() {
+        boolean temIngredientes = sharedViewModel.temIngredientesSalvos();
+        boolean temQuantidades = tabelaViewModel.getQuantidades().getValue() != null && !tabelaViewModel.getQuantidades().getValue().isEmpty();
+        boolean camposTabela = false;
+
+        if (!TextUtils.isEmpty(tabelaViewModel.getNomeProdutoLiveData().getValue())) {
+            camposTabela = true;
+        } else if (!TextUtils.isEmpty(tabelaViewModel.getNomeTabelaLiveData().getValue())) {
+            camposTabela = true;
+        } else if (tabelaViewModel.getPorcaoLiveData().getValue() != null && tabelaViewModel.getPorcaoLiveData().getValue() > 0) {
+            camposTabela = true;
+        } else if (tabelaViewModel.getPorcaoEmbalagemLiveData().getValue() != null && tabelaViewModel.getPorcaoEmbalagemLiveData().getValue() > 0) {
+            camposTabela = true;
+        } else if (!TextUtils.isEmpty(tabelaViewModel.getUnidadeMedidaLiveData().getValue())) {
+            camposTabela = true;
+        }
+
+        return (temIngredientes && temQuantidades) || camposTabela;
     }
     @Override
     public void onDestroyView() {
