@@ -79,8 +79,18 @@ public class VisualizarFragment extends Fragment {
         binding.btnVoltar.setOnClickListener(v -> {
             Bundle result = new Bundle();
             result.putInt("idTabela", idTabela);
-            NavController navController = NavHostFragment.findNavController(VisualizarFragment.this);
-            navController.navigate(R.id.action_navigation_visualizar_to_navigation_avaliacao_tabela, result);
+            if (getArguments() != null && getArguments().containsKey("nomeProduto")) {
+                String nomeProduto = getArguments().getString("nomeProduto");
+                String idProduto = getArguments().getString("idProduto");
+                result.putString("nomeProduto", nomeProduto);
+                result.putString("idProduto", idProduto);
+                NavController navController = NavHostFragment.findNavController(VisualizarFragment.this);
+                navController.navigate(R.id.action_navigation_visualizar_to_navigation_avaliacao_tabela, result);
+            }
+            else {
+                NavController navController = NavHostFragment.findNavController(VisualizarFragment.this);
+                navController.navigate(R.id.action_navigation_visualizar_to_navigation_avaliacao_tabela, result);
+            }
         });
     }
     @Override

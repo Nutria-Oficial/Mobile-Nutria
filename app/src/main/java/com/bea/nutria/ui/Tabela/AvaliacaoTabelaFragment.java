@@ -71,7 +71,7 @@ public class AvaliacaoTabelaFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         assert getArguments() != null;
-        Integer idTabela = getArguments().getInt("idTabela");
+        int idTabela = getArguments().getInt("idTabela");
         porcaoEmbalagemAtual = getArguments().getDouble("porcaoEmbalagem");
         conexaoAPI.iniciandoServidor(AvaliacaoTabelaFragment.this,() -> buscarTabelaAvaliacao(idTabela));
 
@@ -87,8 +87,19 @@ public class AvaliacaoTabelaFragment extends Fragment {
             navController.navigate(R.id.action_navigation_avaliacao_tabela_to_navigation_visualizar, result);
         });
         binding.btnVoltar.setOnClickListener(v ->{
-            NavController navController = NavHostFragment.findNavController(AvaliacaoTabelaFragment.this);
-            navController.navigate(R.id.action_avaliacao_tabela_to_tabela);
+            if (getArguments() != null && getArguments().containsKey("nomeProduto")) {
+                String nomeProduto = getArguments().getString("nomeProduto");
+                String idProduto = getArguments().getString("idProduto");
+                Bundle result = new Bundle();
+                result.putString("nomeProduto", nomeProduto);
+                result.putString("idProduto", idProduto);
+                NavController navController = NavHostFragment.findNavController(AvaliacaoTabelaFragment.this);
+                navController.navigate(R.id.action_avaliacao_tabela_to_tabela, result);
+            }
+            else {
+                NavController navController = NavHostFragment.findNavController(AvaliacaoTabelaFragment.this);
+                navController.navigate(R.id.action_avaliacao_tabela_to_tabela);
+            }
         });
         binding.avaliacao.setOnClickListener(v -> {
             mostrarLegenda();

@@ -206,16 +206,41 @@ public class TabelaFragment extends Fragment {
                 tabelaViewModel.setNomeTabela(charSequence.toString());
             }
         });
+        if (getArguments() != null && getArguments().containsKey("nomeProduto")) {
+            String nomeProduto = getArguments().getString("nomeProduto");
+
+            if (!TextUtils.isEmpty(nomeProduto)) {
+                binding.nomeProdutoLayout.getEditText().setText(nomeProduto);
+
+                tabelaViewModel.setNomeProduto(nomeProduto);
+
+                binding.nomeProdutoLayout.getEditText().setEnabled(false);
+
+                binding.nomeProdutoLayout.setHint("Nome do produto (bloqueado)");
+                binding.nomeProdutoLayout.setBoxBackgroundColor(getResources().getColor(R.color.gray));
+            }
+        }
 
         binding.btnIngredientes.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(TabelaFragment.this);
-            navController.navigate(R.id.action_tabela_to_ingrediente);
+            if (getArguments() != null && getArguments().containsKey("nomeProduto")) {
+                String nomeProduto = getArguments().getString("nomeProduto");
+                String idProduto = getArguments().getString("idProduto");
+                Bundle result = new Bundle();
+                result.putString("nomeProduto", nomeProduto);
+                result.putString("idProduto", idProduto);
+                NavController navController = NavHostFragment.findNavController(TabelaFragment.this);
+                navController.navigate(R.id.action_tabela_to_ingrediente, result);
+            }
+            else {
+                NavController navController = NavHostFragment.findNavController(TabelaFragment.this);
+                navController.navigate(R.id.action_tabela_to_ingrediente);
+            }
         });
         binding.button.setOnClickListener(v -> {
             if (validarTodosCamposObrigatorios()) {
 
                 if (getArguments() != null) {
-                    Integer idProduto = getArguments().getInt("idProduto");
+                    Integer idProduto = Integer.parseInt(getArguments().getString("idProduto"));
                     conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> adicionarTabela(usuarioId, idProduto, getTabelaInformacoes(adapter.getQuantidades())));
                 } else {
                     conexaoAPI.iniciandoServidor(TabelaFragment.this,() -> criarTabela(usuarioId, getTabelaInformacoes(adapter.getQuantidades())));
@@ -233,8 +258,19 @@ public class TabelaFragment extends Fragment {
             result.putInt("idTabela", idTabela);
             result.putDouble("porcaoEmbalagem", getPorcaoEmbalagemAtual());
 
-            NavController navController = NavHostFragment.findNavController(TabelaFragment.this);
-            navController.navigate(R.id.action_tabela_to_avaliacao_tabela, result);
+            if (getArguments() != null && getArguments().containsKey("nomeProduto")) {
+                String nomeProduto = getArguments().getString("nomeProduto");
+                String idProduto = getArguments().getString("idProduto");
+
+                result.putString("nomeProduto", nomeProduto);
+                result.putString("idProduto", idProduto);
+                NavController navController = NavHostFragment.findNavController(TabelaFragment.this);
+                navController.navigate(R.id.action_tabela_to_avaliacao_tabela, result);
+            }
+            else {
+                NavController navController = NavHostFragment.findNavController(TabelaFragment.this);
+                navController.navigate(R.id.action_tabela_to_avaliacao_tabela, result);
+            }
         });
 
 
