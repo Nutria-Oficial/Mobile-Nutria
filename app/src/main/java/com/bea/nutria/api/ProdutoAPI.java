@@ -1,8 +1,8 @@
 package com.bea.nutria.api;
 
 import com.bea.nutria.model.GetProdutoDTO;
-// Importação necessária para o novo método, assumindo que GetTabelaDTO está em outro pacote.
-import com.bea.nutria.model.GetTabelaDTO;
+// Importação necessária para o novo método, assumindo que GetTabelaComparacaoDTO está em outro pacote.
+import com.bea.nutria.model.GetTabelaComparacaoDTO;
 
 import java.util.List;
 
@@ -12,11 +12,9 @@ import retrofit2.http.Path;
 
 public interface ProdutoAPI {
 
-    // Método anterior (manter)
-    @GET("produtos/usuario/{id}?filtrar=false")
+    @GET("produtos/usuario/{id}?filtrar=true")
     Call<List<GetProdutoDTO>> buscarProdutosComMaisDeUmaTabela(@Path("id") Integer id);
 
-    // ✨ NOVO MÉTODO: Para buscar todas as tabelas de um produto por produtoId
     @GET("produtos/{id}")
-    Call<List<GetTabelaDTO>> buscarTodasTabelasDoProduto(@Path("id") Integer produtoId);
+    Call<List<GetTabelaComparacaoDTO>> buscarTodasTabelasDoProduto(@Path("id") Integer produtoId);
 }

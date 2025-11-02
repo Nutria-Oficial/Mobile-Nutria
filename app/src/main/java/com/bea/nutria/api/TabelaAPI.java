@@ -1,5 +1,6 @@
 package com.bea.nutria.api;
 
+import com.bea.nutria.model.GetTabelaComparacaoDTO;
 import com.bea.nutria.model.GetTabelaDTO;
 import com.bea.nutria.model.GetTabelaEAvaliacaoDTO;
 import com.bea.nutria.model.ComparacaoNutrienteDTO;
@@ -25,7 +26,7 @@ public interface TabelaAPI {
 
     // Busca de uma única tabela (método original)
     @GET("tabelas/{id}")
-    Call<GetTabelaDTO> buscarTabela(@Path("id") Integer id);
+    Call<GetTabelaComparacaoDTO> buscarTabela(@Path("id") Integer id);
 
     // NOVO MÉTODO: Busca a lista de comparação entre duas tabelas
     @GET("tabelas/{idTabela1}/{idTabela2}")

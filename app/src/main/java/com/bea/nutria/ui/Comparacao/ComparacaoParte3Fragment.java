@@ -694,4 +694,5 @@ public class ComparacaoParte3Fragment extends Fragment {
 
         imageView.clearColorFilter();
     }
+
 }
