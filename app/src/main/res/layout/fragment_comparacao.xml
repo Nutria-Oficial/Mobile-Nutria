@@ -218,7 +218,6 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:visibility="gone"
-        android:onClick="openFragmentComparacaoPart2"
         app:backgroundTint="#EE7026"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
