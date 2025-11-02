@@ -6,6 +6,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -26,8 +28,7 @@ import java.util.List;
 public class ResultadoFragment extends Fragment {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_resultado, container, false);
     }
 
@@ -39,7 +40,6 @@ public class ResultadoFragment extends Fragment {
         ImageView voltar = v.findViewById(R.id.btVoltar);
         TextView tvTitulo = v.findViewById(R.id.tvTitulo);
         TextView tvPorcao = v.findViewById(R.id.tvPorcao);
-        TextView tvPorcaoColuna = v.findViewById(R.id.tvPorcaoColuna);
         TableLayout table = v.findViewById(R.id.tableNutri);
 
         Bundle args = getArguments();
@@ -55,79 +55,68 @@ public class ResultadoFragment extends Fragment {
             }
         }
 
-        // Log para debugggg
         Log.d("ResultadoFragment", "Nome: " + nome);
         Log.d("ResultadoFragment", "Porção: " + porcao);
         Log.d("ResultadoFragment", "Nutrientes: " + (nutrientes != null ? nutrientes.size() : "null"));
 
         tvTitulo.setText(TextUtils.isEmpty(nome) ? "Ingrediente" : nome);
         tvPorcao.setText("Porção aproximada do ingrediente");
-        tvPorcaoColuna.setText(TextUtils.isEmpty(porcao) ? "" : porcao);
 
-        // Limpa a tabela completamente
         table.removeAllViews();
 
-        // Adiciona cabeçalho
         addHeader(table);
 
         if (nutrientes != null && !nutrientes.isEmpty()) {
             for (ScannerAPI.NutrienteDTO n : nutrientes) {
-                addRow(table, safe(n.nome), safe(n.valor), safe(n.vd));
+                addRow(table, safe(n.nome), safe(n.valor));
             }
         } else {
             Log.e("ResultadoFragment", "Lista de nutrientes vazia!");
-            addRow(table, "Nenhum nutriente encontrado", "-", "-");
+            addRow(table, "Nenhum nutriente encontrado", "-");
         }
 
-        voltar.setOnClickListener(v1 -> requireActivity().onBackPressed());
+        voltar.setOnClickListener(v1 -> {
+            NavController navController = NavHostFragment.findNavController(ResultadoFragment.this);
+            navController.navigate(R.id.action_resultado_to_scanner);
+        });
     }
 
     private void addHeader(TableLayout table) {
         TableRow header = new TableRow(requireContext());
         header.setPadding(dp(12), dp(12), dp(12), dp(12));
 
-        TextView c1 = cell("Item", true, 2);
+        TextView c1 = cell("Item", true, 1);
         TextView c2 = cell("Valor", true, 1);
-        TextView c3 = cell("%VD*", true, 1);
         c2.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
-        c3.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
 
         header.addView(c1);
         header.addView(c2);
-        header.addView(c3);
         table.addView(header);
 
         View divider = new View(requireContext());
-        divider.setLayoutParams(new TableRow.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, dp(1)
-        ));
+        divider.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(1)));
         divider.setBackgroundColor(0xFFE0E0E0);
         table.addView(divider);
     }
 
-    private void addRow(TableLayout table, String item, String valor, String vd) {
+    private void addRow(TableLayout table, String item, String valor) {
         TableRow row = new TableRow(requireContext());
         row.setPadding(dp(12), dp(12), dp(12), dp(12));
 
-        TextView c1 = cell(item, false, 2);
+        TextView c1 = cell(item, false, 1);
         TextView c2 = cell(valor, false, 1);
-        TextView c3 = cell(vd, false, 1);
 
         c1.setMaxLines(1);
         c1.setEllipsize(android.text.TextUtils.TruncateAt.END);
 
         c2.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
-        c3.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
 
         row.addView(c1);
         row.addView(c2);
-        row.addView(c3);
         table.addView(row);
 
         View divider = new View(requireContext());
-        divider.setLayoutParams(new TableRow.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, dp(1)
-        ));
+        divider.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(1)));
         divider.setBackgroundColor(0xFFE0E0E0);
         table.addView(divider);
     }

@@ -10,8 +10,11 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.bea.nutria.R;
+import com.bea.nutria.ui.Ingrediente.IngredienteFragment;
 
 public class PopUpScanner extends DialogFragment {
 

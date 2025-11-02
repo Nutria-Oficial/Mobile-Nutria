@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -25,12 +26,16 @@ import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.bea.nutria.R;
 import com.bea.nutria.api.IngredienteAPI;
 import com.bea.nutria.api.ScannerAPI;
 import com.bea.nutria.api.ScannerClient;
+import com.bea.nutria.databinding.FragmentScannerBinding;
 import com.bea.nutria.ui.Ingrediente.Ingrediente;
+import com.bea.nutria.ui.Ingrediente.IngredienteFragment;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -55,6 +60,7 @@ public class ScannerFragment extends Fragment {
     private LifecycleCameraController cameraController;
     private ImageButton btnTirarFoto;
     private ProgressBar progressBarEnvio;
+    private FragmentScannerBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -294,7 +300,6 @@ public class ScannerFragment extends Fragment {
         b.putString("nomeIngrediente", ing.getNomeIngrediente() != null ? ing.getNomeIngrediente() : "Ingrediente");
         b.putString("porcao", "100g");
 
-        // Converter todos os campos do Ingrediente para NutrienteDTO
         ArrayList<ScannerAPI.NutrienteDTO> nutrientesDTO = new ArrayList<>();
 
         // Mapa com nome do nutriente -> valor
@@ -342,7 +347,6 @@ public class ScannerFragment extends Fragment {
                 ScannerAPI.NutrienteDTO dto = new ScannerAPI.NutrienteDTO();
                 dto.nome = entry.getKey();
                 dto.valor = formatarValor(entry.getKey(), valor);
-                dto.vd = calcularVD(entry.getKey(), valor);
                 nutrientesDTO.add(dto);
             }
         }
@@ -350,14 +354,8 @@ public class ScannerFragment extends Fragment {
         Log.d(TAG, "Total de nutrientes com valor: " + nutrientesDTO.size());
         b.putSerializable("nutrientes", nutrientesDTO);
 
-        ResultadoFragment fragment = new ResultadoFragment();
-        fragment.setArguments(b);
-
-        requireActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.nav_host_fragment_activity_main, fragment)
-                .addToBackStack(null)
-                .commit();
+        NavController navController = NavHostFragment.findNavController(ScannerFragment.this);
+        navController.navigate(R.id.action_scanner_to_resultado, b);
     }
 
     private String formatarValor(String nomeNutriente, double valor) {
@@ -381,50 +379,6 @@ public class ScannerFragment extends Fragment {
         } else {
             return String.format("%.2f g", valor);
         }
-    }
-
-    private String calcularVD(String nomeNutriente, double valor) {
-        double vd = 0;
-
-        switch (nomeNutriente) {
-            case "Calorias":
-                vd = (valor / 2000) * 100;
-                break;
-            case "Carboidratos":
-                vd = (valor / 300) * 100;
-                break;
-            case "Proteína":
-                vd = (valor / 75) * 100;
-                break;
-            case "Gordura Total":
-                vd = (valor / 55) * 100;
-                break;
-            case "Gordura Saturada":
-                vd = (valor / 22) * 100;
-                break;
-            case "Fibra":
-                vd = (valor / 25) * 100;
-                break;
-            case "Sódio":
-                vd = (valor / 2400) * 100;
-                break;
-            case "Cálcio":
-                vd = (valor / 1000) * 100;
-                break;
-            case "Ferro":
-                vd = (valor / 14) * 100;
-                break;
-            case "Vitamina C":
-                vd = (valor / 45) * 100;
-                break;
-            case "Vitamina D":
-                vd = (valor / 5) * 100;
-                break;
-            default:
-                return "-";
-        }
-
-        return vd > 0 ? String.format("%.0f%%", vd) : "-";
     }
 
     private void mostrarCarregando(boolean mostrar) {

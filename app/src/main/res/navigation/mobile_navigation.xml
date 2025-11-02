@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android:http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_historico">
 
@@ -29,7 +29,24 @@
         android:id="@+id/navigation_scanner"
         android:name="com.bea.nutria.ui.Scanner.ScannerFragment"
         android:label="Scanner"
-        tools:layout="@layout/fragment_scanner" />
+        tools:layout="@layout/fragment_scanner" >
+        <!-- Ação para navegar para o fragment resultado -->
+        <action
+            android:id="@+id/action_scanner_to_resultado"
+            app:destination="@id/resultadoFragment" />
+    </fragment>
+
+    <!-- 3.2. Fragmento Resultado -->
+    <fragment
+        android:id="@+id/resultadoFragment"
+        android:name="com.bea.nutria.ui.Scanner.ResultadoFragment"
+        android:label="Resultado"
+        tools:layout="@layout/fragment_resultado" >
+        <!-- Ação para navegar para o fragment scanner -->
+        <action
+            android:id="@+id/action_resultado_to_scanner"
+            app:destination="@id/navigation_scanner" />
+    </fragment>
 
     <!-- 4. Fragmento Comparação (Produto 1) -->
     <fragment
@@ -38,7 +55,7 @@
         android:label="Comparação">
         <!-- Ação para navegar para o fragment do produto 2 -->
         <action
-            android:id="@+id/action_navigation_comparacao_to_comparacaoFragmentProduto2"
+            android:id="@+id/action_navigation_comparacao_to_comparacaoParte2Fragment"
             app:destination="@id/comparacaoParte2Fragment" />
     </fragment>
 
@@ -46,7 +63,13 @@
     <fragment
         android:id="@+id/navigation_tabela"
         android:name="com.bea.nutria.ui.Tabela.TabelaFragment"
-        android:label="Tabela" />
+        android:label="Tabela"
+        tools:layout="@layout/fragment_tabela">
+        <!-- ADICIONE ESTA AÇÃO AQUI -->
+        <action
+            android:id="@+id/action_tabela_to_ingrediente"
+            app:destination="@id/navigation_ingrediente" />
+    </fragment>
 
     <!-- 6. Fragmento de Detalhes do Produto (usado pelo Histórico) -->
     <fragment
@@ -64,7 +87,7 @@
             app:destination="@id/navigation_ingrediente" />
     </fragment>
 
-    <!-- 7. Fragmento de Detalhes do Ingrediente -->
+    <!-- 6.2. Fragmento de Detalhes do Ingrediente -->
     <fragment
         android:id="@+id/navigation_ingrediente"
         android:name="com.bea.nutria.ui.Ingrediente.IngredienteFragment"
@@ -76,8 +99,7 @@
             app:destination="@id/navigation_tabela" />
     </fragment>
 
-    <!-- 8. Fragmento de Comparação do Produto 2 -->
-    <!-- Este fragmento estava com um caminho de classe incompleto no 'HEAD', usei o 'tools:layout' como nome para a classe completa. Por favor, verifique o caminho completo. -->
+    <!-- 7. Fragmento de Comparação do Produto 2 -->
     <fragment
         android:id="@+id/comparacaoParte2Fragment"
         android:name="com.bea.nutria.ui.Comparacao.ComparacaoParte2Fragment"
