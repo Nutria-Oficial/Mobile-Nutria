@@ -45,9 +45,6 @@ public class ChatFragment extends Fragment {
     private static final String URL_FAST = "https://nutria-fast-api.koyeb.app/";
     private static final String URL_SPRING = "https://api-spring-mongodb.onrender.com/";
 
-    private int countErro = 0; // Variável não utilizada, mantida por consistência
-    private int tentativas = 0; // Variável não utilizada, mantida por consistência
-
     private String prefsName = "nutria_prefs";
 
     @Override
@@ -58,9 +55,9 @@ public class ChatFragment extends Fragment {
         SharedPreferences prefs = requireActivity().getSharedPreferences(prefsName, Context.MODE_PRIVATE);
         idUser = prefs.getInt("id", 1);
 
-        if(idUser == 0){
+        if (idUser == 0) {
             mostrarTelaVazia();
-        }else{
+        } else {
             binding.progressBar.setVisibility(View.VISIBLE);
             inicializarChat();
             setupRecyclerView();
@@ -95,17 +92,17 @@ public class ChatFragment extends Fragment {
     }
 
     private void carregarChat() {
+        if (binding == null) return;
+
         binding.progressBar.setVisibility(View.VISIBLE);
         apiManagerSpring.iniciarServidor(requireActivity(), () -> {
             chatAPISpring.listarChat(idUser).enqueue(new Callback<List<String>>() {
                 @Override
                 public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                    // **VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException**
-                    if (binding == null) {
-                        return;
-                    }
+                    if (binding == null) return;
 
                     binding.progressBar.setVisibility(View.GONE);
+
                     if (response.isSuccessful() && response.body() != null) {
                         List<String> chatInteiro = response.body();
 
@@ -127,20 +124,22 @@ public class ChatFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<List<String>> call, Throwable throwable) {
-                    // **VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException**
-                    if (binding == null) {
-                        return;
-                    }
+                    if (binding == null) return;
 
                     binding.progressBar.setVisibility(View.GONE);
                     mostrarTelaVazia();
-                    Toast.makeText(getContext(), "Erro ao carregar chat", Toast.LENGTH_SHORT).show();
+
+                    if (getContext() != null) {
+                        Toast.makeText(getContext(), "Erro ao carregar chat", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         });
     }
 
     private void enviarMensagem() {
+        if (binding == null) return;
+
         String mensagem = binding.editTextPergunta.getText().toString().trim();
 
         if (mensagem.isEmpty()) {
@@ -164,7 +163,7 @@ public class ChatFragment extends Fragment {
         chatRequest.setPergunta(mensagem);
         chatRequest.setIdUser(idUser);
 
-        enviarParaFastAPI(chatRequest, 0); // Passar contador como parâmetro
+        enviarParaFastAPI(chatRequest, 0);
     }
 
     private void enviarParaFastAPI(ChatRequest chatRequest, int tentativa) {
@@ -181,14 +180,16 @@ public class ChatFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     String respostaBot = response.body().getResposta();
 
-                    // Adicionar resposta do bot
+                    // adicionar resposta do bot
                     chatAtual.add(respostaBot);
                     chatAdapter.addMessage(respostaBot);
 
                     // scroll para última mensagem
                     binding.recyclerViewChat.scrollToPosition(chatAdapter.getItemCount() - 1);
                 } else {
-                    Toast.makeText(getContext(), "Erro ao receber resposta", Toast.LENGTH_SHORT).show();
+                    if (getContext() != null) {
+                        Toast.makeText(getContext(), "Erro ao receber resposta", Toast.LENGTH_SHORT).show();
+                    }
                     // remove a mensagem do usuário que não teve resposta
                     if (!chatAtual.isEmpty()) {
                         chatAtual.remove(chatAtual.size() - 1);
@@ -239,11 +240,13 @@ public class ChatFragment extends Fragment {
                         chatAdapter.clearMessages();
                         mostrarTelaVazia();
                         carregarChat();
-                    }
-                    else {
-                        Toast.makeText(getContext(), "Erro ao limpar chat", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (getContext() != null) {
+                            Toast.makeText(getContext(), "Erro ao limpar chat", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
+
                 @Override
                 public void onFailure(Call<Void> call, Throwable throwable) {
                     // **VERIFICAÇÃO DE SEGURANÇA CONTRA NullPointerException**
@@ -251,16 +254,17 @@ public class ChatFragment extends Fragment {
                         return;
                     }
 
-                    if (finalTentativas < 2) { // Tenta no máximo 3 vezes
+                    if (finalTentativas < 2) {
                         limparChat(finalTentativas + 1);
                     } else {
                         binding.imgLixeira.setEnabled(true);
-                        // após 3 tentativas, mostra erro
-                        Toast.makeText(getContext(), "Não foi possível limpar o chat", Toast.LENGTH_SHORT).show();
+
+                        if (getContext() != null) {
+                            Toast.makeText(getContext(), "Não foi possível limpar o chat", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             });
-
         });
     }
 
@@ -274,6 +278,8 @@ public class ChatFragment extends Fragment {
     }
 
     private void mostrarDialogConfirmacao() {
+        if (binding == null) return;
+
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View dialogView = getLayoutInflater().inflate(R.layout.popup_limpar_chat, null);
         builder.setView(dialogView);
@@ -290,7 +296,9 @@ public class ChatFragment extends Fragment {
 
         btnFechar.setOnClickListener(v -> dialog.dismiss());
         btnExcluir.setOnClickListener(v -> {
-            binding.imgLixeira.setEnabled(false);
+            if (binding != null) {
+                binding.imgLixeira.setEnabled(false);
+            }
             limparChat(0);
             dialog.dismiss();
         });

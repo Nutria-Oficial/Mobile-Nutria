@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.text.Editable;
 import android.text.TextWatcher;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -188,7 +189,8 @@ public class ComparacaoFragment extends Fragment {
         if (searchBar != null) {
             searchBar.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -198,7 +200,8 @@ public class ComparacaoFragment extends Fragment {
                 }
 
                 @Override
-                public void afterTextChanged(Editable editable) {}
+                public void afterTextChanged(Editable editable) {
+                }
             });
         }
     }
@@ -322,7 +325,7 @@ public class ComparacaoFragment extends Fragment {
     }
 
     /**
-     *  Restaura o Fragment para o estado inicial.
+     * Restaura o Fragment para o estado inicial.
      */
     private void resetEstado() {
         demonstracaoItem1.setVisibility(View.VISIBLE);

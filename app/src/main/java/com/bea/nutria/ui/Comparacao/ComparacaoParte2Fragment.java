@@ -12,6 +12,7 @@ import android.widget.Toast;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -358,12 +359,14 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
                         setupAdapter(listaTabelas);
                     } else {
                         Toast.makeText(getContext(), "Nenhuma tabela encontrada para este produto.", Toast.LENGTH_LONG).show();
-                        if (listaItensPrincipalContainer != null) listaItensPrincipalContainer.setVisibility(View.GONE);
+                        if (listaItensPrincipalContainer != null)
+                            listaItensPrincipalContainer.setVisibility(View.GONE);
                     }
                 } else {
                     Log.e(TAG, "Erro ao buscar tabelas: Código " + response.code());
                     Toast.makeText(getContext(), "Erro na resposta do servidor ao buscar tabelas.", Toast.LENGTH_LONG).show();
-                    if (listaItensPrincipalContainer != null) listaItensPrincipalContainer.setVisibility(View.GONE);
+                    if (listaItensPrincipalContainer != null)
+                        listaItensPrincipalContainer.setVisibility(View.GONE);
                 }
 
                 if (progressBarLoading != null) {
@@ -375,7 +378,8 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
             public void onFailure(@NonNull Call<List<GetTabelaDTO>> call, @NonNull Throwable t) {
                 Log.e(TAG, "Falha de conexão: " + t.getMessage());
                 Toast.makeText(getContext(), "Falha ao conectar-se à API para buscar tabelas.", Toast.LENGTH_LONG).show();
-                if (listaItensPrincipalContainer != null) listaItensPrincipalContainer.setVisibility(View.GONE);
+                if (listaItensPrincipalContainer != null)
+                    listaItensPrincipalContainer.setVisibility(View.GONE);
 
                 if (progressBarLoading != null) {
                     progressBarLoading.setVisibility(View.GONE);
@@ -512,7 +516,8 @@ public class ComparacaoParte2Fragment extends Fragment implements TabelaAdapter.
 
             // Oculta a lista de seleção
             if (recyclerViewTabelas != null) recyclerViewTabelas.setVisibility(View.GONE);
-            if (listaItensPrincipalContainer != null) listaItensPrincipalContainer.setVisibility(View.GONE);
+            if (listaItensPrincipalContainer != null)
+                listaItensPrincipalContainer.setVisibility(View.GONE);
 
         } else if (tabelaSelecionada1 != null) {
             subtitulo.setText("Escolha a segunda tabela para comparação");

@@ -56,7 +56,7 @@ public class ConexaoAPI {
      * Agora aceita qualquer interface (ProdutoAPI, UsuarioAPI, etc.).
      *
      * @param apiClass A interface da API (e.g., ProdutoAPI.class).
-     * @param <T> O tipo da interface da API.
+     * @param <T>      O tipo da interface da API.
      * @return Uma instância da interface da API.
      */
     public <T> T getApi(Class<T> apiClass) {
@@ -66,7 +66,8 @@ public class ConexaoAPI {
     /**
      * Tenta "acordar" o servidor de backend hospedado no Render (ou similar).
      * Só executa o health check se a última tentativa for há mais de JANELA_WAKE_MS.
-     * @param activity A Activity para garantir que o 'proximoPasso' seja executado na UI thread.
+     *
+     * @param activity     A Activity para garantir que o 'proximoPasso' seja executado na UI thread.
      * @param proximoPasso A ação a ser executada na UI thread após a tentativa de wake-up.
      */
     public void iniciarServidor(Activity activity, Runnable proximoPasso) {
@@ -101,7 +102,9 @@ public class ConexaoAPI {
             }
             ultimoWakeMs = System.currentTimeMillis();
             // Volta para a UI thread para executar o próximo passo
-            activity.runOnUiThread(() -> { if (proximoPasso != null) proximoPasso.run(); });
+            activity.runOnUiThread(() -> {
+                if (proximoPasso != null) proximoPasso.run();
+            });
         }).start();
     }
 }

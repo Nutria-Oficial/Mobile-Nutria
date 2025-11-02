@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ProgressBar;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -27,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -352,7 +354,8 @@ public class ComparacaoParte3Fragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().isEmpty()) {
                         Toast.makeText(getContext(), "Nenhum dado de comparação encontrado.", Toast.LENGTH_LONG).show();
-                        if (scrollViewBlocoTabelas != null) scrollViewBlocoTabelas.setVisibility(View.GONE);
+                        if (scrollViewBlocoTabelas != null)
+                            scrollViewBlocoTabelas.setVisibility(View.GONE);
                         if (progressBarLoading != null) progressBarLoading.setVisibility(View.GONE);
                         return;
                     }
@@ -360,14 +363,16 @@ public class ComparacaoParte3Fragment extends Fragment {
                     originalComparisonData = response.body();
                     displayComparisonData(originalComparisonData, isFlipped);
 
-                    if (scrollViewBlocoTabelas != null) scrollViewBlocoTabelas.setVisibility(View.VISIBLE);
+                    if (scrollViewBlocoTabelas != null)
+                        scrollViewBlocoTabelas.setVisibility(View.VISIBLE);
 
 
                 } else {
                     Toast.makeText(getContext(), "Erro ao carregar dados da comparação. Código: " + response.code(), Toast.LENGTH_LONG).show();
                     Log.e(TAG, "Erro na resposta: " + response.code() + " - " + response.message());
 
-                    if (scrollViewBlocoTabelas != null) scrollViewBlocoTabelas.setVisibility(View.GONE);
+                    if (scrollViewBlocoTabelas != null)
+                        scrollViewBlocoTabelas.setVisibility(View.GONE);
                 }
 
                 if (progressBarLoading != null) {

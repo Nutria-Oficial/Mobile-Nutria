@@ -14,6 +14,10 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildTypes {
@@ -94,5 +98,11 @@ dependencies {
     implementation("com.cloudinary:cloudinary-android:2.5.0")
     implementation("androidx.exifinterface:exifinterface:1.3.7")
     implementation("at.favre.lib:bcrypt:0.10.2")
+
+    implementation("androidx.camera:camera-core:1.3.4")
+    implementation("androidx.camera:camera-camera2:1.3.4")
+    implementation("androidx.camera:camera-lifecycle:1.3.4")
+    implementation("androidx.camera:camera-view:1.3.4")
+    implementation("com.google.code.gson:gson:2.11.0")
 
 }

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardPopupScanner"
+        android:layout_width="343dp"
+        android:layout_height="251dp"
+        android:layout_margin="16dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeWidth="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Botão de fechar -->
+            <ImageView
+                android:id="@+id/btnFechar"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="end"
+                android:contentDescription="Fechar"
+                android:src="@drawable/ic_fechar" />
+
+            <!-- Título -->
+            <TextView
+                android:id="@+id/tvTituloPopUp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp"
+                android:gravity="center"
+                android:text="Cadastre o nome do produto"
+                android:textColor="#333333"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <!-- Campo de texto -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilNomeScanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ex: Presunto"
+                app:boxBackgroundColor="#FBF9F9"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeColor="#EE7026"
+                app:boxStrokeWidth="2dp"
+                app:boxStrokeWidthFocused="3dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nomeScanner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="textCapSentences" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Botão -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCadastrarScanner"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
+                android:text="Cadastrar"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                app:backgroundTint="#EE7026"
+                app:cornerRadius="10dp" />
+
+            <!-- Mensagem de erro opcional -->
+            <LinearLayout
+                android:id="@+id/llErroScanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    app:tint="#EE7026" />
+
+                <TextView
+                    android:id="@+id/tvErroScanner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="Esse nome já existe, digite um novo."
+                    android:textColor="#EE7026"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,11 +1,9 @@
 package com.bea.nutria.ui.Perfil;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,11 +25,7 @@ import com.bumptech.glide.Glide;
 import com.cloudinary.android.MediaManager;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.gson.Gson;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Credentials;
@@ -59,17 +53,17 @@ public class PerfilActivity extends AppCompatActivity {
     private TextView tvTelefone;
     private TextInputLayout tilTelefone;
     private TextInputEditText inputTelefone;
-    private ImageView btnEditTelefone, btnCancelTelefone, btnOkTelefone;
+    private ImageView btnEditTelefone, btnCancelarTelefone, btnOkTelefone;
 
     private TextView tvEmail;
     private TextInputLayout tilEmail;
     private TextInputEditText inputEmail;
-    private ImageView btnEditEmail, btnCancelEmail, btnOkEmail;
+    private ImageView btnEditEmail, btnCancelarEmail, btnOkEmail;
 
     private TextView tvSenha;
     private TextInputLayout tilSenha;
     private TextInputEditText inputSenha;
-    private ImageView btnEditSenha, btnCancelSenha, btnOkSenha;
+    private ImageView btnEditSenha, btnCancelarSenha, btnOkSenha;
 
     private View overlayCarregando;
     private TextView txtCarregando;
@@ -126,7 +120,7 @@ public class PerfilActivity extends AppCompatActivity {
         api = retrofit.create(UsuarioAPI.class);
 
         overlayCarregando = findViewById(R.id.loadingOverlay);
-        txtCarregando     = findViewById(R.id.txtLoading);
+        txtCarregando = findViewById(R.id.txtLoading);
 
         nomeTopo = findViewById(R.id.nomeTopo);
         empresaTopo = findViewById(R.id.empresaTopo);
@@ -144,21 +138,21 @@ public class PerfilActivity extends AppCompatActivity {
         tilTelefone = findViewById(R.id.tilTelefone);
         inputTelefone = findViewById(R.id.inputTelefone);
         btnEditTelefone = findViewById(R.id.btnEditTelefone);
-        btnCancelTelefone = findViewById(R.id.btnCancelTelefone);
+        btnCancelarTelefone = findViewById(R.id.btnCancelTelefone);
         btnOkTelefone = findViewById(R.id.btnOkTelefone);
 
         tvEmail = findViewById(R.id.tvEmail);
         tilEmail = findViewById(R.id.tilEmail);
         inputEmail = findViewById(R.id.inputEmail);
         btnEditEmail = findViewById(R.id.btnEditEmail);
-        btnCancelEmail = findViewById(R.id.btnCancelEmail);
+        btnCancelarEmail = findViewById(R.id.btnCancelEmail);
         btnOkEmail = findViewById(R.id.btnOkEmail);
 
         tvSenha = findViewById(R.id.tvSenha);
         tilSenha = findViewById(R.id.tilSenha);
         inputSenha = findViewById(R.id.inputSenha);
         btnEditSenha = findViewById(R.id.btnEditSenha);
-        btnCancelSenha = findViewById(R.id.btnCancelSenha);
+        btnCancelarSenha = findViewById(R.id.btnCancelSenha);
         btnOkSenha = findViewById(R.id.btnOkSenha);
 
         //abrindo a galeria
@@ -195,7 +189,8 @@ public class PerfilActivity extends AppCompatActivity {
 
     //mostra o overlay de carregamento com mensagem
     private void mostrarCarregando(String mensagem) {
-        if (txtCarregando != null) txtCarregando.setText(mensagem == null ? "Carregando..." : mensagem);
+        if (txtCarregando != null)
+            txtCarregando.setText(mensagem == null ? "Carregando..." : mensagem);
         if (overlayCarregando != null) overlayCarregando.setVisibility(View.VISIBLE);
     }
 
@@ -226,7 +221,9 @@ public class PerfilActivity extends AppCompatActivity {
                 }
             }
             ultimoWakeMs = System.currentTimeMillis();
-            runOnUiThread(() -> { if (proximoPasso != null) proximoPasso.run(); });
+            runOnUiThread(() -> {
+                if (proximoPasso != null) proximoPasso.run();
+            });
         }).start();
     }
 
@@ -295,26 +292,26 @@ public class PerfilActivity extends AppCompatActivity {
         //telefone
         btnEditTelefone.setOnClickListener(v -> {
             tilTelefone.setHint("Digite seu telefone");
-            editarCampo(tilTelefone, tvTelefone, btnEditTelefone, btnCancelTelefone, btnOkTelefone, inputTelefone, tvTelefone.getText().toString());
+            editarCampo(tilTelefone, tvTelefone, btnEditTelefone, btnCancelarTelefone, btnOkTelefone, inputTelefone, tvTelefone.getText().toString());
         });
-        btnCancelTelefone.setOnClickListener(v -> cancelarEdicao(tilTelefone, tvTelefone, btnEditTelefone, btnCancelTelefone, btnOkTelefone));
-        btnOkTelefone.setOnClickListener(v -> salvarCampo("telefone", getText(inputTelefone), tilTelefone, tvTelefone, btnEditTelefone, btnCancelTelefone, btnOkTelefone));
+        btnCancelarTelefone.setOnClickListener(v -> cancelarEdicao(tilTelefone, tvTelefone, btnEditTelefone, btnCancelarTelefone, btnOkTelefone));
+        btnOkTelefone.setOnClickListener(v -> salvarCampo("telefone", getText(inputTelefone), tilTelefone, tvTelefone, btnEditTelefone, btnCancelarTelefone, btnOkTelefone));
 
         //email
         btnEditEmail.setOnClickListener(v -> {
             tilEmail.setHint("Digite seu e-mail");
-            editarCampo(tilEmail, tvEmail, btnEditEmail, btnCancelEmail, btnOkEmail, inputEmail, tvEmail.getText().toString());
+            editarCampo(tilEmail, tvEmail, btnEditEmail, btnCancelarEmail, btnOkEmail, inputEmail, tvEmail.getText().toString());
         });
-        btnCancelEmail.setOnClickListener(v -> cancelarEdicao(tilEmail, tvEmail, btnEditEmail, btnCancelEmail, btnOkEmail));
-        btnOkEmail.setOnClickListener(v -> salvarCampo("email", getText(inputEmail), tilEmail, tvEmail, btnEditEmail, btnCancelEmail, btnOkEmail));
+        btnCancelarEmail.setOnClickListener(v -> cancelarEdicao(tilEmail, tvEmail, btnEditEmail, btnCancelarEmail, btnOkEmail));
+        btnOkEmail.setOnClickListener(v -> salvarCampo("email", getText(inputEmail), tilEmail, tvEmail, btnEditEmail, btnCancelarEmail, btnOkEmail));
 
         //senha
         btnEditSenha.setOnClickListener(v -> {
             tilSenha.setHint("Digite sua nova senha");
-            editarCampo(tilSenha, tvSenha, btnEditSenha, btnCancelSenha, btnOkSenha, inputSenha, "");
+            editarCampo(tilSenha, tvSenha, btnEditSenha, btnCancelarSenha, btnOkSenha, inputSenha, "");
         });
-        btnCancelSenha.setOnClickListener(v -> cancelarEdicao(tilSenha, tvSenha, btnEditSenha, btnCancelSenha, btnOkSenha));
-        btnOkSenha.setOnClickListener(v -> salvarCampo("senha", getText(inputSenha), tilSenha, tvSenha, btnEditSenha, btnCancelSenha, btnOkSenha));
+        btnCancelarSenha.setOnClickListener(v -> cancelarEdicao(tilSenha, tvSenha, btnEditSenha, btnCancelarSenha, btnOkSenha));
+        btnOkSenha.setOnClickListener(v -> salvarCampo("senha", getText(inputSenha), tilSenha, tvSenha, btnEditSenha, btnCancelarSenha, btnOkSenha));
     }
 
     private void editarCampo(TextInputLayout til, TextView tv, ImageView edit, ImageView cancel, ImageView ok, TextInputEditText input, String valorAtual) {
@@ -463,10 +460,12 @@ public class PerfilActivity extends AppCompatActivity {
                     .option("folder", "fotos")
                     .callback(new com.cloudinary.android.callback.UploadCallback() {
                         @Override
-                        public void onStart(String requestId) {}
+                        public void onStart(String requestId) {
+                        }
 
                         @Override
-                        public void onProgress(String requestId, long bytes, long totalBytes) {}
+                        public void onProgress(String requestId, long bytes, long totalBytes) {
+                        }
 
                         @Override
                         public void onSuccess(String requestId, java.util.Map resultData) {
@@ -517,7 +516,8 @@ public class PerfilActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onReschedule(String requestId, com.cloudinary.android.callback.ErrorInfo error) {}
+                        public void onReschedule(String requestId, com.cloudinary.android.callback.ErrorInfo error) {
+                        }
                     })
                     .dispatch(PerfilActivity.this);
 

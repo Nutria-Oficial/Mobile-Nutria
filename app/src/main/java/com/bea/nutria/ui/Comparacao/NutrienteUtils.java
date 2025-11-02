@@ -8,6 +8,7 @@ public class NutrienteUtils {
 
     /**
      * Formata um valor Double em uma String, tratando nulos e formatando para duas casas decimais.
+     *
      * @param value O valor Double (total ou porcao) do NutrienteDTO.
      * @return O valor formatado como String, ou "0.0" se for nulo.
      */

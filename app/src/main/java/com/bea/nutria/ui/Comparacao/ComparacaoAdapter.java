@@ -82,6 +82,7 @@ public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.Pr
 
     /**
      * MÉTODO DE FILTRO: Aplica a lógica de pesquisa.
+     *
      * @param text O texto digitado na barra de pesquisa.
      */
     @SuppressLint("NotifyDataSetChanged")
@@ -109,6 +110,7 @@ public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.Pr
     /**
      * Método para adicionar um item de volta à lista.
      * O produto é adicionado à lista Original e o filtro é re-aplicado.
+     *
      * @param produto O produto a ser adicionado.
      */
     public void addItem(GetProdutoDTO produto) {
@@ -125,6 +127,7 @@ public class ComparacaoAdapter extends RecyclerView.Adapter<ComparacaoAdapter.Pr
     /**
      * Método para remover um item.
      * O produto é removido da lista Original e o filtro é re-aplicado/atualizado.
+     *
      * @param produto O produto a ser removido.
      */
     public void removeItem(GetProdutoDTO produto) {

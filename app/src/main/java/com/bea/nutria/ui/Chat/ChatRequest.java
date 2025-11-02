@@ -8,7 +8,10 @@ public class ChatRequest {
     @SerializedName("nCdUser")
     private int idUser;
 
-    public ChatRequest(){};
+    public ChatRequest() {
+    }
+
+    ;
 
     public ChatRequest(String cPrompt, int nCdUser) {
         this.pergunta = cPrompt;

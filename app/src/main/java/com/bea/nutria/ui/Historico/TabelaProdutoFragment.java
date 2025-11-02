@@ -42,7 +42,9 @@ import java.util.regex.Pattern;
 
 public class TabelaProdutoFragment extends Fragment {
 
-    public TabelaProdutoFragment() { super(R.layout.fragment_tabela_produto); }
+    public TabelaProdutoFragment() {
+        super(R.layout.fragment_tabela_produto);
+    }
 
     private ViewPager2 pager;
     private TabLayout tabDots;
@@ -70,15 +72,15 @@ public class TabelaProdutoFragment extends Fragment {
 
         DF2.applyPattern("#0.00"); //todo numero com 2 casas
 
-        pager= view.findViewById(R.id.pagerTabelas);
-        tabDots= view.findViewById(R.id.tabDots);
-        tvResumoAvaliacao= view.findViewById(R.id.tvResumoAvaliacao);
-        tvTitulo= view.findViewById(R.id.tvTitulo);
-        loadingOverlay    = view.findViewById(R.id.loadingOverlay);
-        cardConteudo      = view.findViewById(R.id.cardConteudo);
+        pager = view.findViewById(R.id.pagerTabelas);
+        tabDots = view.findViewById(R.id.tabDots);
+        tvResumoAvaliacao = view.findViewById(R.id.tvResumoAvaliacao);
+        tvTitulo = view.findViewById(R.id.tvTitulo);
+        loadingOverlay = view.findViewById(R.id.loadingOverlay);
+        cardConteudo = view.findViewById(R.id.cardConteudo);
 
         if (getArguments() != null) {
-            idProduto   = getArguments().getString("idProduto");
+            idProduto = getArguments().getString("idProduto");
             nomeProduto = getArguments().getString("nomeProduto", "Produto");
         }
         if (nomeProduto != null) tvTitulo.setText(nomeProduto);
@@ -103,10 +105,12 @@ public class TabelaProdutoFragment extends Fragment {
         pager.setAdapter(pagerAdapter);
         pager.setOffscreenPageLimit(1);
 
-        new TabLayoutMediator(tabDots, pager, (tab, position) -> { }).attach();
+        new TabLayoutMediator(tabDots, pager, (tab, position) -> {
+        }).attach();
 
         pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override public void onPageSelected(int position) {
+            @Override
+            public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 atualizarAvaliacao(position);
             }
@@ -173,7 +177,7 @@ public class TabelaProdutoFragment extends Fragment {
                     JSONObject o = arr.optJSONObject(i);
                     if (o == null) continue;
 
-                    String nomeTabela  = o.optString("nomeTabela", "Tabela Nutricional");
+                    String nomeTabela = o.optString("nomeTabela", "Tabela Nutricional");
                     String porcaoTexto = resolvePorcaoTexto(o);
 
                     List<Linha> linhas = new ArrayList<>();
@@ -185,7 +189,7 @@ public class TabelaProdutoFragment extends Fragment {
 
                             String nome = jn.optString("nutriente", "");
                             String valorFmt = formatAnyNumberToTwoDecimals(anyToString(jn.opt("porcao")));
-                            String vdFmt    = formatAnyNumberToTwoDecimals(anyToString(jn.opt("valorDiario")));
+                            String vdFmt = formatAnyNumberToTwoDecimals(anyToString(jn.opt("valorDiario")));
 
                             linhas.add(new Linha(nome, valorFmt, vdFmt));
                         }
@@ -206,8 +210,11 @@ public class TabelaProdutoFragment extends Fragment {
                     } else if (avObj instanceof String) {
                         String raw = ((String) avObj).trim();
                         if (raw.startsWith("{") && raw.endsWith("}")) {
-                            try { avText = normalizeAvaliacao(new JSONObject(raw)); }
-                            catch (Exception ignore) { avText = normalizeAvaliacao(raw); }
+                            try {
+                                avText = normalizeAvaliacao(new JSONObject(raw));
+                            } catch (Exception ignore) {
+                                avText = normalizeAvaliacao(raw);
+                            }
                         } else {
                             avText = normalizeAvaliacao(raw);
                         }
@@ -272,7 +279,7 @@ public class TabelaProdutoFragment extends Fragment {
 
     private void showLoading(boolean show) {
         if (loadingOverlay != null) loadingOverlay.setVisibility(show ? View.VISIBLE : View.GONE);
-        if (cardConteudo != null)   cardConteudo.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+        if (cardConteudo != null) cardConteudo.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
     }
 
     private void postUi(Runnable r) {
@@ -322,7 +329,7 @@ public class TabelaProdutoFragment extends Fragment {
         }
         String best = "";
         int bestLen = 0;
-        for (Iterator<String> it = obj.keys(); it.hasNext();) {
+        for (Iterator<String> it = obj.keys(); it.hasNext(); ) {
             String k = it.next();
             if ("classificacao".equalsIgnoreCase(k) || "pontuacao".equalsIgnoreCase(k)) continue;
             Object v = obj.opt(k);

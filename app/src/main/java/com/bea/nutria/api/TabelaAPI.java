@@ -2,9 +2,11 @@ package com.bea.nutria.api;
 
 import com.bea.nutria.model.GetTabelaDTO;
 import com.bea.nutria.model.ComparacaoNutrienteDTO;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+
 import java.util.List;
 
 public interface TabelaAPI {

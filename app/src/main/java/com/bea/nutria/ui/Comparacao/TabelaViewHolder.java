@@ -3,9 +3,11 @@ package com.bea.nutria.ui.Comparacao;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.ImageButton;
+
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.button.MaterialButton;
 
 import com.bea.nutria.R;
@@ -391,13 +393,16 @@ public class TabelaViewHolder extends RecyclerView.ViewHolder {
         if (name.equals("Valor Calórico")) return "kcal";
 
         // G (gramas)
-        if (name.equals("Proteína") || name.equals("Carboidrato") || name.equals("Açúcar Total") || name.equals("Fibra Alimentar") || name.equals("Gordura Total") || name.contains("Gordura") || name.equals("Álcool") || name.equals("Água")) return "g";
+        if (name.equals("Proteína") || name.equals("Carboidrato") || name.equals("Açúcar Total") || name.equals("Fibra Alimentar") || name.equals("Gordura Total") || name.contains("Gordura") || name.equals("Álcool") || name.equals("Água"))
+            return "g";
 
         // MG (miligramas)
-        if (name.equals("Colesterol") || name.equals("Tiamina") || name.equals("Riboflavina") || name.equals("Niacina") || name.equals("Vitamina B-6") || name.equals("Colina") || name.equals("Vitamina C") || name.equals("Vitamina E") || name.equals("Cálcio") || name.equals("Fósforo") || name.equals("Magnésio") || name.equals("Ferro") || name.equals("Zinco") || name.equals("Cobre") || name.equals("Potássio") || name.equals("Sódio") || name.equals("Cafeína") || name.equals("Teobromina")) return "mg";
+        if (name.equals("Colesterol") || name.equals("Tiamina") || name.equals("Riboflavina") || name.equals("Niacina") || name.equals("Vitamina B-6") || name.equals("Colina") || name.equals("Vitamina C") || name.equals("Vitamina E") || name.equals("Cálcio") || name.equals("Fósforo") || name.equals("Magnésio") || name.equals("Ferro") || name.equals("Zinco") || name.equals("Cobre") || name.equals("Potássio") || name.equals("Sódio") || name.equals("Cafeína") || name.equals("Teobromina"))
+            return "mg";
 
         // µG (microgramas)
-        if (name.contains("Retinol/Vitamina A") || name.contains("Ácido Fólico") || name.contains("Vitamina B-12") || name.contains("Vitamina D") || name.contains("Vitamina K") || name.contains("Selênio")) return "μg";
+        if (name.contains("Retinol/Vitamina A") || name.contains("Ácido Fólico") || name.contains("Vitamina B-12") || name.contains("Vitamina D") || name.contains("Vitamina K") || name.contains("Selênio"))
+            return "μg";
 
         return "";
     }
