@@ -46,6 +46,7 @@ public class VisualizarFragment extends Fragment {
     private TelaDeslizavelBinding telaDeslizavelBinding;
     private boolean telaVisivel = false;
     private String csvTemporario = null;
+    private int idTabela;
 
 
     @Override
@@ -64,6 +65,7 @@ public class VisualizarFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (getArguments() != null) {
+            idTabela = getArguments().getInt("idTabela");
             ArrayList<String[]> tabelaDados = (ArrayList<String[]>) getArguments().getSerializable("tabela");
             String tabelaNome = getArguments().getString("tabelaNome");
             String tabelaPorcao = getArguments().getString("tabelaPorcao");
@@ -75,8 +77,10 @@ public class VisualizarFragment extends Fragment {
         }
         binding.btnOpcoes.setOnClickListener(v -> mostrarTelaDeslizavel());
         binding.btnVoltar.setOnClickListener(v -> {
+            Bundle result = new Bundle();
+            result.putInt("idTabela", idTabela);
             NavController navController = NavHostFragment.findNavController(VisualizarFragment.this);
-            navController.navigate(R.id.action_navigation_visualizar_to_navigation_avaliacao_tabela);
+            navController.navigate(R.id.action_navigation_visualizar_to_navigation_avaliacao_tabela, result);
         });
     }
     @Override
@@ -170,30 +174,38 @@ public class VisualizarFragment extends Fragment {
         telaDeslizavelBinding= TelaDeslizavelBinding.inflate(getLayoutInflater(), binding.getRoot(), false);
         View telaView = telaDeslizavelBinding.getRoot();
 
-        int alturaEmDp = 796;
-        float densidade = getResources().getDisplayMetrics().density;
-        int alturaEmPx = (int) (alturaEmDp * densidade);
+        View cardView = binding.cardViewConteudo;
 
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                alturaEmPx,
-                Gravity.BOTTOM
-        );
-        telaView.setTranslationX(300f);
-        ((ViewGroup) binding.getRoot()).addView(telaView, params);
+        cardView.post(() -> {
+            int alturaEmPx = cardView.getHeight();
+            int[] posicao = new int[2];
+            cardView.getLocationOnScreen(posicao);
+            int posicaoTopo = posicao[1];
 
-        telaView.animate().translationX(0f).setDuration(300).start();
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    alturaEmPx
+            );
+            params.topMargin = posicaoTopo;
+            params.gravity = Gravity.TOP;
 
-        telaVisivel = true;
+            telaView.setTranslationX(300f);
+            ((ViewGroup) binding.getRoot()).addView(telaView, params);
 
-        telaDeslizavelBinding.btnFechar.setOnClickListener(v -> esconderTelaDeslizavel());
-        telaDeslizavelBinding.btnExportar.setOnClickListener(v -> {
-            try {
-                salvarTabelaComoCSV();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(getContext(), "Erro ao exportar: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+            telaView.animate().translationX(0f).setDuration(300).start();
+
+            telaVisivel = true;
+
+            telaDeslizavelBinding.btnFechar.setOnClickListener(v -> esconderTelaDeslizavel());
+            telaDeslizavelBinding.btnExportar.setOnClickListener(v -> {
+                try {
+                    salvarTabelaComoCSV();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Erro ao exportar: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
         });
     }
     public void esconderTelaDeslizavel(){

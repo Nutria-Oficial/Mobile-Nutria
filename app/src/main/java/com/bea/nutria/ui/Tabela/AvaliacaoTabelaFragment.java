@@ -77,6 +77,7 @@ public class AvaliacaoTabelaFragment extends Fragment {
 
         binding.btnVisualizar.setOnClickListener(v -> {
             Bundle result = new Bundle();
+            result.putInt("idTabela", idTabela);
             result.putSerializable("tabela", tabelaDados);
             result.putString("tabelaNome", binding.tvTabelaTitulo.getText().toString());
             result.putString("tabelaPorcao", binding.tvPorcaoColuna.getText().toString());
