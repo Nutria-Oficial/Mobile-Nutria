@@ -48,7 +48,14 @@
         android:name="com.bea.nutria.ui.Tabela.TabelaFragment"
         android:label="Tabela" />
 
-    <!-- 6. Fragmento de Detalhes do Produto (usado pelo Histórico) -->
+        <action
+            android:id="@+id/action_tabela_to_ingrediente"
+            app:destination="@id/navigation_ingrediente" />
+
+        <action
+            android:id="@+id/action_ingrediente_to_tabela"
+            app:destination="@id/navigation_tabela" />
+    </fragment>
     <fragment
         android:id="@+id/tabelaProdutoFragment"
         android:name="com.bea.nutria.ui.Historico.TabelaProdutoFragment"

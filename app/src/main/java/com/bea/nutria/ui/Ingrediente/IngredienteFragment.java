@@ -4,10 +4,12 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import com.bea.nutria.R;
 import com.bea.nutria.api.IngredienteAPI;
@@ -30,13 +32,49 @@ public class IngredienteFragment extends Fragment {
     private long ultimoWakeMs = 0L;
     private static final long JANELA_WAKE_MS = 60_000;
 
+    private float larguraTab = 0f;
+    private boolean layoutPronto = false;
+    private boolean isTablet = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentIngredienteBinding.inflate(inflater, container, false);
 
+        // Verificar se é tablet
+        isTablet = isTabletDevice();
+
         adapter = new IngredienteViewPagerAdapter(this);
         binding.viewPager2.setAdapter(adapter);
+        binding.registrados.setTextColor(getResources().getColor(R.color.orange, null));
+
+
+        if (isTablet) {
+            // Para tablet: configurar a linha após o layout estar pronto
+            binding.registrados.getViewTreeObserver().addOnGlobalLayoutListener(
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            binding.registrados.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                            larguraTab = binding.registrados.getWidth();
+
+                            int larguraLinha = (int) (larguraTab * 0.4f);
+
+                            ViewGroup.LayoutParams params = binding.imageView2.getLayoutParams();
+                            params.width = larguraLinha;
+                            binding.imageView2.setLayoutParams(params);
+
+                            float margemEsquerda = (larguraTab - larguraLinha) / 2f;
+                            binding.imageView2.setTranslationX(margemEsquerda);
+
+                            layoutPronto = true;
+                        }
+                    });
+        } else {
+            // Para celular: layout já está pronto
+            layoutPronto = true;
+        }
 
         // 0 para ingredientes registrados e 1 para novo ingrediente
         binding.registrados.setOnClickListener(v -> binding.viewPager2.setCurrentItem(0));
@@ -85,26 +123,66 @@ public class IngredienteFragment extends Fragment {
         return binding.getRoot();
     }
 
+    private boolean isTabletDevice() {
+        // Verifica se é tablet através do tamanho da tela
+        int screenLayout = getResources().getConfiguration().screenLayout;
+        screenLayout &= Configuration.SCREENLAYOUT_SIZE_MASK;
+
+        return screenLayout == Configuration.SCREENLAYOUT_SIZE_LARGE ||
+                screenLayout == Configuration.SCREENLAYOUT_SIZE_XLARGE;
+    }
+
     private void atualizarTabSelecionada(int position) {
-        if (position == 0) {
-            binding.registrados.setTextColor(getResources().getColor(R.color.orange, null));
-            binding.novo.setTextColor(getResources().getColor(R.color.gray, null));
+        if (!layoutPronto) return;
 
-            // move a linha laranja para a esquerda
-            binding.imageView2.animate()
-                    .translationX(0)
-                    .setDuration(200)
-                    .start();
+        if (isTablet) {
+            // para tablet:
+            int larguraLinha = binding.imageView2.getWidth();
+
+            if (position == 0) {
+                binding.registrados.setTextColor(getResources().getColor(R.color.orange, null));
+                binding.novo.setTextColor(getResources().getColor(R.color.gray, null));
+
+                // Centraliza a linha na primeira tab
+                float posicao = (larguraTab - larguraLinha) / 2f;
+
+                binding.imageView2.animate()
+                        .translationX(posicao)
+                        .setDuration(200)
+                        .start();
+            } else {
+                binding.registrados.setTextColor(getResources().getColor(R.color.gray, null));
+                binding.novo.setTextColor(getResources().getColor(R.color.orange, null));
+
+                float posicao = larguraTab + (larguraTab - larguraLinha) / 2f;
+
+                binding.imageView2.animate()
+                        .translationX(posicao)
+                        .setDuration(200)
+                        .start();
+            }
         } else {
-            binding.registrados.setTextColor(getResources().getColor(R.color.gray, null));
-            binding.novo.setTextColor(getResources().getColor(R.color.orange, null));
+            // para celular
+            if (position == 0) {
+                binding.registrados.setTextColor(getResources().getColor(R.color.orange, null));
+                binding.novo.setTextColor(getResources().getColor(R.color.gray, null));
 
-            // move a linha laranja para a direita --> depois precisa ajustar para tablet
-            float deslocamento = getResources().getDisplayMetrics().widthPixels / 2f - 30;
-            binding.imageView2.animate()
-                    .translationX(deslocamento)
-                    .setDuration(200)
-                    .start();
+                // move a linha laranja para a esquerda
+                binding.imageView2.animate()
+                        .translationX(0)
+                        .setDuration(200)
+                        .start();
+            } else {
+                binding.registrados.setTextColor(getResources().getColor(R.color.gray, null));
+                binding.novo.setTextColor(getResources().getColor(R.color.orange, null));
+
+                // move a linha laranja para a direita
+                float deslocamento = getResources().getDisplayMetrics().widthPixels / 2f - 30;
+                binding.imageView2.animate()
+                        .translationX(deslocamento)
+                        .setDuration(200)
+                        .start();
+            }
         }
     }
 

@@ -63,6 +63,7 @@
 
         <!-- Tela principal -->
         <activity
+            android:windowSoftInputMode="adjustPan"
             android:name=".MainActivity"
             android:exported="false"
             android:label="@string/app_name"
