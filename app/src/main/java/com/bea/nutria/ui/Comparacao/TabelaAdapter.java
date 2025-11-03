@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bea.nutria.R;
 import com.bea.nutria.model.GetTabelaComparacaoDTO;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
@@ -20,7 +22,6 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
     private OnTabelaClickListener listener;
     private static final String TAG = "TabelaAdapter";
 
-    // Interface para cliques no botão "Escolher Tabela"
     public interface OnTabelaClickListener {
         void onEscolherTabelaClick(GetTabelaComparacaoDTO tabela, int position);
     }
@@ -31,17 +32,12 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
 
     public TabelaAdapter(List<GetTabelaComparacaoDTO> tabelas) {
         this.listaTabelas = tabelas;
-
-        // ⭐️ 1. HABILITA IDs ESTÁVEIS
         setHasStableIds(true);
     }
 
-    // ⭐️ 2. NOVO MÉTODO OBRIGATÓRIO: Retorna o ID único do item
     @Override
     public long getItemId(int position) {
         if (position >= 0 && position < listaTabelas.size()) {
-            // Se o GetTabelaComparacaoDTO tiver um campo 'id', use-o.
-            // Exemplo assumindo que GetTabelaComparacaoDTO tem um método getId() que retorna long.
             return listaTabelas.get(position).getTabelaId();
         }
         return RecyclerView.NO_ID;
@@ -67,21 +63,15 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
     public void onBindViewHolder(@NonNull TabelaViewHolder holder, @SuppressLint("RecyclerView") int position) {
         GetTabelaComparacaoDTO tabelaAtual = listaTabelas.get(position);
 
-        // 1. Delegar todo o preenchimento dos 35 nutrientes ao ViewHolder
-        holder.bind(tabelaAtual);
+        holder.bind(corrigirTabelaTextos(tabelaAtual));
 
-        // 2. Lógica de expansão/colapso no cabeçalho
         if (holder.headerItem != null) {
             holder.headerItem.setOnClickListener(v -> {
-                tabelaAtual.setExpanded(!tabelaAtual.isExpanded()); // Inverte o estado
-
-                // ⭐️ Recomenda-se usar getBindingAdapterPosition() se a posição for usada em lógica complexa
-                // mas para notifyItemChanged, a 'position' anotada já funciona.
+                tabelaAtual.setExpanded(!tabelaAtual.isExpanded());
                 notifyItemChanged(position);
             });
         }
 
-        // 3. Listener para o botão "Escolher Tabela"
         if (holder.btnSelecionarTabela != null) {
             holder.btnSelecionarTabela.setOnClickListener(v -> {
                 if (listener != null) {
@@ -96,18 +86,62 @@ public class TabelaAdapter extends RecyclerView.Adapter<TabelaViewHolder> {
         return listaTabelas.size();
     }
 
-    // NOVO MÉTODO: Remove um item da lista e notifica a RecyclerView
+    private String corrigirTextoCodificado(String texto) {
+        if (texto == null) return null;
+
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            boolean houveCorrecao = false;
+
+            for (int i = 0; i < texto.length();) {
+                char c = texto.charAt(i);
+
+                if (c == '\\' && i + 3 < texto.length() && texto.charAt(i + 1) == 'x') {
+                    String hex = texto.substring(i + 2, i + 4);
+                    try {
+                        int valor = Integer.parseInt(hex, 16);
+                        out.write(valor);
+                        i += 4;
+                        houveCorrecao = true;
+                    } catch (NumberFormatException e) {
+                        out.write((byte) c);
+                        i++;
+                    }
+                } else {
+                    out.write((byte) c);
+                    i++;
+                }
+            }
+
+            if (!houveCorrecao) {
+                return texto;
+            }
+
+            return new String(out.toByteArray(), StandardCharsets.UTF_8);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return texto;
+        }
+    }
+
+    private GetTabelaComparacaoDTO corrigirTabelaTextos(GetTabelaComparacaoDTO tabela) {
+        if (tabela == null) return null;
+
+        if (tabela.getNomeTabela() != null) {
+            tabela.setNomeTabela(corrigirTextoCodificado(tabela.getNomeTabela()));
+        }
+
+        return tabela;
+    }
+
     public void removeItem(int position) {
         if (position >= 0 && position < listaTabelas.size()) {
             listaTabelas.remove(position);
-
-            // ⭐️ O notifyItemRemoved(position) ainda é usado, mas com IDs estáveis,
-            // a RecyclerView recalcula as posições de forma mais confiável.
             notifyItemRemoved(position);
         }
     }
 
-    // NOVO MÉTODO: Adiciona um item de volta (usado na deseleção)
     public void addItem(GetTabelaComparacaoDTO tabela) {
         listaTabelas.add(tabela);
         notifyItemInserted(listaTabelas.size() - 1);

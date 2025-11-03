@@ -2,7 +2,7 @@ package com.bea.nutria.ui.Comparacao;
 
 import android.widget.TextView;
 
-// Classe simples para armazenar o par de TextViews (Valor e Valor Diário)
+
 public class NutrientTextViews {
     public final TextView tvValor;
     public final TextView tvVD;

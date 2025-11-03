@@ -58,10 +58,8 @@ public class ComparacaoFragment extends Fragment {
     private View iconeTabela;
     private View btnEscolherTabelas;
 
-    // Referência para a barra de pesquisa
     private EditText searchBar;
 
-    // Referência para a ProgressBar
     private ProgressBar progressBarLoading;
 
     private RecyclerView recyclerViewProdutos;
@@ -75,10 +73,8 @@ public class ComparacaoFragment extends Fragment {
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private int usuarioId = -1;
 
-    // Variável para armazenar o ID do produto selecionado
     private Integer produtoSelecionadoId = null;
 
-    // Armazena o objeto do produto que foi removido para poder reinserir na lista
     private GetProdutoDTO produtoRemovidoAnteriormente = null;
 
     private ProdutoAPI produtoApi;
@@ -101,36 +97,28 @@ public class ComparacaoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-        // --- Inicialização do Gerenciador de API ---
         apiManager = new ConexaoAPI(url);
         produtoApi = apiManager.getApi(ProdutoAPI.class);
         conexaoAPIUsuario = new ConexaoAPI("https://api-spring-aql.onrender.com/");
         usuarioAPI = conexaoAPIUsuario.getApi(UsuarioAPI.class);
-        // ------------------------------------------
 
         usuarioId = prefs().getInt("usuario_id", -1);
         if (usuarioId < 0) {
             resolverUsuarioId();
         }
 
-        // Referências dos elementos de UI
         demonstracaoItem1 = view.findViewById(R.id.View_demonstracaoItem_1);
         textViewSelecionarProduto1 = view.findViewById(R.id.textViewSelecionarProduto1);
-        // botaoTesteTransicao = view.findViewById(R.id.botaoTesteTransicao);
         demonstracaoItemSelecionado = view.findViewById(R.id.View_demonstracaoItem_selecionado);
         nomeProdutoSelecionado = view.findViewById(R.id.textViewNomeProdutoSelecionado);
         textViewSelecionarProduto2 = view.findViewById(R.id.textViewSelecionarProduto2);
         iconeTabela = view.findViewById(R.id.imageViewIconeTabela);
         btnEscolherTabelas = view.findViewById(R.id.btn_escolherTabelas);
 
-        // Referência para a ProgressBar
         progressBarLoading = view.findViewById(R.id.progress_bar_loading);
 
-        // Referência para a barra de pesquisa
         searchBar = view.findViewById(R.id.search_bar);
 
-        // --- Configuração da RecyclerView ---
         View listaItensIncluded = view.findViewById(R.id.listaItens);
         if (listaItensIncluded != null) {
             recyclerViewProdutos = listaItensIncluded.findViewById(R.id.recyclerViewListaProdutos);
@@ -142,17 +130,12 @@ public class ComparacaoFragment extends Fragment {
         } else {
             Log.e("ComparacaoFragment", "Erro: listaItens (include) não encontrado.");
         }
-        // -----------------------------------
 
-        // --- Uso da função iniciandoServidor (A Boa Prática) ---
         progressBarLoading.setVisibility(View.VISIBLE);
         apiManager.iniciarServidor(requireActivity(), () -> buscarProdutoDoUsuario(usuarioId));
-        // -------------------------------------------------------
 
-        // Configurar o listener da barra de pesquisa
         setupSearchFunctionality();
 
-        // Fecha o teclado ao tocar fora da EditText
         view.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 View currentFocus = requireActivity().getCurrentFocus();
@@ -161,25 +144,21 @@ public class ComparacaoFragment extends Fragment {
                     currentFocus.getGlobalVisibleRect(outRect);
                     if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                         currentFocus.clearFocus();
-                        hideKeyboard(); // Usa o novo método auxiliar
+                        hideKeyboard();
                     }
                 }
             }
             return false;
         });
 
-        // Abre ComparacaoParte2Fragment
         if (btnEscolherTabelas != null) {
             btnEscolherTabelas.setOnClickListener(v -> {
                 if (produtoSelecionadoId != null) {
 
-                    // AÇÃO CORRIGIDA: Força a barra de pesquisa a perder o foco
-                    // e esconde o teclado antes da transição.
                     if (searchBar != null) {
                         searchBar.clearFocus();
                     }
                     hideKeyboard();
-                    // --------------------------------------------------------
 
                     FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -187,21 +166,16 @@ public class ComparacaoFragment extends Fragment {
                     ComparacaoParte2Fragment nextFragment =
                             ComparacaoParte2Fragment.newInstance(produtoSelecionadoId);
 
-
                     fragmentTransaction.replace(FRAGMENT_CONTAINER_ID, nextFragment);
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                 } else {
                     Log.w("ComparacaoFragment", "Tentativa de transição sem produto selecionado.");
-                    // Opcional: Adicionar um Toast de aviso aqui.
                 }
             });
         }
     }
 
-    /**
-     * Configura o TextWatcher para a funcionalidade de pesquisa/filtragem.
-     */
     private void setupSearchFunctionality() {
         if (searchBar != null) {
             searchBar.addTextChangedListener(new TextWatcher() {
@@ -223,7 +197,6 @@ public class ComparacaoFragment extends Fragment {
         }
     }
 
-
     private void buscarProdutoDoUsuario(Integer idUsuario) {
         produtoApi.buscarProdutosComMaisDeUmaTabela(idUsuario).enqueue(new Callback<List<GetProdutoDTO>>() {
             @Override
@@ -236,15 +209,12 @@ public class ComparacaoFragment extends Fragment {
 
                     if (recyclerViewProdutos != null && !listaRetorno.isEmpty()) {
 
-                        // --- Lógica de integração do Adapter ---
                         comparacaoAdapter = new ComparacaoAdapter(listaRetorno);
 
                         comparacaoAdapter.setOnItemClickListener(produto -> {
                             Log.d("Comparacao", "Produto selecionado: " + produto.getNome());
 
-                            // AÇÃO REQUERIDA: FECHAR O TECLADO AO CLICAR NO ITEM
                             hideKeyboard();
-                            // ------------------------------------
 
                             if (comparacaoAdapter != null) {
 
@@ -259,7 +229,6 @@ public class ComparacaoFragment extends Fragment {
 
                             produtoSelecionadoId = produto.getId();
 
-                            // Transição visual
                             textViewSelecionarProduto1.setVisibility(View.GONE);
                             demonstracaoItem1.setVisibility(View.GONE);
 
@@ -286,7 +255,6 @@ public class ComparacaoFragment extends Fragment {
                     tratarListaVaziaOuErro();
                 }
 
-                // Oculta a ProgressBar
                 if (progressBarLoading != null) {
                     progressBarLoading.setVisibility(View.GONE);
                 }
@@ -296,7 +264,6 @@ public class ComparacaoFragment extends Fragment {
             public void onFailure(@NonNull Call<List<GetProdutoDTO>> call, @NonNull Throwable t) {
                 Log.e("API:", "Falha na requisição: " + t.getMessage());
                 if (getActivity() != null) {
-                    // Oculta a ProgressBar na falha
                     if (progressBarLoading != null) {
                         progressBarLoading.setVisibility(View.GONE);
                     }
@@ -306,14 +273,10 @@ public class ComparacaoFragment extends Fragment {
         });
     }
 
-    /**
-     * Centraliza a lógica de exibição em caso de lista vazia ou erro de API.
-     */
     private void tratarListaVaziaOuErro() {
         if (recyclerViewProdutos != null) {
             recyclerViewProdutos.setVisibility(View.GONE);
         }
-        // Mostra a UI de "Escolha seu produto"
         demonstracaoItem1.setVisibility(View.VISIBLE);
         textViewSelecionarProduto1.setVisibility(View.VISIBLE);
         if (botaoTesteTransicao != null) {
@@ -321,9 +284,6 @@ public class ComparacaoFragment extends Fragment {
         }
     }
 
-    /**
-     * Esconde o teclado virtual
-     */
     private void hideKeyboard() {
         View currentFocus = requireActivity().getCurrentFocus();
         if (currentFocus != null) {
@@ -341,9 +301,6 @@ public class ComparacaoFragment extends Fragment {
         resetEstado();
     }
 
-    /**
-     * Restaura o Fragment para o estado inicial.
-     */
     private void resetEstado() {
         demonstracaoItem1.setVisibility(View.VISIBLE);
         textViewSelecionarProduto1.setVisibility(View.VISIBLE);
@@ -354,7 +311,6 @@ public class ComparacaoFragment extends Fragment {
         btnEscolherTabelas.setVisibility(View.GONE);
         textViewSelecionarProduto2.setVisibility(View.GONE);
 
-        // Reseta os IDs e o produto removido
         produtoSelecionadoId = null;
 
         if (comparacaoAdapter != null && produtoRemovidoAnteriormente != null) {
@@ -368,12 +324,10 @@ public class ComparacaoFragment extends Fragment {
 
         nomeProdutoSelecionado.setText("");
 
-        // Limpa a SearchBar
         if (searchBar != null) {
             searchBar.setText("");
         }
 
-        // Esconde o teclado
         hideKeyboard();
     }
 
@@ -426,14 +380,13 @@ public class ComparacaoFragment extends Fragment {
             }
         });
     }
+
     private android.content.SharedPreferences prefs() {
         return requireContext().getSharedPreferences("nutria_prefs", Context.MODE_PRIVATE);
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
     }
-
-
 }

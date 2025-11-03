@@ -6,7 +6,6 @@ public class AvaliacaoDTO {
     private Integer pontuacao;
     private String comentarios;
 
-    // Construtores, Getters e Setters
     public AvaliacaoDTO() {
     }
 

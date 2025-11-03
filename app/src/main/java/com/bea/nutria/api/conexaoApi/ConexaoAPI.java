@@ -22,7 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ConexaoAPI {
 
     private long ultimoWakeMs = 0L;
-    private static final long JANELA_WAKE_MS = 60_000; // 60 segundos
+    private static final long JANELA_WAKE_MS = 60_000;
     private static String BASE_URL = "";
 
     private final String credenciais = Credentials.basic("nutria", "nutria123");
@@ -34,7 +34,6 @@ public class ConexaoAPI {
         BASE_URL = url;
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message -> Log.d("API_LOG", message));
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        // 1. Configura OkHttpClient
         client = new OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .connectTimeout(25, TimeUnit.SECONDS)
@@ -53,7 +52,6 @@ public class ConexaoAPI {
                 })
                 .build();
 
-        // 2. Configura Retrofit (apenas a instância base)
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(client)
@@ -61,25 +59,10 @@ public class ConexaoAPI {
                 .build();
     }
 
-    /**
-     * Retorna uma instância da interface Retrofit especificada.
-     * Agora aceita qualquer interface (ProdutoAPI, UsuarioAPI, etc.).
-     *
-     * @param apiClass A interface da API (e.g., ProdutoAPI.class).
-     * @param <T>      O tipo da interface da API.
-     * @return Uma instância da interface da API.
-     */
     public <T> T getApi(Class<T> apiClass) {
         return retrofit.create(apiClass);
     }
 
-    /**
-     * Tenta "acordar" o servidor de backend hospedado no Render (ou similar).
-     * Só executa o health check se a última tentativa for há mais de JANELA_WAKE_MS.
-     *
-     * @param activity     A Activity para garantir que o 'proximoPasso' seja executado na UI thread.
-     * @param proximoPasso A ação a ser executada na UI thread após a tentativa de wake-up.
-     */
     public void iniciarServidor(Activity activity, Runnable proximoPasso) {
         long agora = System.currentTimeMillis();
         if (agora - ultimoWakeMs < JANELA_WAKE_MS) {
@@ -115,7 +98,6 @@ public class ConexaoAPI {
                 }
             }
             ultimoWakeMs = System.currentTimeMillis();
-            // Volta para a UI thread para executar o próximo passo
             activity.runOnUiThread(() -> {
                 if (proximoPasso != null) proximoPasso.run();
             });

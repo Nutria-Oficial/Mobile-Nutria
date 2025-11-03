@@ -24,11 +24,9 @@ public interface TabelaAPI {
     @GET("/tabelas/{idTabela}")
     Call<GetTabelaEAvaliacaoDTO> buscarTabelaComAvaliacao(@Path("idTabela") Integer idTabela);
 
-    // Busca de uma única tabela (método original)
     @GET("tabelas/{id}")
     Call<GetTabelaComparacaoDTO> buscarTabela(@Path("id") Integer id);
 
-    // NOVO MÉTODO: Busca a lista de comparação entre duas tabelas
     @GET("tabelas/{idTabela1}/{idTabela2}")
     Call<List<ComparacaoNutrienteDTO>> compararTabelas(
             @Path("idTabela1") Integer idTabela1,

@@ -166,12 +166,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
             android:fontFamily="@font/montserrat_medium"
             android:text="Produto"
             android:textColor="#161515"
             android:textSize="18sp"
             android:textStyle="normal"
+            android:maxLines="3"
+            android:ellipsize="end"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/icon_selecionado1"
             app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem4"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -602,15 +606,19 @@
 
         <TextView
             android:id="@+id/textViewTitulo3"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
             android:fontFamily="@font/montserrat_medium"
             android:text="Produto"
             android:textColor="#161515"
             android:textSize="18sp"
             android:textStyle="normal"
+            android:maxLines="3"
+            android:ellipsize="end"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/icon_selecionado2"
             app:layout_constraintStart_toEndOf="@+id/view_demonstracaoItem5"
             app:layout_constraintTop_toTopOf="parent" />
 

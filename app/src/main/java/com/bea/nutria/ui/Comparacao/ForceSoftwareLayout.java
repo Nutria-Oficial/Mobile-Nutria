@@ -24,7 +24,6 @@ public class ForceSoftwareLayout extends ConstraintLayout {
     }
 
     private void init() {
-        // Forçar software rendering
         setLayerType(LAYER_TYPE_SOFTWARE, null);
         setWillNotDraw(false);
     }
@@ -32,7 +31,6 @@ public class ForceSoftwareLayout extends ConstraintLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        // Aplicar software rendering em todos os children
         forceSoftwareRecursive(this);
     }
 
